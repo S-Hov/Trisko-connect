@@ -112,6 +112,7 @@ public static class ConfigHandler
         config.MsgUIItem ??= new();
 
         config.UiItem ??= new();
+        TriskoStartupDefaults.Apply(config.UiItem);
         config.UiItem.MainColumnItem ??= [];
         config.UiItem.WindowSizeItem ??= [];
 

@@ -243,6 +243,7 @@ public partial class TriskoShellViewModel : MyReactiveObject, IDisposable
                     return;
                 }
 
+                _appConfig.UiItem.TriskoVirtualHereStartupPreferenceInitialized = true;
                 _appConfig.UiItem.TriskoAutoStartVirtualHereOnLaunch = val;
                 _ = ConfigHandler.SaveConfig(_appConfig);
                 AutoStartVirtualHereSettingStatus = val

@@ -41,14 +41,9 @@ internal class AvaUtils
 
     public static WindowIcon GetAppIcon(ESysProxyType sysProxyType = default)
     {
-        var customPath = Utils.GetPath("trisko-connect.ico");
-        if (File.Exists(customPath))
-        {
-            return new(customPath);
-        }
-
-        var uri = new Uri(Path.Combine(Global.AvaAssets, "Trisko/Brand/trisko-connect.ico"));
-        using var bitmap = new Bitmap(AssetLoader.Open(uri));
-        return new(bitmap);
+        // Always use the current product icon, keeping every ICO size for Windows shell/DPI selection.
+        var uri = new Uri($"{Global.AvaAssets}Trisko/Brand/trisko-connect.ico");
+        using var stream = AssetLoader.Open(uri);
+        return new WindowIcon(stream);
     }
 }

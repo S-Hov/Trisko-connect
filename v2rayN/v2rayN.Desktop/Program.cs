@@ -20,6 +20,7 @@ internal class Program
         // Velopack must be the first framework call. It may execute a fast
         // install/update hook and terminate without starting Avalonia.
         VelopackApp.Build()
+            .SetAppUserModelId(WindowsShellIdentity.AppUserModelId)
             .SetAutoApplyOnStartup(false)
             .Run();
 
@@ -49,6 +50,7 @@ internal class Program
 
         try
         {
+            WindowsShellIdentity.Initialize();
             BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
         }

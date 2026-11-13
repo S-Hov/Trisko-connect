@@ -116,6 +116,7 @@ public class UIItem
     public bool TriskoRouteVirtualHereInGlobalExceptLocal { get; set; } = true;
     public bool TriskoRouteVirtualHereInGlobal { get; set; } = true;
     public bool TriskoAutoStartVirtualHereOnLaunch { get; set; } = false;
+    public bool TriskoVirtualHereStartupPreferenceInitialized { get; set; }
     public bool TriskoEcpAutoScanEnabled { get; set; } = true;
     public int TriskoEcpAutoScanIntervalSeconds { get; set; } = 5;
     public bool TriskoAutoCheckUpdatesEnabled { get; set; } = true;
