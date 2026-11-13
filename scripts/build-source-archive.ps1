@@ -93,10 +93,24 @@ finally {
     'Build instructions: docs/release-and-update.md'
 ) | Set-Content -LiteralPath (Join-Path $stageDirectory 'SOURCE-COMMIT.txt') -Encoding utf8NoBOM
 
-[IO.Compression.ZipFile]::CreateFromDirectory(
-    $stageDirectory,
+# Editors can restore projects inside the staging folder while it exists.
+# Archive only the explicit Git snapshot, never incidental obj/bin files.
+$archive = [IO.Compression.ZipFile]::Open(
     [IO.Path]::GetFullPath($DestinationPath),
-    [IO.Compression.CompressionLevel]::Optimal,
-    $true)
+    [IO.Compression.ZipArchiveMode]::Create)
+try {
+    $archiveRoot = Split-Path -Leaf $stageDirectory
+    foreach ($relativePath in @($sourceFiles) + @('SOURCE-COMMIT.txt')) {
+        $stagedFile = Join-Path $stageDirectory $relativePath
+        if (-not (Test-Path -LiteralPath $stagedFile -PathType Leaf)) { continue }
+        $entryName = "$archiveRoot/$($relativePath.Replace('\', '/'))"
+        [IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+            $archive, $stagedFile, $entryName,
+            [IO.Compression.CompressionLevel]::Optimal) | Out-Null
+    }
+}
+finally {
+    $archive.Dispose()
+}
 
 Write-Output ([IO.Path]::GetFullPath($DestinationPath))
