@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="v2rayN/v2rayN.Desktop/v2rayN.Desktop.csproj" />
+  <Project Path="v2rayN/ServiceLib/ServiceLib.csproj" />
+  <Project Path="v2rayN/ServiceLib.Tests/ServiceLib.Tests.csproj" />
+  <Project Path="v2rayN/ServiceLib.UdpTest/ServiceLib.UdpTest.csproj" />
+  <Project Path="v2rayN/GlobalHotKeys/src/GlobalHotKeys/GlobalHotKeys.csproj" />
+  <Project Path="v2rayN/ThirdParty/MarcusW.VncClient/MarcusW.VncClient.csproj" />
+</Solution>

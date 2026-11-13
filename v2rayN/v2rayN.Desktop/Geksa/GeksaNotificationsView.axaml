@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Geksa;assembly=ServiceLib"
+             xmlns:gek="clr-namespace:ServiceLib.Geksa;assembly=ServiceLib"
+             x:Class="v2rayN.Desktop.Geksa.GeksaNotificationsView"
+             x:Name="NotificationRoot" x:DataType="gek:GeksaNotificationCenter"
+             MinWidth="280" MaxWidth="380">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <ItemsControl ItemsSource="{Binding Items}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="gek:GeksaNotificationItem">
+                <Border Margin="0,8,0,0" Padding="14,12" CornerRadius="8"
+                        Background="{DynamicResource GeksaCardBackground}"
+                        BorderBrush="{Binding AccentColor}" BorderThickness="3,1,1,1"
+                        BoxShadow="0 4 18 0 #30000000">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="6">
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{DynamicResource GeksaCardTitleForeground}" TextWrapping="Wrap" />
+                        <Button Grid.Column="1" Width="24" Height="24" Padding="4" Classes="geksaSecondary"
+                                Command="{Binding #NotificationRoot.DataContext.DismissCommand}" CommandParameter="{Binding}"
+                                ToolTip.Tip="{x:Static tr:TriskoStrings.S1907d5c300176824}">
+                            <PathIcon Width="12" Height="12" Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12Z" />
+                        </Button>
+                        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Message}" FontSize="12"
+                                   MaxLines="4" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource GeksaSectionSubtitleForeground}" />
+                        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8"
+                                    IsVisible="{Binding IsError}">
+                            <Button Width="30" Height="28" Padding="6" Classes="geksaSecondary" Click="CopyError_Click"
+                                    ToolTip.Tip="{x:Static tr:TriskoStrings.S08977566c6ae8e28}">
+                                <PathIcon Width="14" Height="14" Data="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1M19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5M19 21H8V7H19V21Z" />
+                            </Button>
+                        </StackPanel>
+                        <Button Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" Classes="geksaSecondary"
+                                Content="{Binding ActionText}" Command="{Binding ActionCommand}" IsVisible="{Binding HasAction}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    </ScrollViewer>
+</UserControl>

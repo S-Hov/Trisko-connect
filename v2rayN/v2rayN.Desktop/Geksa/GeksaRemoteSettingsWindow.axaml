@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Geksa;assembly=ServiceLib"
+        x:Class="v2rayN.Desktop.Geksa.GeksaRemoteSettingsWindow"
+        Width="620" SizeToContent="Height" MaxHeight="680"
+        Background="{DynamicResource GeksaShellBackground}"
+        ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <Style Selector="TextBlock.sectionSubtitle">
+            <Setter Property="Foreground" Value="{DynamicResource GeksaSectionSubtitleForeground}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="Border.subCard">
+            <Setter Property="Background" Value="{DynamicResource GeksaSubCardBackground}" />
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+    </Window.Styles>
+    <Grid Margin="24" RowDefinitions="Auto,*,Auto" RowSpacing="18">
+        <StackPanel Spacing="6">
+            <TextBlock x:Name="Heading" FontSize="22" FontWeight="Bold"
+                       Foreground="{DynamicResource GeksaBrandTitleForeground}" TextWrapping="Wrap" />
+            <TextBlock x:Name="Description" Classes="sectionSubtitle" TextWrapping="Wrap" />
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ContentControl x:Name="Form" HorizontalContentAlignment="Stretch" />
+        </ScrollViewer>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+            <Button x:Name="Dismiss" Classes="geksaSecondary" Content="{x:Static tr:TriskoStrings.Sef05d57959cfde50}" Click="Dismiss_Click" />
+            <Button x:Name="Apply" Classes="geksaPrimary" Content="{x:Static tr:TriskoStrings.Sb4d30cae52894cf0}" IsVisible="False" Click="Apply_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

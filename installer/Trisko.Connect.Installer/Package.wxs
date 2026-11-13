@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+      Name="Trisko connect"
+      Manufacturer="Trisko"
+      Version="$(var.ProductVersion)"
+      UpgradeCode="{6D532D10-C5FD-401D-87CA-0A51B26EE54D}"
+      Codepage="1251"
+      Scope="perMachine"
+      InstallerVersion="500"
+      Compressed="yes">
+    <SummaryInformation Description="Корпоративный VPN-клиент Trisko на базе v2rayN" />
+    <MajorUpgrade
+        AllowSameVersionUpgrades="yes"
+        Schedule="afterInstallExecute"
+        DowngradeErrorMessage="Установлена более новая версия Trisko connect." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Trisko connect" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Files Directory="INSTALLFOLDER" Include="$(var.StageDir)\app\**">
+      <Exclude Files="$(var.StageDir)\app\Trisko.Connect.exe" />
+    </Files>
+
+    <Component Id="MainExecutable" Directory="INSTALLFOLDER" Guid="{EDC97338-D5B9-4366-A90F-3E469033CDBE}">
+      <File
+          Id="MainExe"
+          Source="$(var.StageDir)\app\Trisko.Connect.exe"
+          KeyPath="yes">
+        <Shortcut
+            Id="StartMenuShortcut"
+            Directory="ProgramMenuFolder"
+            Name="Trisko connect"
+            Description="Корпоративный VPN, RDP, SSH и сетевые папки"
+            WorkingDirectory="INSTALLFOLDER"
+            Advertise="yes" />
+        <Shortcut
+            Id="DesktopShortcut"
+            Directory="DesktopFolder"
+            Name="Trisko connect"
+            Description="Корпоративный VPN, RDP, SSH и сетевые папки"
+            WorkingDirectory="INSTALLFOLDER"
+            Advertise="yes" />
+      </File>
+      <RegistryValue
+          Root="HKLM"
+          Key="SOFTWARE\Trisko\Connect"
+          Name="InstallDirectory"
+          Type="string"
+          Value="[INSTALLFOLDER]" />
+    </Component>
+  </Package>
+</Wix>

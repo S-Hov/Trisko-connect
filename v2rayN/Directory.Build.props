@@ -1,0 +1,41 @@
+<Project>
+
+    <PropertyGroup>
+        <Version Condition="'$(Version)' == ''">0.1.0</Version>
+        <AssemblyVersion>$(Version).0</AssemblyVersion>
+        <FileVersion>$(Version).0</FileVersion>
+        <InformationalVersion>$(Version)</InformationalVersion>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+        <Nullable>annotations</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Authors>Trisko; Geksa-A; 2dust and v2rayN contributors</Authors>
+        <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
+        <Copyright>Trisko connect © 2026 S-Hov; Geksa-A Connection modifications © 2026 Geksa-A; v2rayN © 2017-$([System.DateTime]::UtcNow.Year) 2dust and contributors</Copyright>
+        <InvariantGlobalization>false</InvariantGlobalization>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <DebugType>embedded</DebugType>
+        <EventSourceSupport>false</EventSourceSupport>
+        <StackTraceSupport>false</StackTraceSupport>
+        <MetricsSupport>false</MetricsSupport>
+        <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+        <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+        <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+
+        <UseSystemResourceKeys>true</UseSystemResourceKeys>
+        <PublishSingleFile>true</PublishSingleFile>
+        <PublishReadyToRun>false</PublishReadyToRun>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'GlobalHotKeys'">
+        <!-- Pinned upstream submodule currently has one known nullable warning. -->
+        <NoWarn>$(NoWarn);CS8625</NoWarn>
+    </PropertyGroup>
+</Project>

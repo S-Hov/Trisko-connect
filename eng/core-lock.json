@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "bundle": "v2rayN-windows-64 7.24.6 core bundle",
+  "source": {
+    "url": "https://github.com/2dust/v2rayN/releases/download/7.24.6/v2rayN-windows-64.zip",
+    "sha256": "2CC488BAC6FAFA7C63B26ED7432C3DD0A33EAC33C25F29F43C62455330068E12",
+    "archiveRoot": "v2rayN-windows-64/bin"
+  },
+  "files": [
+    {
+      "path": "xray/xray.exe",
+      "sha256": "859FB86DC5A92B2EC809CEBF20962C895A45727FB8870D0F70A6EFB5772B9AED"
+    },
+    {
+      "path": "xray/wintun.dll",
+      "sha256": "E5DA8447DC2C320EDC0FC52FA01885C103DE8C118481F683643CACC3220DAFCE"
+    },
+    {
+      "path": "sing_box/sing-box.exe",
+      "sha256": "BA6BB0C067F546A58B1D572E91CBBD082068CF52AED4FB58008678D19F1DBEB2"
+    },
+    {
+      "path": "sing_box/libcronet.dll",
+      "sha256": "C7434CFA93C3041321DD19111C4DE6C52B8A9531A65661BA45425D3C51EC69E2"
+    },
+    {
+      "path": "geoip.dat",
+      "sha256": "6BA63D75F307D16A81AE09406DDCF2779FA75CB642D4AAE59613370D62D33509"
+    },
+    {
+      "path": "geosite.dat",
+      "sha256": "8C3A825B1A7D09F627DE10263B21008B8A48DEE10794F42CAF1927928FEC74DA"
+    }
+  ],
+  "licenses": [
+    {
+      "fileName": "Xray-core-MPL-2.0.txt",
+      "url": "https://raw.githubusercontent.com/XTLS/Xray-core/main/LICENSE",
+      "sha256": "1F256ECAD192880510E84AD60474EAB7589218784B9A50BC7CEEE34C2B91F1D5"
+    },
+    {
+      "fileName": "sing-box-GPL-3.0-or-later.txt",
+      "url": "https://raw.githubusercontent.com/SagerNet/sing-box/testing/LICENSE",
+      "sha256": "650D5E3B99A446FB38E820FA87A49562E0C79EAB868FFF58618AC487A58E554C"
+    },
+    {
+      "fileName": "Wintun-prebuilt-binaries-license.txt",
+      "url": "https://git.zx2c4.com/wintun/plain/prebuilt-binaries-license.txt",
+      "sha256": "9AAF948856CE8845A762121306039EF09D0EEB4D9E4F4C355647D4081E818087"
+    }
+  ]
+}

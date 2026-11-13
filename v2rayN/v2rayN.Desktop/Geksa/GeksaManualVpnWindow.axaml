@@ -1,0 +1,53 @@
+<Window
+    x:Class="v2rayN.Desktop.Geksa.GeksaManualVpnWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Geksa;assembly=ServiceLib"
+    xmlns:gek="clr-namespace:ServiceLib.Geksa;assembly=ServiceLib"
+    x:DataType="gek:GeksaManualVpnViewModel"
+    Width="680"
+    Height="500"
+    Background="{DynamicResource GeksaShellBackground}"
+    CanResize="False"
+    Title="{x:Static tr:TriskoStrings.Sd64163d945a2f71c}"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="28" RowDefinitions="Auto,*,Auto">
+        <StackPanel Spacing="7">
+            <TextBlock FontSize="25" FontWeight="Bold" Foreground="{DynamicResource GeksaBrandTitleForeground}" Text="{x:Static tr:TriskoStrings.Sd64163d945a2f71c}" />
+            <TextBlock Foreground="{DynamicResource GeksaSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S0bf28cfbce39bb33}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0,24,0,18" Spacing="15">
+            <StackPanel Spacing="6">
+                <TextBlock Foreground="{DynamicResource GeksaSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S653dfedb2be9760c}" />
+                <TextBox Text="{Binding DisplayName, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Spacing="6">
+                <TextBlock Foreground="{DynamicResource GeksaSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S74c5c442b85ae1f7}" />
+                <TextBox
+                    AcceptsReturn="True"
+                    Height="130"
+                    PlaceholderText="vless://..."
+                    Text="{Binding ShareUri, Mode=TwoWay}"
+                    TextWrapping="Wrap"
+                    />
+            </StackPanel>
+            <CheckBox Content="{x:Static tr:TriskoStrings.S4d2376d3b6296ccf}" IsChecked="{Binding EnableTun, Mode=TwoWay}" />
+            <Border
+                Padding="13,10"
+                Background="{DynamicResource GeksaErrorBoxBackground}"
+                BorderBrush="{DynamicResource GeksaErrorBoxBorder}"
+                BorderThickness="1"
+                CornerRadius="9"
+                IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <TextBlock Foreground="{DynamicResource GeksaErrorTextForeground}" Text="{Binding ValidationMessage}" TextWrapping="Wrap" />
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
+            <Button MinWidth="110" Classes="geksaSecondary" Click="CancelClick" Content="{x:Static tr:TriskoStrings.S8fbe9b75cbdfbfa6}" />
+            <Button MinWidth="130" Classes="geksaPrimary" Click="SaveClick" Content="{x:Static tr:TriskoStrings.S71038c53bbc48d3b}" />
+        </StackPanel>
+    </Grid>
+</Window>

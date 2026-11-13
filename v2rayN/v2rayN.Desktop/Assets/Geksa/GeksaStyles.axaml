@@ -1,0 +1,60 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="Button.geksaPrimary">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource GeksaPrimaryActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GeksaPrimaryActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource GeksaPrimaryActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.geksaPrimary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource GeksaPrimaryActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource GeksaPrimaryActionForeground}" />
+    </Style>
+
+    <Style Selector="Button.geksaSecondary">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource GeksaSecondaryActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GeksaSecondaryActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource GeksaSecondaryActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.geksaSecondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource GeksaSecondaryActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource GeksaSecondaryActionForeground}" />
+    </Style>
+
+    <Style Selector="Button.geksaWarning">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource GeksaWarningActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GeksaWarningActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource GeksaWarningActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.geksaWarning:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource GeksaWarningActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource GeksaWarningActionForeground}" />
+    </Style>
+
+    <Style Selector="Button.geksaDanger">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource GeksaDangerActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GeksaDangerActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource GeksaDangerActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.geksaDanger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource GeksaDangerActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource GeksaDangerActionForeground}" />
+    </Style>
+</Styles>

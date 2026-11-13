@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "configurationVersion": "pilot-2026.08",
+  "revision": 1,
+  "resources": [
+    {
+      "id": "rdp-office",
+      "type": "rdp",
+      "displayName": "Удалённый рабочий стол",
+      "description": "Основной рабочий компьютер",
+      "host": "rdp.corp.example.test",
+      "port": 3389,
+      "userName": "CORP\\user",
+      "requiresVpn": true,
+      "fullScreen": true,
+      "multiMonitor": false
+    },
+    {
+      "id": "ssh-admin",
+      "type": "ssh",
+      "displayName": "SSH сервера",
+      "host": "ssh.corp.example.test",
+      "port": 22,
+      "userName": "operator",
+      "requiresVpn": true
+    },
+    {
+      "id": "smb-documents",
+      "type": "smb",
+      "displayName": "Общие документы",
+      "host": "files.corp.example.test",
+      "port": 445,
+      "path": "departments/documents",
+      "driveLetter": "Z:",
+      "requiresVpn": true
+    }
+  ]
+}
