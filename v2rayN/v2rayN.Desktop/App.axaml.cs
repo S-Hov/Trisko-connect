@@ -9,12 +9,8 @@ public partial class App : Application
 {
     public override void Initialize()
     {
-        AvaloniaXamlLoader.Load(this);
-
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-
-        ApplySemiLocale();
     }
 
     public static void ApplySemiLocale(string? language = null)
@@ -49,17 +45,66 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && !Design.IsDesignMode)
+        {
+            var splash = new StartupSplashWindow();
+            desktop.MainWindow = splash;
+            splash.Loaded += async (_, _) => await CompleteStartupAsync(desktop, splash);
+        }
+        else
+        {
+            LoadApplicationResources();
+            CreateMainWindow();
+        }
+
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    private void LoadApplicationResources()
+    {
+        // Load localized resources only after the saved language is available.
+        AvaloniaXamlLoader.Load(this);
+        ApplySemiLocale();
+    }
+
+    private async Task CompleteStartupAsync(IClassicDesktopStyleApplicationLifetime desktop, StartupSplashWindow splash)
+    {
+        try
+        {
+            if (OperatingSystem.IsWindows() && !await Task.Run(Program.InitializeApplication))
+            {
+                desktop.Shutdown(1);
+                return;
+            }
+
+            // InitApp ran on a worker so diagnostics don't freeze the splash.
+            TriskoLocalization.Initialize(AppManager.Instance.Config.UiItem.CurrentLanguage);
+            LoadApplicationResources();
+            splash.SetLanguage();
+            await Task.Run(() => AppManager.Instance.InitComponents());
+            DataContext = StatusBarViewModel.Instance;
+            CreateMainWindow();
+
+            // Transfer ownership before closing the temporary main window.
+            // The existing MainWindow.Loaded handler still handles tray startup.
+            desktop.MainWindow!.Show();
+            splash.Close();
+        }
+        catch (Exception ex)
+        {
+            Logging.SaveLog("Application startup", ex);
+            File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "crash.txt"), ex.ToString());
+            desktop.Shutdown(1);
+        }
+    }
+
+    private void CreateMainWindow()
+    {
         var viewLocator = SimpleViewLocator.Instance;
         DataTemplates.Add(viewLocator);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            if (!Design.IsDesignMode)
-            {
-                AppManager.Instance.InitComponents();
-                DataContext = StatusBarViewModel.Instance;
-            }
-
             var mainWindowViewModel = new MainWindowViewModel();
             var mainWindow = (MainWindow)viewLocator.Build(mainWindowViewModel);
             mainWindow.ViewModel = mainWindowViewModel;
@@ -70,8 +115,6 @@ public partial class App : Application
                 Current?.TryGetFeature<IActivatableLifetime>()?.Activated += OnMacOSActivated;
             }
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
 
     #region MacOS Activation

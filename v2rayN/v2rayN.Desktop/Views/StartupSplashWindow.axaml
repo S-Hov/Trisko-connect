@@ -1,0 +1,45 @@
+<Window
+    x:Class="v2rayN.Desktop.Views.StartupSplashWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="560"
+    Height="330"
+    CanResize="False"
+    ShowInTaskbar="False"
+    ShowActivated="False"
+    WindowDecorations="None"
+    WindowStartupLocation="CenterScreen"
+    Background="#101B32"
+    Title="Trisko connect">
+    <!-- Self-contained: displayed before configuration and application styles load. -->
+    <Border BorderBrush="#2A3C60" BorderThickness="1" Padding="36">
+        <Grid RowDefinitions="*,Auto">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                <Image Width="100" Height="100"
+                       Source="/Assets/Trisko/Brand/trisko-connect.png" />
+                <TextBlock Text="Trisko connect" FontSize="30" FontWeight="SemiBold"
+                           Foreground="#F4F7FF" HorizontalAlignment="Center" />
+                <TextBlock x:Name="LoadingText" Text="Загрузка…" FontSize="14"
+                           Foreground="#A9BBDD" HorizontalAlignment="Center" />
+            </StackPanel>
+            <Border Grid.Row="1" Height="3" Background="#223454" CornerRadius="2">
+                <Border Width="100" HorizontalAlignment="Left" Background="#6A9BFF" CornerRadius="2">
+                    <Border.RenderTransform>
+                        <TranslateTransform />
+                    </Border.RenderTransform>
+                    <Border.Styles>
+                        <Style Selector="Border">
+                            <Style.Animations>
+                                <Animation Duration="0:0:1.8" IterationCount="Infinite">
+                                    <KeyFrame Cue="0%"><Setter Property="TranslateTransform.X" Value="0" /></KeyFrame>
+                                    <KeyFrame Cue="50%"><Setter Property="TranslateTransform.X" Value="386" /></KeyFrame>
+                                    <KeyFrame Cue="100%"><Setter Property="TranslateTransform.X" Value="0" /></KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </Border.Styles>
+                </Border>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

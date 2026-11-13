@@ -135,6 +135,13 @@ internal class Program
             }
         }
 
+        // Windows loads configuration and runs startup diagnostics after the
+        // splash is visible. macOS needs its configuration to build Avalonia.
+        return OperatingSystem.IsWindows() || InitializeApplication();
+    }
+
+    internal static bool InitializeApplication()
+    {
         if (!AppManager.Instance.InitApp())
         {
             return false;
