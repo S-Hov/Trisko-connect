@@ -1,7 +1,7 @@
 using AwesomeAssertions;
 using ServiceLib.Common;
 using ServiceLib.Enums;
-using ServiceLib.Geksa;
+using ServiceLib.Trisko;
 using ServiceLib.Models;
 using ServiceLib.Services.CoreConfig;
 using Xunit;
@@ -641,28 +641,28 @@ public class CoreConfigV2rayServiceTests
     }
 
     [Theory]
-    [InlineData(GeksaVpnRoutingMode.CorporateOnly, false, false, "direct")]
-    [InlineData(GeksaVpnRoutingMode.RussianSites, true, true, "direct")]
-    [InlineData(GeksaVpnRoutingMode.GlobalExceptLocal, true, false, "proxy")]
-    [InlineData(GeksaVpnRoutingMode.Global, true, true, "proxy")]
-    public void GenerateClientConfigContent_GeksaRoutingMode_ShouldCreateMatchingWindowsAndCoreRules(
-        GeksaVpnRoutingMode mode,
+    [InlineData(TriskoVpnRoutingMode.CorporateOnly, false, false, "direct")]
+    [InlineData(TriskoVpnRoutingMode.RussianSites, true, true, "direct")]
+    [InlineData(TriskoVpnRoutingMode.GlobalExceptLocal, true, false, "proxy")]
+    [InlineData(TriskoVpnRoutingMode.Global, true, true, "proxy")]
+    public void GenerateClientConfigContent_TriskoRoutingMode_ShouldCreateMatchingWindowsAndCoreRules(
+        TriskoVpnRoutingMode mode,
         bool publicAddressUsesTun,
         bool ordinaryLocalAddressUsesTun,
         string fallbackOutbound)
     {
         var config = CoreConfigTestFactory.CreateConfig(ECoreType.Xray);
         config.TunModeItem.EnableTun = true;
-        config.TunModeItem.GeksaRoutingMode = mode;
-        config.TunModeItem.GeksaManualVpnRoutes = ["192.168.3.222/32"];
-        if (mode == GeksaVpnRoutingMode.RussianSites)
+        config.TunModeItem.TriskoRoutingMode = mode;
+        config.TunModeItem.TriskoManualVpnRoutes = ["192.168.3.222/32"];
+        if (mode == TriskoVpnRoutingMode.RussianSites)
         {
             config.Inbound.First().SniffingEnabled = false;
         }
         CoreConfigTestFactory.BindAppManagerConfig(config);
 
         var node = CoreConfigTestFactory.CreateVmessNode(ECoreType.Xray);
-        node.IndexId = GeksaCorporateConfigurationService.ManagedProfileId;
+        node.IndexId = TriskoCorporateConfigurationService.ManagedProfileId;
         var context = CoreConfigTestFactory.CreateContext(config, node, ECoreType.Xray) with
         {
             IsTunEnabled = true,
@@ -688,14 +688,14 @@ public class CoreConfigV2rayServiceTests
         corporateRuleIndex.Should().BeGreaterThanOrEqualTo(0);
         fallbackRuleIndex.Should().BeGreaterThan(corporateRuleIndex);
 
-        if (mode == GeksaVpnRoutingMode.GlobalExceptLocal)
+        if (mode == TriskoVpnRoutingMode.GlobalExceptLocal)
         {
             cfg.routing.rules.Should().Contain(rule =>
                 rule.outboundTag == Global.DirectTag
                 && rule.ip != null
                 && rule.ip.Contains("geoip:private"));
         }
-        if (mode == GeksaVpnRoutingMode.RussianSites)
+        if (mode == TriskoVpnRoutingMode.RussianSites)
         {
             var russianDomainsRuleIndex = cfg.routing.rules.FindIndex(rule =>
                 rule.outboundTag == Global.ProxyTag

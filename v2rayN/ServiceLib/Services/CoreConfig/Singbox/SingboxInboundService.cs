@@ -68,13 +68,13 @@ public partial class CoreConfigSingboxService
                 tunInbound.auto_route = _config.TunModeItem.AutoRoute;
                 tunInbound.stack = _config.TunModeItem.Stack;
 
-                var geksaPolicy = GeksaCorporateRoutingTargetProvider.Load(context);
-                if (geksaPolicy.IsEnabled)
+                var triskoPolicy = TriskoCorporateRoutingTargetProvider.Load(context);
+                if (triskoPolicy.IsEnabled)
                 {
-                    tunInbound.route_address = [.. geksaPolicy.SystemRouteCidrs];
+                    tunInbound.route_address = [.. triskoPolicy.SystemRouteCidrs];
                     // Selective routing must leave ordinary/local DNS free to
                     // use the physical Windows interface.
-                    tunInbound.strict_route = geksaPolicy.Mode == GeksaVpnRoutingMode.Global
+                    tunInbound.strict_route = triskoPolicy.Mode == TriskoVpnRoutingMode.Global
                         && _config.TunModeItem.StrictRoute;
                 }
                 else

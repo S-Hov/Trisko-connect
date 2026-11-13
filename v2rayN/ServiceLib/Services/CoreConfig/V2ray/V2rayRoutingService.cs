@@ -39,7 +39,7 @@ public partial class CoreConfigV2rayService
             {
                 _coreConfig.routing.domainStrategy = _config.RoutingBasicItem.DomainStrategy;
 
-                AddGeksaCorporateRoutingRules();
+                AddTriskoCorporateRoutingRules();
 
                 var routing = context.RoutingItem;
                 if (routing != null)
@@ -84,9 +84,9 @@ public partial class CoreConfigV2rayService
         }
     }
 
-    private void AddGeksaCorporateRoutingRules()
+    private void AddTriskoCorporateRoutingRules()
     {
-        var policy = GeksaCorporateRoutingTargetProvider.Load(context);
+        var policy = TriskoCorporateRoutingTargetProvider.Load(context);
         if (!policy.IsEnabled)
         {
             return;
@@ -122,7 +122,7 @@ public partial class CoreConfigV2rayService
             });
         }
 
-        if (policy.Mode == GeksaVpnRoutingMode.GlobalExceptLocal)
+        if (policy.Mode == TriskoVpnRoutingMode.GlobalExceptLocal)
         {
             _coreConfig.routing.rules.Add(new()
             {
@@ -142,8 +142,8 @@ public partial class CoreConfigV2rayService
         {
             type = "field",
             network = "tcp,udp",
-            outboundTag = policy.Mode is GeksaVpnRoutingMode.CorporateOnly
-                or GeksaVpnRoutingMode.RussianSites
+            outboundTag = policy.Mode is TriskoVpnRoutingMode.CorporateOnly
+                or TriskoVpnRoutingMode.RussianSites
                 ? Global.DirectTag
                 : Global.ProxyTag,
         });

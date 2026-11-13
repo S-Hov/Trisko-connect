@@ -26,7 +26,7 @@ internal class Program
         // SMB drive mappings belong to a Windows logon session. The main app
         // runs elevated for TUN, so a short-lived helper is launched by the
         // user's Explorer and must finish before the normal UAC bootstrap.
-        if (WindowsGeksaSmbDriveService.TryRunUserSessionHelper(args, out var helperExitCode))
+        if (WindowsTriskoSmbDriveService.TryRunUserSessionHelper(args, out var helperExitCode))
         {
             Environment.ExitCode = helperExitCode;
             return;
@@ -84,7 +84,7 @@ internal class Program
         var executable = Environment.ProcessPath;
         if (string.IsNullOrWhiteSpace(executable))
         {
-            throw new InvalidOperationException(global::ServiceLib.Geksa.TriskoLocalization.Text("Не удалось определить путь к приложению."));
+            throw new InvalidOperationException(global::ServiceLib.Trisko.TriskoLocalization.Text("Не удалось определить путь к приложению."));
         }
 
         var startInfo = new ProcessStartInfo(executable)

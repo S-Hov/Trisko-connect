@@ -37,7 +37,7 @@ $velopackDirectory = Join-Path $releaseDirectory 'velopack'
 $portableDirectory = Join-Path $releaseDirectory 'portable'
 $licenseCacheDirectory = Join-Path $repositoryRoot 'artifacts\license-cache'
 $projectPath = Join-Path $repositoryRoot 'v2rayN\v2rayN.Desktop\v2rayN.Desktop.csproj'
-$iconPath = Join-Path $repositoryRoot 'v2rayN\v2rayN.Desktop\Assets\Geksa\Brand\trisko-connect.ico'
+$iconPath = Join-Path $repositoryRoot 'v2rayN\v2rayN.Desktop\Assets\Trisko\Brand\trisko-connect.ico'
 $packageId = 'TriskoConnect-Desktop'
 
 if ([string]::IsNullOrWhiteSpace($ReleaseNotesPath)) {

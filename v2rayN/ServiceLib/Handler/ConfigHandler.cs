@@ -22,7 +22,7 @@ public static class ConfigHandler
         var result = EmbedUtils.LoadResource(Utils.GetConfigPath(_configRes));
         if (result.IsNotEmpty())
         {
-            config = JsonUtils.Deserialize<Config>(result);
+            config = JsonUtils.Deserialize<Config>(TriskoDataCompatibility.NormalizeConfigJson(result));
         }
         else
         {
@@ -94,15 +94,15 @@ public static class ConfigHandler
             IcmpRouting = Global.TunIcmpRoutingPolicies.First(),
             EnableLegacyProtect = true,
         };
-        if (!Enum.IsDefined(config.TunModeItem.GeksaRoutingMode))
+        if (!Enum.IsDefined(config.TunModeItem.TriskoRoutingMode))
         {
-            config.TunModeItem.GeksaRoutingMode = GeksaVpnRoutingMode.GlobalExceptLocal;
+            config.TunModeItem.TriskoRoutingMode = TriskoVpnRoutingMode.GlobalExceptLocal;
         }
-        config.TunModeItem.GeksaManualVpnRoutes = GeksaVpnRouteParser.NormalizeMany(
-            config.TunModeItem.GeksaManualVpnRoutes);
-        if (config.TunModeItem.GeksaLastExportRevision < 0)
+        config.TunModeItem.TriskoManualVpnRoutes = TriskoVpnRouteParser.NormalizeMany(
+            config.TunModeItem.TriskoManualVpnRoutes);
+        if (config.TunModeItem.TriskoLastExportRevision < 0)
         {
-            config.TunModeItem.GeksaLastExportRevision = 0;
+            config.TunModeItem.TriskoLastExportRevision = 0;
         }
         config.GuiItem ??= new();
         if (!Global.RootCertProviders.Contains(config.GuiItem.RootCertProvider))
@@ -2229,11 +2229,11 @@ public static class ConfigHandler
             item.PreSocksPort = subItem.PreSocksPort;
             item.Memo = subItem.Memo;
             item.CustomCoreType = subItem.CustomCoreType;
-            item.GeksaTrafficUpload = subItem.GeksaTrafficUpload;
-            item.GeksaTrafficDownload = subItem.GeksaTrafficDownload;
-            item.GeksaTrafficTotal = subItem.GeksaTrafficTotal;
-            item.GeksaTrafficExpire = subItem.GeksaTrafficExpire;
-            item.GeksaTrafficUpdatedAt = subItem.GeksaTrafficUpdatedAt;
+            item.TriskoTrafficUpload = subItem.TriskoTrafficUpload;
+            item.TriskoTrafficDownload = subItem.TriskoTrafficDownload;
+            item.TriskoTrafficTotal = subItem.TriskoTrafficTotal;
+            item.TriskoTrafficExpire = subItem.TriskoTrafficExpire;
+            item.TriskoTrafficUpdatedAt = subItem.TriskoTrafficUpdatedAt;
         }
 
         if (item.Id.IsNullOrEmpty())

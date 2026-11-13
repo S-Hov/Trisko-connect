@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 var root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../"));
 var strings = new SortedSet<string>(StringComparer.Ordinal);
-var files = Directory.GetFiles(Path.Combine(root, "v2rayN/ServiceLib/Geksa"), "*.cs")
+var files = Directory.GetFiles(Path.Combine(root, "v2rayN/ServiceLib/Trisko"), "*.cs")
     .Concat(Directory.GetFiles(Path.Combine(root, "v2rayN/v2rayN.Desktop"), "*.cs", SearchOption.AllDirectories)
         .Where(f => !f.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar)
             && !f.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar)));

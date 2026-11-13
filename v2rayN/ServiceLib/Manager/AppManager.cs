@@ -68,7 +68,7 @@ public sealed class AppManager
 
     public bool InitApp()
     {
-        // Geksa 3 is distributed as a replaceable application folder, but its
+        // Trisko 3 is distributed as a replaceable application folder, but its
         // configuration must survive ZIP upgrades and must not be written next
         // to the executable.
         if (Utils.IsWindows() || Utils.HasWritePermission() == false)
@@ -77,6 +77,7 @@ public sealed class AppManager
         }
 
         Logging.Setup();
+        TriskoDataCompatibility.PrepareFiles(Utils.GetConfigPath());
         var config = ConfigHandler.LoadConfig();
         if (config == null)
         {
@@ -86,14 +87,14 @@ public sealed class AppManager
         TriskoLocalization.Initialize(_config.UiItem.CurrentLanguage);
         try
         {
-            GeksaStartupDiagnosticsService.Instance
+            TriskoStartupDiagnosticsService.Instance
                 .InspectAndRepairAsync(_config)
                 .GetAwaiter()
                 .GetResult();
         }
         catch (Exception ex)
         {
-            Logging.SaveLog(nameof(GeksaStartupDiagnosticsService), ex);
+            Logging.SaveLog(nameof(TriskoStartupDiagnosticsService), ex);
         }
         Thread.CurrentThread.CurrentUICulture = new(_config.UiItem.CurrentLanguage);
 

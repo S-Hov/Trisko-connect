@@ -1,0 +1,111 @@
+<Window
+    x:Class="v2rayN.Desktop.Trisko.TriskoUpdateWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    xmlns:gek="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    Title="{x:Static tr:TriskoStrings.Sa52a1388ae9291c4}"
+    Width="650"
+    SizeToContent="Height"
+    MaxHeight="760"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner"
+    Background="{DynamicResource TriskoShellBackground}"
+    Icon="/Assets/Trisko/Brand/trisko-connect.ico"
+    x:DataType="gek:TriskoUpdateViewModel">
+    <Window.Styles>
+        <Style Selector="Border.updateCard">
+            <Setter Property="Background" Value="{DynamicResource TriskoCardBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource TriskoCardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+        </Style>
+    </Window.Styles>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="30" Spacing="20">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                <Border Width="56" Height="56" CornerRadius="16" Background="{DynamicResource TriskoSettingIconBackground}">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource TriskoSettingIconForeground}"
+                        Text="UP" />
+                </Border>
+                <StackPanel Grid.Column="1" Spacing="5" VerticalAlignment="Center">
+                    <TextBlock FontSize="25" FontWeight="SemiBold" Text="{x:Static tr:TriskoStrings.Sf014354519291665}" />
+                    <TextBlock FontSize="14" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S58521da5e7e5b565}" />
+                </StackPanel>
+            </Grid>
+
+            <Border Classes="updateCard" Padding="19">
+                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="145,*" RowSpacing="12">
+                    <TextBlock Grid.Row="0" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S0b29a3640f4cad3a}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Foreground="{DynamicResource TriskoSubCardValueForeground}" Text="{Binding CurrentVersionText}" />
+                    <TextBlock Grid.Row="1" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Sc94eb8240739797d}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" FontWeight="SemiBold" Foreground="{DynamicResource TriskoSettingIconForeground}" Text="{Binding AvailableVersionText}" />
+                    <TextBlock Grid.Row="2" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S56e46960c10438ad}" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{Binding ReleaseSourceText}" />
+                </Grid>
+            </Border>
+
+            <Border Padding="16,14" Background="{DynamicResource TriskoSubCardBackground}" BorderBrush="{DynamicResource TriskoSubCardBorder}" BorderThickness="1" CornerRadius="10">
+                <TextBlock Foreground="{DynamicResource TriskoSubCardValueForeground}" Text="{Binding StatusText}" TextWrapping="Wrap" />
+            </Border>
+
+            <StackPanel Spacing="9">
+                <ProgressBar
+                    Height="8"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="{Binding DownloadProgress}"
+                    IsVisible="{Binding IsDownloadProgressVisible}" />
+                <Border
+                    Padding="14,11"
+                    Background="#351A25"
+                    BorderBrush="#7A3044"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Foreground="{DynamicResource TriskoErrorTextForeground}" Text="{Binding ErrorMessage}" TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+
+            <Border
+                Classes="updateCard"
+                Padding="17"
+                IsVisible="{Binding ReleaseNotesText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <StackPanel Spacing="8">
+                    <TextBlock FontSize="15" FontWeight="SemiBold" Text="{x:Static tr:TriskoStrings.Sbc016a1cbc9778b3}" />
+                    <ScrollViewer MaxHeight="190" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBlock Margin="0,0,6,0" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{Binding ReleaseNotesText}" TextWrapping="Wrap" />
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="11"
+                    Foreground="{DynamicResource TriskoSectionSubtitleForeground}"
+                    Text="{x:Static tr:TriskoStrings.S10683b85750090f6}"
+                    TextWrapping="Wrap" />
+                <Button
+                    Grid.Column="1"
+                    Classes="triskoSecondary"
+                    Content="{x:Static tr:TriskoStrings.Sa7a4033657e89fc9}"
+                    IsEnabled="{Binding !IsBusy}"
+                    Click="OnCloseClick" />
+                <Button
+                    Grid.Column="2"
+                    AutomationProperties.Name="{x:Static tr:TriskoStrings.S3c0fc3fb0fa0676d}"
+                    Classes="triskoPrimary"
+                    Command="{Binding RunActionCommand}"
+                    Content="{Binding ActionButtonText}"
+                    IsEnabled="{Binding CanRunAction}" />
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

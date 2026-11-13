@@ -113,9 +113,9 @@ public partial class CoreConfigSingboxService
                 }
             }
 
-            var forceGeksaDomainSniffing = context.IsTunEnabled
-                && GeksaCorporateRoutingTargetProvider.Load(context).Mode == GeksaVpnRoutingMode.RussianSites;
-            if (_config.Inbound.First().SniffingEnabled || forceGeksaDomainSniffing)
+            var forceTriskoDomainSniffing = context.IsTunEnabled
+                && TriskoCorporateRoutingTargetProvider.Load(context).Mode == TriskoVpnRoutingMode.RussianSites;
+            if (_config.Inbound.First().SniffingEnabled || forceTriskoDomainSniffing)
             {
                 _coreConfig.route.rules.Add(new()
                 {
@@ -226,7 +226,7 @@ public partial class CoreConfigSingboxService
                 }
             }
 
-            AddGeksaCorporateRoutingRules();
+            AddTriskoCorporateRoutingRules();
 
             _coreConfig.route.rules.Add(new()
             {
@@ -294,9 +294,9 @@ public partial class CoreConfigSingboxService
         }
     }
 
-    private void AddGeksaCorporateRoutingRules()
+    private void AddTriskoCorporateRoutingRules()
     {
-        var policy = GeksaCorporateRoutingTargetProvider.Load(context);
+        var policy = TriskoCorporateRoutingTargetProvider.Load(context);
         if (!policy.IsEnabled)
         {
             return;
@@ -329,7 +329,7 @@ public partial class CoreConfigSingboxService
             });
         }
 
-        if (policy.Mode == GeksaVpnRoutingMode.GlobalExceptLocal)
+        if (policy.Mode == TriskoVpnRoutingMode.GlobalExceptLocal)
         {
             _coreConfig.route.rules.Add(new()
             {
@@ -343,8 +343,8 @@ public partial class CoreConfigSingboxService
             });
         }
 
-        var fallbackOutbound = policy.Mode is GeksaVpnRoutingMode.CorporateOnly
-            or GeksaVpnRoutingMode.RussianSites
+        var fallbackOutbound = policy.Mode is TriskoVpnRoutingMode.CorporateOnly
+            or TriskoVpnRoutingMode.RussianSites
             ? Global.DirectTag
             : Global.ProxyTag;
         _coreConfig.route.rules.Add(new()

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using AwesomeAssertions;
-using ServiceLib.Geksa;
+using ServiceLib.Trisko;
 using ServiceLib.Services;
 using Xunit;
 
@@ -112,7 +112,7 @@ public class SocksPortReadinessTests
                 port,
                 isRunning ?? (() => true),
                 () => isOwner?.Invoke(port)
-                      ?? GeksaStartupDiagnosticsService.IsTcpListenerOwnedByProcess(port, Environment.ProcessId),
+                      ?? TriskoStartupDiagnosticsService.IsTcpListenerOwnedByProcess(port, Environment.ProcessId),
                 timeout ?? TimeSpan.FromSeconds(5));
         }
         finally

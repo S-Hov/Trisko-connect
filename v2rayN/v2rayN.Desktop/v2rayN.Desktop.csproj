@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<ApplicationIcon>Assets\Geksa\Brand\trisko-connect.ico</ApplicationIcon>
+		<ApplicationIcon>Assets\Trisko\Brand\trisko-connect.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -10,7 +10,7 @@
 		<RootNamespace>v2rayN.Desktop</RootNamespace>
 		<Product>Trisko connect</Product>
 		<Company>Trisko</Company>
-		<Description>VPN and remote access client based on v2rayN</Description>
+		<Description>Corporate access to files, desktops, servers and digital signature devices</Description>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<CETCompat>false</CETCompat>
 	</PropertyGroup>
@@ -50,7 +50,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Assets\Geksa\Brand\trisko-connect.ico">
+		<EmbeddedResource Include="Assets\Trisko\Brand\trisko-connect.ico">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<Compile Update="Views\FullConfigTemplateWindow.axaml.cs">
@@ -82,7 +82,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
-		<None Update="Geksa\Vnc\LICENSE-MarcusW.txt">
+		<None Update="Trisko\Vnc\LICENSE-MarcusW.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>

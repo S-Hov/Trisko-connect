@@ -52,7 +52,7 @@ public sealed class CoreInfoManager
 
     public List<ECoreType> GetCheckUpdateCoreTypes()
     {
-        // Geksa-A 3.x ships the UI and VPN cores as one tested release.
+        // Trisko-A 3.x ships the UI and VPN cores as one tested release.
         // Updating any component directly from upstream could replace our UI
         // or introduce an untested core/TUN combination.
         return [];

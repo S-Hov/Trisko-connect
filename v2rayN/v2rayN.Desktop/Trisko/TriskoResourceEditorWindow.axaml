@@ -1,0 +1,151 @@
+<Window
+    x:Class="v2rayN.Desktop.Trisko.TriskoResourceEditorWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    xmlns:gek="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    x:DataType="gek:TriskoResourceEditorViewModel"
+    Width="650"
+    Height="740"
+    MinWidth="560"
+    MinHeight="620"
+    Background="{DynamicResource TriskoShellBackground}"
+    CanResize="True"
+    Title="{Binding WindowTitle}"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="28" RowDefinitions="Auto,*,Auto">
+        <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="7">
+                <TextBlock FontSize="25" FontWeight="Bold" Foreground="{DynamicResource TriskoBrandTitleForeground}" Text="{Binding WindowTitle}" />
+                <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S8cbe0fb21196d960}" TextWrapping="Wrap" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" VerticalAlignment="Top" Orientation="Horizontal" Spacing="8">
+                <Button
+                    Height="34"
+                    Padding="10,0"
+                    Classes="triskoSecondary"
+                    Click="ImportFromFileClick"
+                    ToolTip.Tip="{x:Static tr:TriskoStrings.S32265a9a3d25bfce}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <PathIcon Width="13" Height="13" Data="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" Foreground="{DynamicResource TriskoCardTitleForeground}" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.S03a8ad53d7352a66}" />
+                    </StackPanel>
+                </Button>
+                <Button
+                    Height="34"
+                    Padding="10,0"
+                    Classes="triskoSecondary"
+                    Click="ExportClick"
+                    ToolTip.Tip="{x:Static tr:TriskoStrings.S45c2d7171575216b}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <PathIcon Width="13" Height="13" Data="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" Foreground="{DynamicResource TriskoCardTitleForeground}" />
+                        <TextBlock VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Scb1f613611142a09}" />
+                    </StackPanel>
+                </Button>
+                <Button
+                    Width="34"
+                    Height="34"
+                    Padding="0"
+                    Classes="triskoSecondary"
+                    Click="HelpFormatClick"
+                    ToolTip.Tip="{x:Static tr:TriskoStrings.S2ce20e80ac987c63}">
+                    <TextBlock FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="?" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Margin="0,22,0,18" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="14">
+                <StackPanel Spacing="6">
+                    <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S653dfedb2be9760c}" />
+                    <TextBox PlaceholderText="{x:Static tr:TriskoStrings.Sb755eea1903a43d3}" Text="{Binding DisplayName, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Spacing="6">
+                    <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Sb3680f2cba5f35d0}" />
+                    <TextBox AcceptsReturn="True" MaxHeight="90" PlaceholderText="{x:Static tr:TriskoStrings.Sa58a33b2dc71c51a}" Text="{Binding Description, Mode=TwoWay}" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <Grid ColumnDefinitions="3*,14,*">
+                    <StackPanel Spacing="6">
+                        <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S0f4f0899955c1d0a}" />
+                        <TextBox PlaceholderText="{x:Static tr:TriskoStrings.S4bc2a6dd1341f5e4}" Text="{Binding Host, Mode=TwoWay}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Spacing="6">
+                        <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S63fe198cfa541b29}" />
+                        <TextBox Text="{Binding PortText, Mode=TwoWay}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel IsVisible="{Binding HasUserName}" Spacing="6">
+                    <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{Binding UserNameLabel}" />
+                    <TextBox PlaceholderText="{x:Static tr:TriskoStrings.S10f678567a524be5}" Text="{Binding UserName, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel IsVisible="{Binding IsSmb}" Spacing="6">
+                    <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S045ac0568ec762ea}" />
+                    <TextBox PlaceholderText="department/documents" Text="{Binding Path, Mode=TwoWay}" />
+                    <TextBlock FontSize="11" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Sa3c405554e5baf72}" />
+                </StackPanel>
+
+                <StackPanel IsVisible="{Binding IsSmb}" Spacing="6">
+                    <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S95a62e84478a347f}" />
+                    <TextBox MaxLength="2" PlaceholderText="Z:" Text="{Binding DriveLetter, Mode=TwoWay}" />
+                    <TextBlock FontSize="11" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S44878a1c525c7721}" TextWrapping="Wrap" />
+                </StackPanel>
+
+                <CheckBox Content="{x:Static tr:TriskoStrings.S92a94440bbc20c6b}" IsChecked="{Binding RequiresVpn, Mode=TwoWay}" />
+
+                <StackPanel IsVisible="{Binding IsRdp}" Spacing="9">
+                    <CheckBox Content="{x:Static tr:TriskoStrings.Sc68ca23817ecfa38}" IsChecked="{Binding FullScreen, Mode=TwoWay}" />
+                    <CheckBox Content="{x:Static tr:TriskoStrings.S1de2524e5ffad06a}" IsChecked="{Binding MultiMonitor, Mode=TwoWay}" />
+                </StackPanel>
+
+                <CheckBox Content="{x:Static tr:TriskoStrings.S28fe2f7b80899add}" IsChecked="{Binding IsPinned, Mode=TwoWay}" />
+
+                <CheckBox Content="{x:Static tr:TriskoStrings.S36d2a22f2675f09d}" IsChecked="{Binding AutoLaunchOnVpn, Mode=TwoWay}" />
+
+                <Border
+                    Padding="13,10"
+                    Background="{DynamicResource TriskoErrorBoxBackground}"
+                    BorderBrush="{DynamicResource TriskoErrorBoxBorder}"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    IsVisible="{Binding ValidationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Foreground="{DynamicResource TriskoErrorTextForeground}" Text="{Binding ValidationMessage}" TextWrapping="Wrap" />
+                </Border>
+                <Border
+                    Padding="13,10"
+                    Background="{DynamicResource TriskoSubCardBackground}"
+                    BorderBrush="{DynamicResource TriskoSubCardBorder}"
+                    BorderThickness="1"
+                    CornerRadius="9"
+                    IsVisible="{Binding OperationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                    <TextBlock Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{Binding OperationMessage}" TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="10">
+            <Button
+                Grid.Column="0"
+                MinWidth="170"
+                AutomationProperties.Name="{x:Static tr:TriskoStrings.Sbe555b7af1e9f3ed}"
+                Classes="triskoDanger"
+                Click="DisconnectSmbClick"
+                Content="{x:Static tr:TriskoStrings.S7e1c7eeb997f2616}"
+                IsVisible="{Binding CanDisconnectSmb}" />
+            <Button
+                Grid.Column="1"
+                MinWidth="110"
+                AutomationProperties.Name="{x:Static tr:TriskoStrings.S038edde9e7beb6d5}"
+                Classes="triskoDanger"
+                Click="DeleteClick"
+                Content="{x:Static tr:TriskoStrings.Sbe99b13612015a48}"
+                IsVisible="{Binding CanDelete}" />
+            <Button Grid.Column="3" MinWidth="110" Classes="triskoSecondary" Click="CancelClick" Content="{x:Static tr:TriskoStrings.S8fbe9b75cbdfbfa6}" />
+            <Button Grid.Column="4" MinWidth="130" Classes="triskoPrimary" Click="SaveClick" Content="{x:Static tr:TriskoStrings.Sb4d30cae52894cf0}" />
+        </Grid>
+    </Grid>
+</Window>

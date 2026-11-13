@@ -3,7 +3,7 @@
     <OutputType>Package</OutputType>
     <Platform>x64</Platform>
     <InstallerPlatform>x64</InstallerPlatform>
-    <ProductVersion Condition="'$(ProductVersion)' == ''">0.1.0</ProductVersion>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">0.1.1</ProductVersion>
     <StageDir Condition="'$(StageDir)' == ''">$(MSBuildThisFileDirectory)..\..\artifacts\msi-stage</StageDir>
     <DefineConstants>ProductVersion=$(ProductVersion);StageDir=$(StageDir)</DefineConstants>
     <SuppressIces>ICE61</SuppressIces>

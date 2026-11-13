@@ -16,9 +16,9 @@ public partial class MainWindowViewModel : MyReactiveObject
     public CheckUpdateViewModel CheckUpdateViewModel { get; } = new();
     public BackupAndRestoreViewModel BackupAndRestoreViewModel { get; } = new();
     public StatusBarViewModel StatusBarViewModel { get; } = StatusBarViewModel.Instance;
-    public GeksaVpnController GeksaVpnController { get; }
-    public GeksaCorporateConfigurationService GeksaConfigurationService { get; }
-    public GeksaShellViewModel GeksaShellViewModel { get; }
+    public TriskoVpnController TriskoVpnController { get; }
+    public TriskoCorporateConfigurationService TriskoConfigurationService { get; }
+    public TriskoShellViewModel TriskoShellViewModel { get; }
 
     #region Menu
 
@@ -95,18 +95,18 @@ public partial class MainWindowViewModel : MyReactiveObject
     public MainWindowViewModel()
     {
         _config = AppManager.Instance.Config;
-        var networkBindingSelector = new GeksaNetworkBindingSelector();
-        GeksaVpnController = new GeksaVpnController(new V2RayNGeksaVpnRuntime(this, networkBindingSelector));
-        GeksaConfigurationService = new GeksaCorporateConfigurationService(_config);
-        GeksaShellViewModel = new GeksaShellViewModel(
-            GeksaVpnController,
-            GeksaConfigurationService,
-            new GeksaUserResourceService(),
-            new WindowsGeksaResourceLauncher(),
-            new WindowsGeksaSmbDriveService(),
+        var networkBindingSelector = new TriskoNetworkBindingSelector();
+        TriskoVpnController = new TriskoVpnController(new V2RayNTriskoVpnRuntime(this, networkBindingSelector));
+        TriskoConfigurationService = new TriskoCorporateConfigurationService(_config);
+        TriskoShellViewModel = new TriskoShellViewModel(
+            TriskoVpnController,
+            TriskoConfigurationService,
+            new TriskoUserResourceService(),
+            new WindowsTriskoResourceLauncher(),
+            new WindowsTriskoSmbDriveService(),
             networkBindingSelector,
-            new WindowsGeksaOneCSystemService(),
-            new WindowsGeksaVirtualHereService());
+            new WindowsTriskoOneCSystemService(),
+            new WindowsTriskoVirtualHereService());
         BlIsWindows = Utils.IsWindows();
         MainGirdOrientation = _config.UiItem.MainGirdOrientation;
 
@@ -349,7 +349,7 @@ public partial class MainWindowViewModel : MyReactiveObject
         await CoreManager.Instance.Init(_config, UpdateHandler);
         await CertPemManager.Instance.Init(_config);
         TaskManager.Instance.RegUpdateTask(_config, UpdateScheduledTaskHandler,
-            GeksaShellViewModel.RunScheduledSubscriptionUpdateAsync);
+            TriskoShellViewModel.RunScheduledSubscriptionUpdateAsync);
 
         if (_config.GuiItem.EnableStatistics || _config.GuiItem.DisplayRealTimeSpeed)
         {
@@ -357,9 +357,9 @@ public partial class MainWindowViewModel : MyReactiveObject
         }
         await RefreshServersDispatcherAsync();
 
-        // Geksa 3.0 starts disconnected. The VPN core is launched explicitly
-        // from the Geksa shell or from the advanced v2rayN interface.
-        await GeksaShellViewModel.InitializeAsync();
+        // Trisko 3.0 starts disconnected. The VPN core is launched explicitly
+        // from the Trisko shell or from the advanced v2rayN interface.
+        await TriskoShellViewModel.InitializeAsync();
     }
 
     #endregion Init
@@ -369,7 +369,7 @@ public partial class MainWindowViewModel : MyReactiveObject
     private async Task UpdateHandler(bool notify, string msg)
     {
         NoticeManager.Instance.SendMessage(msg);
-        if (notify && !GeksaShellViewModel.IsVpnLifecycleBusy)
+        if (notify && !TriskoShellViewModel.IsVpnLifecycleBusy)
         {
             NoticeManager.Instance.Enqueue(msg);
         }

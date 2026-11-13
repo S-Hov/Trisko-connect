@@ -1,7 +1,7 @@
 using Avalonia.Controls.Templates;
 using v2rayN.Desktop.ViewModels;
 using v2rayN.Desktop.Views;
-using v2rayN.Desktop.Geksa;
+using v2rayN.Desktop.Trisko;
 
 namespace v2rayN.Desktop.Common;
 
@@ -23,7 +23,7 @@ public class SimpleViewLocator : IDataTemplate
         RegisterViewFactory<DNSSettingViewModel, DNSSettingWindow>();
         RegisterViewFactory<FullConfigTemplateViewModel, FullConfigTemplateWindow>();
         RegisterViewFactory<GlobalHotkeySettingViewModel, GlobalHotkeySettingWindow>();
-        RegisterViewFactory<GeksaShellViewModel, GeksaShellView>();
+        RegisterViewFactory<TriskoShellViewModel, TriskoShellView>();
         RegisterViewFactory<MainWindowViewModel, MainWindow>();
         RegisterViewFactory<MsgViewModel, MsgView>();
         RegisterViewFactory<OptionSettingViewModel, OptionSettingWindow>();

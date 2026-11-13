@@ -13,7 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="Assets/GlobalResources.axaml" />
-                <ResourceInclude Source="Assets/Geksa/GeksaTheme.axaml" />
+                <ResourceInclude Source="Assets/Trisko/TriskoTheme.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
@@ -21,7 +21,7 @@
         <semi:SemiTheme Locale="ru-RU" />
         <semi:AvaloniaEditSemiTheme />
         <StyleInclude Source="Assets/GlobalStyles.axaml" />
-        <StyleInclude Source="Assets/Geksa/GeksaStyles.axaml" />
+        <StyleInclude Source="Assets/Trisko/TriskoStyles.axaml" />
         <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
         <dialogHost:DialogHostStyles />
 
@@ -38,7 +38,7 @@
         <TrayIcons>
             <TrayIcon
                 Command="{Binding NotifyLeftClickCmd}"
-                Icon="/Assets/Geksa/Brand/trisko-connect.ico"
+                Icon="/Assets/Trisko/Brand/trisko-connect.ico"
                 ToolTipText="{Binding RunningServerToolTipText}">
                 <TrayIcon.Menu>
                     <NativeMenu>

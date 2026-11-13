@@ -1,0 +1,60 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="Button.triskoPrimary">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource TriskoPrimaryActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TriskoPrimaryActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource TriskoPrimaryActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.triskoPrimary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TriskoPrimaryActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource TriskoPrimaryActionForeground}" />
+    </Style>
+
+    <Style Selector="Button.triskoSecondary">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource TriskoSecondaryActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TriskoSecondaryActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource TriskoSecondaryActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.triskoSecondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TriskoSecondaryActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource TriskoSecondaryActionForeground}" />
+    </Style>
+
+    <Style Selector="Button.triskoWarning">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource TriskoWarningActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TriskoWarningActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource TriskoWarningActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.triskoWarning:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TriskoWarningActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource TriskoWarningActionForeground}" />
+    </Style>
+
+    <Style Selector="Button.triskoDanger">
+        <Setter Property="Padding" Value="17,10" />
+        <Setter Property="Background" Value="{DynamicResource TriskoDangerActionBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TriskoDangerActionBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Foreground" Value="{DynamicResource TriskoDangerActionForeground}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Button.triskoDanger:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource TriskoDangerActionHoverBackground}" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource TriskoDangerActionForeground}" />
+    </Style>
+</Styles>

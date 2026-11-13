@@ -93,43 +93,43 @@ public class UIItem
     public EGirdOrientation MainGirdOrientation { get; set; } = EGirdOrientation.Vertical;
     public string? ColorPrimaryName { get; set; }
     public string? CurrentTheme { get; set; }
-    public Geksa.GeksaThemeMode GeksaThemeMode { get; set; } = Geksa.GeksaThemeMode.Brand;
-    public bool GeksaIsSidebarCollapsed { get; set; } = false;
-    public bool GeksaShowConnectionNav { get; set; } = true;
-    public bool GeksaShowRdpNav { get; set; } = true;
-    public bool GeksaShowSmbNav { get; set; } = true;
-    public bool GeksaShowSshNav { get; set; } = true;
-    public bool GeksaShowEcpNav { get; set; } = true;
-    public bool GeksaShowSettingsNav { get; set; } = true;
-    public bool GeksaShowConnectionStatus { get; set; } = true;
-    public bool GeksaShowConnectionResources { get; set; } = true;
-    public bool GeksaShowConnectionConfiguration { get; set; } = true;
-    public bool GeksaShowConnectionLogs { get; set; } = true;
-    public bool GeksaAutoConnectSmbOnVpn { get; set; } = false;
-    public bool GeksaAutoConnectVpnOnStartup { get; set; }
-    public bool GeksaAutoDisconnectSmbOnVpn { get; set; } = false;
-    public bool GeksaAutoLaunchResourcesOnVpn { get; set; } = true;
-    public List<Geksa.GeksaVirtualHereHubConfiguration> GeksaVirtualHereHubs { get; set; } = [];
-    public bool GeksaRouteVirtualHereThroughVpn { get; set; } = true;
-    public bool GeksaRouteVirtualHereInCorporateOnly { get; set; } = true;
-    public bool GeksaRouteVirtualHereInRussianSites { get; set; } = true;
-    public bool GeksaRouteVirtualHereInGlobalExceptLocal { get; set; } = true;
-    public bool GeksaRouteVirtualHereInGlobal { get; set; } = true;
-    public bool GeksaAutoStartVirtualHereOnLaunch { get; set; } = false;
-    public bool GeksaEcpAutoScanEnabled { get; set; } = true;
-    public int GeksaEcpAutoScanIntervalSeconds { get; set; } = 5;
-    public bool GeksaAutoCheckUpdatesEnabled { get; set; } = true;
-    public int GeksaCheckUpdateIntervalHours { get; set; } = 2;
-    public bool GeksaAutoSelectVpnProfile { get; set; }
-    public bool GeksaAutoSelectAnyDeskVpnProfile { get; set; }
-    public bool GeksaAnyDeskIntegrationEnabled { get; set; } = true;
-    public bool GeksaAutoStartAnyDeskOnLaunch { get; set; }
-    public Geksa.GeksaAnyDeskViewMode GeksaAnyDeskViewMode { get; set; } = Geksa.GeksaAnyDeskViewMode.Integration;
-    public Geksa.GeksaAnyDeskStrategy GeksaAnyDeskStrategy { get; set; } = Geksa.GeksaAnyDeskStrategy.Direct;
-    public string? GeksaAnyDeskExecutablePath { get; set; }
-    public Dictionary<string, Geksa.GeksaAnyDeskPreference> GeksaAnyDeskPreferences { get; set; } = [];
-    public List<string> GeksaFavoriteResourceIds { get; set; } = [];
-    public List<string> GeksaFavoriteVpnIds { get; set; } = [];
+    public Trisko.TriskoThemeMode TriskoThemeMode { get; set; } = Trisko.TriskoThemeMode.Brand;
+    public bool TriskoIsSidebarCollapsed { get; set; } = false;
+    public bool TriskoShowConnectionNav { get; set; } = true;
+    public bool TriskoShowRdpNav { get; set; } = true;
+    public bool TriskoShowSmbNav { get; set; } = true;
+    public bool TriskoShowSshNav { get; set; } = true;
+    public bool TriskoShowEcpNav { get; set; } = true;
+    public bool TriskoShowSettingsNav { get; set; } = true;
+    public bool TriskoShowConnectionStatus { get; set; } = true;
+    public bool TriskoShowConnectionResources { get; set; } = true;
+    public bool TriskoShowConnectionConfiguration { get; set; } = true;
+    public bool TriskoShowConnectionLogs { get; set; } = true;
+    public bool TriskoAutoConnectSmbOnVpn { get; set; } = false;
+    public bool TriskoAutoConnectVpnOnStartup { get; set; }
+    public bool TriskoAutoDisconnectSmbOnVpn { get; set; } = false;
+    public bool TriskoAutoLaunchResourcesOnVpn { get; set; } = true;
+    public List<Trisko.TriskoVirtualHereHubConfiguration> TriskoVirtualHereHubs { get; set; } = [];
+    public bool TriskoRouteVirtualHereThroughVpn { get; set; } = true;
+    public bool TriskoRouteVirtualHereInCorporateOnly { get; set; } = true;
+    public bool TriskoRouteVirtualHereInRussianSites { get; set; } = true;
+    public bool TriskoRouteVirtualHereInGlobalExceptLocal { get; set; } = true;
+    public bool TriskoRouteVirtualHereInGlobal { get; set; } = true;
+    public bool TriskoAutoStartVirtualHereOnLaunch { get; set; } = false;
+    public bool TriskoEcpAutoScanEnabled { get; set; } = true;
+    public int TriskoEcpAutoScanIntervalSeconds { get; set; } = 5;
+    public bool TriskoAutoCheckUpdatesEnabled { get; set; } = true;
+    public int TriskoCheckUpdateIntervalHours { get; set; } = 2;
+    public bool TriskoAutoSelectVpnProfile { get; set; }
+    public bool TriskoAutoSelectAnyDeskVpnProfile { get; set; }
+    public bool TriskoAnyDeskIntegrationEnabled { get; set; } = true;
+    public bool TriskoAutoStartAnyDeskOnLaunch { get; set; }
+    public Trisko.TriskoAnyDeskViewMode TriskoAnyDeskViewMode { get; set; } = Trisko.TriskoAnyDeskViewMode.Integration;
+    public Trisko.TriskoAnyDeskStrategy TriskoAnyDeskStrategy { get; set; } = Trisko.TriskoAnyDeskStrategy.Direct;
+    public string? TriskoAnyDeskExecutablePath { get; set; }
+    public Dictionary<string, Trisko.TriskoAnyDeskPreference> TriskoAnyDeskPreferences { get; set; } = [];
+    public List<string> TriskoFavoriteResourceIds { get; set; } = [];
+    public List<string> TriskoFavoriteVpnIds { get; set; } = [];
     public string CurrentLanguage { get; set; }
     public string CurrentFontFamily { get; set; }
     public int CurrentFontSize { get; set; }
@@ -185,14 +185,14 @@ public class TunModeItem
     public bool EnableIPv6Address { get; set; }
     public string IcmpRouting { get; set; }
     public bool EnableLegacyProtect { get; set; } = true;
-    public bool GeksaAutoSelectInterface { get; set; } = true;
-    public string? GeksaPreferredInterface { get; set; }
-    public Geksa.GeksaVpnRoutingMode GeksaRoutingMode { get; set; } = Geksa.GeksaVpnRoutingMode.GlobalExceptLocal;
-    public List<string> GeksaManualVpnRoutes { get; set; } = [];
-    public bool GeksaOneCEnabled { get; set; }
-    public string GeksaOneCServerName { get; set; } = string.Empty;
-    public string GeksaOneCServerAddress { get; set; } = string.Empty;
-    public long GeksaLastExportRevision { get; set; }
+    public bool TriskoAutoSelectInterface { get; set; } = true;
+    public string? TriskoPreferredInterface { get; set; }
+    public Trisko.TriskoVpnRoutingMode TriskoRoutingMode { get; set; } = Trisko.TriskoVpnRoutingMode.GlobalExceptLocal;
+    public List<string> TriskoManualVpnRoutes { get; set; } = [];
+    public bool TriskoOneCEnabled { get; set; }
+    public string TriskoOneCServerName { get; set; } = string.Empty;
+    public string TriskoOneCServerAddress { get; set; } = string.Empty;
+    public long TriskoLastExportRevision { get; set; }
     public bool PreserveOutboundInterfaceBinding { get; set; }
     public List<string>? RouteExcludeAddress { get; set; }
     public string IPv4Address { get; set; }

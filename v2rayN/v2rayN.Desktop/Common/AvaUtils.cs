@@ -47,7 +47,7 @@ internal class AvaUtils
             return new(customPath);
         }
 
-        var uri = new Uri(Path.Combine(Global.AvaAssets, "Geksa/Brand/trisko-connect.ico"));
+        var uri = new Uri(Path.Combine(Global.AvaAssets, "Trisko/Brand/trisko-connect.ico"));
         using var bitmap = new Bitmap(AssetLoader.Open(uri));
         return new(bitmap);
     }

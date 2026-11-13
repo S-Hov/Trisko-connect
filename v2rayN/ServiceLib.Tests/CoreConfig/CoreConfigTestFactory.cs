@@ -18,7 +18,7 @@ internal static class CoreConfigTestFactory
         return new Config
         {
             CoreBasicItem = new CoreBasicItem { Loglevel = "warning" },
-            TunModeItem = new TunModeItem { EnableTun = false, IcmpRouting = "default", GeksaRoutingMode = ServiceLib.Geksa.GeksaVpnRoutingMode.CorporateOnly },
+            TunModeItem = new TunModeItem { EnableTun = false, IcmpRouting = "default", TriskoRoutingMode = ServiceLib.Trisko.TriskoVpnRoutingMode.CorporateOnly },
             KcpItem = new KcpItem(),
             GrpcItem = new GrpcItem(),
             RoutingBasicItem =

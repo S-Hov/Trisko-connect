@@ -4,7 +4,7 @@
     <!-- Preserve upstream codec arithmetic: pixel channel shifts/casts intentionally wrap. -->
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Authors>Marcus Wichelmann; Geksa-A compatibility changes</Authors>
+    <Authors>Marcus Wichelmann; Trisko-A compatibility changes</Authors>
     <Copyright>Copyright (c) 2020 Marcus Wichelmann</Copyright>
     <NoWarn>$(NoWarn);CS8632</NoWarn>
   </PropertyGroup>

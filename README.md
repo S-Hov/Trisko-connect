@@ -1,18 +1,22 @@
 # Trisko connect
 
-Универсальный клиент VPN и удалённого доступа для Windows 10/11 на базе v2rayN.
+Программа корпоративного доступа для Windows 10/11: файлы компании, удалённые рабочие столы, серверы и устройства ЭЦП — в одном интерфейсе.
 
-![Trisko](docs/assets/trisko-icon.png)
+<p align="left"><img src="docs/assets/trisko-mark.svg" alt="Trisko connect" width="88" height="88" /></p>
 
-- Несколько независимых именованных HTTPS-подписок и одиночные VPN-ссылки VLESS, VMess, Trojan, Shadowsocks и других поддерживаемых протоколов.
-- RDP, SSH, SMB: ручное добавление, избранное, импорт и экспорт ресурсов.
-- ЭЦП и USB-токены через VirtualHere; VNC по адресу компьютера и прямое подключение через AnyDesk.
-- Русский и английский интерфейс; фирменная мятная, тёмная и светлая темы.
-- Отдельные настройки, автозапуск и канал обновлений Trisko connect.
+- Файлы и сетевые диски SMB, рабочие столы RDP, серверы SSH и VNC.
+- Удалённая помощь через AnyDesk и доступ к ЭЦП/USB-токенам через VirtualHere.
+- Избранное, комплекты ресурсов, импорт и экспорт подключений, автоматизация рабочих действий.
+- VPN как способ доступа к закрытой сети: независимые подписки и одиночные профили.
+- Русский и английский интерфейс, спокойная синяя, тёмная и светлая темы.
 
 У каждой подписки есть своё название, серверы, статистика и действия «Изменить», «Обновить», «Удалить». Одиночные VPN-профили не требуют подписки и сохраняются при её обновлении или удалении. Каскадных ролей, zapret2, WARP и раздела разблокировки сервисов в этом проекте нет.
 
 ## Использование
+
+Добавьте рабочие ресурсы: сетевую папку SMB, рабочий стол RDP или сервер SSH. Сохраните нужные подключения в избранном. Для поддержки коллег используйте AnyDesk или VNC; для работы с удалёнными USB-токенами — раздел ЭЦП. Комплекты ресурсов можно переносить между компьютерами.
+
+Если ресурс доступен из вашей сети, подключайтесь напрямую. Если он находится в закрытой сети компании, сначала настройте VPN-доступ:
 
 В настройках выберите «Добавить VPN-ссылку» для одного профиля либо «Добавить подписку» для списка серверов. Затем на главной странице выберите сервер и подключитесь. По умолчанию интернет идёт через VPN, локальные сети — напрямую. Режим меняется в настройках маршрутизации.
 
@@ -45,7 +49,7 @@ dotnet test .\v2rayN\ServiceLib.Tests\ServiceLib.Tests.csproj
 
 ## English
 
-Trisko connect is a Windows VPN and remote access client based on v2rayN. It supports multiple independent subscriptions, standalone VPN links, RDP, SMB, SSH, digital signature devices through VirtualHere, VNC, and direct AnyDesk connections.
+Trisko connect brings corporate resources into one Windows application: shared files and SMB drives, RDP desktops, SSH servers, VNC, remote assistance through AnyDesk, and digital signature devices through VirtualHere. VPN is an optional way to reach a private company network, with support for multiple subscriptions and standalone profiles.
 
 Choose **Settings → Interface language → English**, then restart. Add a standalone link or a named subscription in Settings and choose a server on the Connection page. Subscription updates and removal preserve standalone profiles. By default, Internet traffic uses the VPN while local networks remain direct.
 

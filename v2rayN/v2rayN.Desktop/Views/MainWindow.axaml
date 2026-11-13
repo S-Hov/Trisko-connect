@@ -2,14 +2,14 @@
     x:Class="v2rayN.Desktop.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:tr="clr-namespace:ServiceLib.Geksa;assembly=ServiceLib"
+    xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:v2rayN.Desktop.DesignData"
     xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:ServiceLib.Resx;assembly=ServiceLib"
     xmlns:vms="clr-namespace:ServiceLib.ViewModels;assembly=ServiceLib"
-    xmlns:gek="using:v2rayN.Desktop.Geksa"
+    xmlns:gek="using:v2rayN.Desktop.Trisko"
     Title="Trisko connect"
     Width="1240"
     Height="790"
@@ -18,21 +18,21 @@
     x:DataType="vms:MainWindowViewModel"
     Design.DataContext="{x:Static dd:DesignData.MainWindow}"
     Background="#081524"
-    Icon="/Assets/Geksa/Brand/trisko-connect.ico"
+    Icon="/Assets/Trisko/Brand/trisko-connect.ico"
     ShowInTaskbar="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <dialogHost:DialogHost CloseOnClickAway="True" DisableOpeningAnimation="True">
         <Grid>
             <ContentControl
-                x:Name="contentGeksaShell"
+                x:Name="contentTriskoShell"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch" />
             <DockPanel x:Name="advancedVpnPanel" IsVisible="False">
             <DockPanel Margin="{StaticResource Margin8}" DockPanel.Dock="Top">
                 <ContentControl x:Name="conTheme" DockPanel.Dock="Right" />
                 <Button
-                    x:Name="btnBackToGeksa"
+                    x:Name="btnBackToTrisko"
                     Margin="{StaticResource Margin4}"
                     Padding="14,7"
                     DockPanel.Dock="Left"
@@ -166,7 +166,7 @@
             </Grid>
             </DockPanel>
             <ThemeVariantScope x:Name="NotificationThemeScope">
-                <gek:GeksaNotificationsView DataContext="{Binding GeksaShellViewModel.Notifications}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="18" MaxHeight="500" />
+                <gek:TriskoNotificationsView DataContext="{Binding TriskoShellViewModel.Notifications}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="18" MaxHeight="500" />
             </ThemeVariantScope>
         </Grid>
     </dialogHost:DialogHost>

@@ -1,0 +1,76 @@
+<Window
+    x:Class="v2rayN.Desktop.Trisko.TriskoConfigurationImportPreviewWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    xmlns:gek="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    x:DataType="gek:TriskoConfigurationImportPreview"
+    Width="700"
+    Height="640"
+    MinWidth="620"
+    MinHeight="560"
+    Background="{DynamicResource TriskoShellBackground}"
+    CanResize="True"
+    Title="{x:Static tr:TriskoStrings.S40cd9f4145a7c826}"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="28" RowDefinitions="Auto,*,Auto">
+        <StackPanel Spacing="7">
+            <TextBlock FontSize="25" FontWeight="Bold" Foreground="{DynamicResource TriskoBrandTitleForeground}" Text="{x:Static tr:TriskoStrings.S7c9599d7325f4e6e}" />
+            <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Sd5c2ec9d968877e9}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Margin="0,22,0,18" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12">
+                <Border Padding="16" Classes="card">
+                    <StackPanel Spacing="7">
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{Binding FileName}" />
+                        <TextBlock Foreground="{DynamicResource TriskoCardSubtitleForeground}" Text="{Binding ConfigurationVersion, StringFormat={x:Static tr:TriskoStrings.Sc80becb7c07cf3b6}}" />
+                        <TextBlock Foreground="{DynamicResource TriskoCardSubtitleForeground}" Text="{Binding RevisionText}" />
+                        <TextBlock Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S63679dce192ba504}" />
+                    </StackPanel>
+                </Border>
+
+                <Border Padding="16" Classes="card">
+                    <StackPanel Spacing="7">
+                        <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S87d89494d05be655}" />
+                        <TextBlock Foreground="{DynamicResource TriskoCardSubtitleForeground}" Text="{Binding ResourceCountText}" />
+                        <TextBlock Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{Binding ChangeCountText}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="16"
+                    Background="{DynamicResource TriskoSubCardBackground}"
+                    BorderBrush="{DynamicResource TriskoSubCardBorder}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    IsVisible="{Binding HasLocalChanges}">
+                    <StackPanel Spacing="10">
+                        <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S7d31ff22b1a73205}" />
+                        <TextBlock Foreground="{DynamicResource TriskoCardSubtitleForeground}" Text="{Binding LocalChangeText}" TextWrapping="Wrap" />
+                        <CheckBox
+                            x:Name="KeepLocalChangesCheckBox"
+                            Content="{x:Static tr:TriskoStrings.S544f1ad12ec357f1}"
+                            IsChecked="True" />
+                        <TextBlock FontSize="11" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S0724292b5eed2632}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="14,11"
+                    Background="{DynamicResource TriskoErrorBoxBackground}"
+                    BorderBrush="{DynamicResource TriskoErrorBoxBorder}"
+                    BorderThickness="1"
+                    CornerRadius="9">
+                    <TextBlock Foreground="{DynamicResource TriskoErrorTextForeground}" Text="{x:Static tr:TriskoStrings.S790734f1561373d5}" TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+            <Button Grid.Column="1" MinWidth="110" Classes="triskoSecondary" Click="CancelClick" Content="{x:Static tr:TriskoStrings.S8fbe9b75cbdfbfa6}" />
+            <Button Grid.Column="2" MinWidth="180" Classes="triskoPrimary" Click="InstallClick" Content="{x:Static tr:TriskoStrings.S435de5b9766809f7}" />
+        </Grid>
+    </Grid>
+</Window>

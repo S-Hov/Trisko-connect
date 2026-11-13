@@ -124,17 +124,17 @@ public static class SubscriptionHandler
         IReadOnlyDictionary<string, string> headers)
     {
         if (!headers.TryGetValue("Subscription-Userinfo", out var header) ||
-            !Geksa.GeksaSubscriptionTrafficInfo.TryParse(header, out var info) ||
+            !Trisko.TriskoSubscriptionTrafficInfo.TryParse(header, out var info) ||
             info is null)
         {
             return;
         }
 
-        item.GeksaTrafficUpload = info.Upload;
-        item.GeksaTrafficDownload = info.Download;
-        item.GeksaTrafficTotal = info.Total;
-        item.GeksaTrafficExpire = info.Expire;
-        item.GeksaTrafficUpdatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        item.TriskoTrafficUpload = info.Upload;
+        item.TriskoTrafficDownload = info.Download;
+        item.TriskoTrafficTotal = info.Total;
+        item.TriskoTrafficExpire = info.Expire;
+        item.TriskoTrafficUpdatedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         if (await ConfigHandler.AddSubItem(config, item) != 0)
         {
             Logging.SaveLog($"Failed to save subscription traffic metadata for {item.Id}");

@@ -37,13 +37,18 @@ public class SubItem
     public ECoreType? CustomCoreType { get; set; }
 
 
-    public long GeksaTrafficUpload { get; set; }
+    [Column(Trisko.TriskoDataCompatibility.TrafficUploadColumn)]
+    public long TriskoTrafficUpload { get; set; }
 
-    public long GeksaTrafficDownload { get; set; }
+    [Column(Trisko.TriskoDataCompatibility.TrafficDownloadColumn)]
+    public long TriskoTrafficDownload { get; set; }
 
-    public long GeksaTrafficTotal { get; set; }
+    [Column(Trisko.TriskoDataCompatibility.TrafficTotalColumn)]
+    public long TriskoTrafficTotal { get; set; }
 
-    public long GeksaTrafficExpire { get; set; }
+    [Column(Trisko.TriskoDataCompatibility.TrafficExpireColumn)]
+    public long TriskoTrafficExpire { get; set; }
 
-    public long GeksaTrafficUpdatedAt { get; set; }
+    [Column(Trisko.TriskoDataCompatibility.TrafficUpdatedColumn)]
+    public long TriskoTrafficUpdatedAt { get; set; }
 }

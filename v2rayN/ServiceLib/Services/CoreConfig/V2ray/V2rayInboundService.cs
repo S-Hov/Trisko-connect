@@ -67,12 +67,12 @@ public partial class CoreConfigV2rayService
 
                 var address = _config.TunModeItem.IPv4Address.NullIfEmpty() ?? Global.TunIPv4Address.First();
                 tunInbound.settings.gateway = [address];
-                var geksaPolicy = GeksaCorporateRoutingTargetProvider.Load(context);
-                IReadOnlyList<string> systemRoutes = geksaPolicy.IsEnabled
-                    ? geksaPolicy.SystemRouteCidrs
+                var triskoPolicy = TriskoCorporateRoutingTargetProvider.Load(context);
+                IReadOnlyList<string> systemRoutes = triskoPolicy.IsEnabled
+                    ? triskoPolicy.SystemRouteCidrs
                     : ["0.0.0.0/0", "::/0"];
                 tunInbound.settings.autoSystemRoutingTable =
-                    GeksaCorporateRoutingTargetProvider.ApplyExclusions(
+                    TriskoCorporateRoutingTargetProvider.ApplyExclusions(
                             systemRoutes,
                             _config.TunModeItem.RouteExcludeAddress)
                         .ToList();
@@ -90,7 +90,7 @@ public partial class CoreConfigV2rayService
                 tunInbound.sniffing = inbound.sniffing;
                 // tunInbound.sniffing.routeOnly = inbound.sniffing.routeOnly;
                 tunInbound.sniffing.routeOnly = true;
-                if (geksaPolicy.Mode == GeksaVpnRoutingMode.RussianSites)
+                if (triskoPolicy.Mode == TriskoVpnRoutingMode.RussianSites)
                 {
                     tunInbound.sniffing.enabled = true;
                     tunInbound.sniffing.destOverride ??= [];

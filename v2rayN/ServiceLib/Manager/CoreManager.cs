@@ -270,7 +270,7 @@ public class CoreManager
             port,
             () => mainProcess is { HasExited: false },
             () => mainProcess is not null
-                  && GeksaStartupDiagnosticsService.IsTcpListenerOwnedByProcess(port, mainProcess.Id));
+                  && TriskoStartupDiagnosticsService.IsTcpListenerOwnedByProcess(port, mainProcess.Id));
     }
 
     #endregion Private

@@ -1,7 +1,7 @@
 using AwesomeAssertions;
 using ServiceLib.Common;
 using ServiceLib.Enums;
-using ServiceLib.Geksa;
+using ServiceLib.Trisko;
 using ServiceLib.Handler.Fmt;
 using ServiceLib.Manager;
 using ServiceLib.Models;
@@ -710,12 +710,12 @@ public class CoreConfigSingboxServiceTests
 
 
     [Theory]
-    [InlineData(GeksaVpnRoutingMode.CorporateOnly, false, false, "direct", false)]
-    [InlineData(GeksaVpnRoutingMode.RussianSites, true, true, "direct", false)]
-    [InlineData(GeksaVpnRoutingMode.GlobalExceptLocal, true, false, "proxy", false)]
-    [InlineData(GeksaVpnRoutingMode.Global, true, true, "proxy", true)]
-    public void GenerateClientConfigContent_GeksaRoutingMode_ShouldCreateMatchingWindowsAndCoreRules(
-        GeksaVpnRoutingMode mode,
+    [InlineData(TriskoVpnRoutingMode.CorporateOnly, false, false, "direct", false)]
+    [InlineData(TriskoVpnRoutingMode.RussianSites, true, true, "direct", false)]
+    [InlineData(TriskoVpnRoutingMode.GlobalExceptLocal, true, false, "proxy", false)]
+    [InlineData(TriskoVpnRoutingMode.Global, true, true, "proxy", true)]
+    public void GenerateClientConfigContent_TriskoRoutingMode_ShouldCreateMatchingWindowsAndCoreRules(
+        TriskoVpnRoutingMode mode,
         bool publicAddressUsesTun,
         bool ordinaryLocalAddressUsesTun,
         string fallbackOutbound,
@@ -723,16 +723,16 @@ public class CoreConfigSingboxServiceTests
     {
         var config = CoreConfigTestFactory.CreateConfig(ECoreType.sing_box);
         config.TunModeItem.EnableTun = true;
-        config.TunModeItem.GeksaRoutingMode = mode;
-        config.TunModeItem.GeksaManualVpnRoutes = ["192.168.3.222/32"];
-        if (mode == GeksaVpnRoutingMode.RussianSites)
+        config.TunModeItem.TriskoRoutingMode = mode;
+        config.TunModeItem.TriskoManualVpnRoutes = ["192.168.3.222/32"];
+        if (mode == TriskoVpnRoutingMode.RussianSites)
         {
             config.Inbound.First().SniffingEnabled = false;
         }
         CoreConfigTestFactory.BindAppManagerConfig(config);
 
         var node = CoreConfigTestFactory.CreateVmessNode(ECoreType.sing_box);
-        node.IndexId = GeksaCorporateConfigurationService.ManagedProfileId;
+        node.IndexId = TriskoCorporateConfigurationService.ManagedProfileId;
         var context = CoreConfigTestFactory.CreateContext(config, node, ECoreType.sing_box) with
         {
             IsTunEnabled = true,
@@ -763,13 +763,13 @@ public class CoreConfigSingboxServiceTests
         fallbackRuleIndex.Should().BeGreaterThan(corporateRuleIndex);
         cfg.route.final.Should().Be(fallbackOutbound);
 
-        if (mode == GeksaVpnRoutingMode.GlobalExceptLocal)
+        if (mode == TriskoVpnRoutingMode.GlobalExceptLocal)
         {
             cfg.route.rules.Should().Contain(rule =>
                 rule.outbound == Global.DirectTag
                 && rule.ip_is_private == true);
         }
-        if (mode == GeksaVpnRoutingMode.RussianSites)
+        if (mode == TriskoVpnRoutingMode.RussianSites)
         {
             var russianDomainsRuleIndex = cfg.route.rules.FindIndex(rule =>
                 rule.outbound == Global.ProxyTag

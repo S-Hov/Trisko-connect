@@ -1,0 +1,130 @@
+<Window
+    x:Class="v2rayN.Desktop.Trisko.TriskoFormatHelpWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+    Width="820"
+    Height="700"
+    MinWidth="640"
+    MinHeight="520"
+    Background="{DynamicResource TriskoShellBackground}"
+    CanResize="True"
+    Title="{x:Static tr:TriskoStrings.S1b8acc41e53c4e1e}"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="24" RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <StackPanel Spacing="6">
+            <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TriskoBrandTitleForeground}" Text="{x:Static tr:TriskoStrings.Sd5ac662c0de48a79}" />
+            <TextBlock Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S378960c62634292f}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <!-- Content Tabs -->
+        <TabControl Grid.Row="1" Margin="0,18,0,16">
+            <!-- GAC3 Tab -->
+            <TabItem Header="{x:Static tr:TriskoStrings.S2691785f111cf123}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,12,12,0" Spacing="14">
+                        <Border Padding="14" Classes="card" Background="{DynamicResource TriskoCardBackground}">
+                            <StackPanel Spacing="8">
+                                <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S13d6bcc7b7d5bf0a}" />
+                                <TextBlock Foreground="{DynamicResource TriskoCardSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S4a21eaf866cb55e0}" TextWrapping="Wrap" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Saf5a1b1b09cc439d}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.Sacdda7be25ad610a}" VerticalAlignment="Center" />
+                                <Button Grid.Column="1" Classes="triskoSecondary" Click="CopyGac3ExampleClick" Content="{x:Static tr:TriskoStrings.S922b2085bde53a7e}" />
+                            </Grid>
+                            <TextBox
+                                x:Name="Gac3TextBox"
+                                AcceptsReturn="True"
+                                FontFamily="Cascadia Mono, Consolas, Courier New"
+                                FontSize="12"
+                                IsReadOnly="True"
+                                MaxHeight="300"
+                                TextWrapping="NoWrap" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- JSON Tab -->
+            <TabItem Header="{x:Static tr:TriskoStrings.S1421f9bd85a5841c}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,12,12,0" Spacing="14">
+                        <Border Padding="14" Classes="card" Background="{DynamicResource TriskoCardBackground}">
+                            <StackPanel Spacing="8">
+                                <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S3fd2288eba652a89}" />
+                                <TextBlock Foreground="{DynamicResource TriskoCardSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S0da455492db83aed}" TextWrapping="Wrap" />
+                                <TextBlock FontSize="12" Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S53329c1f71c842be}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- RDP Example -->
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S9f9f33808a4f542e}" VerticalAlignment="Center" />
+                                <Button Grid.Column="1" Classes="triskoSecondary" Click="CopyRdpExampleClick" Content="{x:Static tr:TriskoStrings.S321165c271b25a56}" />
+                            </Grid>
+                            <TextBox
+                                x:Name="RdpTextBox"
+                                AcceptsReturn="True"
+                                FontFamily="Cascadia Mono, Consolas, Courier New"
+                                FontSize="12"
+                                IsReadOnly="True"
+                                MaxHeight="140" />
+                        </StackPanel>
+
+                        <!-- SSH Example -->
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S8a9afb67a6c62ab4}" VerticalAlignment="Center" />
+                                <Button Grid.Column="1" Classes="triskoSecondary" Click="CopySshExampleClick" Content="{x:Static tr:TriskoStrings.S7d27411ebfc11e41}" />
+                            </Grid>
+                            <TextBox
+                                x:Name="SshTextBox"
+                                AcceptsReturn="True"
+                                FontFamily="Cascadia Mono, Consolas, Courier New"
+                                FontSize="12"
+                                IsReadOnly="True"
+                                MaxHeight="140" />
+                        </StackPanel>
+
+                        <!-- SMB Example -->
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TriskoCardTitleForeground}" Text="{x:Static tr:TriskoStrings.S6799c214c4466ca8}" VerticalAlignment="Center" />
+                                <Button Grid.Column="1" Classes="triskoSecondary" Click="CopySmbExampleClick" Content="{x:Static tr:TriskoStrings.S4ec45a77b30bfb2c}" />
+                            </Grid>
+                            <TextBox
+                                x:Name="SmbTextBox"
+                                AcceptsReturn="True"
+                                FontFamily="Cascadia Mono, Consolas, Courier New"
+                                FontSize="12"
+                                IsReadOnly="True"
+                                MaxHeight="150" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Footer -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+            <TextBlock
+                x:Name="StatusMessageText"
+                VerticalAlignment="Center"
+                Foreground="#3FD69A"
+                Text="" />
+            <Button
+                Grid.Column="1"
+                MinWidth="120"
+                Classes="triskoPrimary"
+                Click="CloseClick"
+                Content="{x:Static tr:TriskoStrings.Sa7a4033657e89fc9}" />
+        </Grid>
+    </Grid>
+</Window>

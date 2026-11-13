@@ -3,7 +3,7 @@ using DialogHostAvalonia;
 using v2rayN.Desktop.Base;
 using v2rayN.Desktop.Common;
 using v2rayN.Desktop.Manager;
-using v2rayN.Desktop.Geksa;
+using v2rayN.Desktop.Trisko;
 
 namespace v2rayN.Desktop.Views;
 
@@ -12,8 +12,8 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
     private static Config _config;
     private readonly SingleReplaceableDisposable _layoutBindingsDisposable = new();
     private BackupAndRestoreView? _backupAndRestoreView;
-    private VelopackGeksaApplicationUpdateService? _gekUpdateService;
-    private GeksaTrayMenuManager? _geksaTrayMenuManager;
+    private VelopackTriskoApplicationUpdateService? _gekUpdateService;
+    private TriskoTrayMenuManager? _triskoTrayMenuManager;
     private readonly SemaphoreSlim _gekUpdateDialogGate = new(1, 1);
     private readonly CancellationTokenSource _updateLoopCts = new();
     private bool _blCloseByUser = false;
@@ -26,15 +26,15 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         InitializeComponent();
 
         _config = AppManager.Instance.Config;
-        NotificationThemeScope.RequestedThemeVariant = GeksaThemeVariants.CurrentVariant;
-        GeksaThemeVariants.CurrentVariantChanged += NotificationThemeChanged;
-        Closed += (_, _) => GeksaThemeVariants.CurrentVariantChanged -= NotificationThemeChanged;
+        NotificationThemeScope.RequestedThemeVariant = TriskoThemeVariants.CurrentVariant;
+        TriskoThemeVariants.CurrentVariantChanged += NotificationThemeChanged;
+        Closed += (_, _) => TriskoThemeVariants.CurrentVariantChanged -= NotificationThemeChanged;
 
         KeyDown += MainWindow_KeyDown;
         menuSettingsSetUWP.Click += MenuSettingsSetUWP_Click;
         menuBackupAndRestore.Click += MenuBackupAndRestore_Click;
         menuClose.Click += MenuClose_Click;
-        btnBackToGeksa.Click += BtnBackToGeksa_Click;
+        btnBackToTrisko.Click += BtnBackToTrisko_Click;
 
         conTheme.Content ??= new ThemeSettingView();
 
@@ -85,7 +85,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
             this.OneWayBind(ViewModel, vm => vm.BlNewUpdate, v => v.btnNewUpdate.IsVisible).DisposeWith(disposables);
 
             this.OneWayBind(ViewModel, vm => vm.StatusBarViewModel, v => v.contentStatusBarView.Content).DisposeWith(disposables);
-            this.OneWayBind(ViewModel, vm => vm.GeksaShellViewModel, v => v.contentGeksaShell.Content).DisposeWith(disposables);
+            this.OneWayBind(ViewModel, vm => vm.TriskoShellViewModel, v => v.contentTriskoShell.Content).DisposeWith(disposables);
 
             _layoutBindingsDisposable.DisposeWith(disposables);
 
@@ -121,15 +121,15 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 interaction.SetOutput(RxVoid.Default);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ShowAdvancedVpnSettingsInteraction.RegisterHandler(interaction =>
+            ViewModel.TriskoShellViewModel.ShowAdvancedVpnSettingsInteraction.RegisterHandler(interaction =>
             {
                 ShowAdvancedVpnSettings(true);
                 interaction.SetOutput(RxVoid.Default);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.BrowseCorporateConfigurationInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.BrowseCorporateConfigurationInteraction.RegisterHandler(async interaction =>
             {
-                var filter = new Avalonia.Platform.Storage.FilePickerFileType(global::ServiceLib.Geksa.TriskoLocalization.Text("Полный комплект Trisko"))
+                var filter = new Avalonia.Platform.Storage.FilePickerFileType(global::ServiceLib.Trisko.TriskoLocalization.Text("Полный комплект Trisko"))
                 {
                     Patterns = ["*.gac3", "*.json"]
                 };
@@ -137,29 +137,29 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 interaction.SetOutput(result);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ShowUpdateManagerInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ShowUpdateManagerInteraction.RegisterHandler(async interaction =>
             {
-                await ShowGeksaUpdateWindowAsync(checkImmediately: true);
+                await ShowTriskoUpdateWindowAsync(checkImmediately: true);
                 interaction.SetOutput(RxVoid.Default);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.EditResourceInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.EditResourceInteraction.RegisterHandler(async interaction =>
             {
-                var dialog = new Geksa.GeksaResourceEditorWindow(interaction.Input);
-                var result = await dialog.ShowDialog<GeksaResourceEditResult?>(this);
+                var dialog = new Trisko.TriskoResourceEditorWindow(interaction.Input);
+                var result = await dialog.ShowDialog<TriskoResourceEditResult?>(this);
                 interaction.SetOutput(result);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.AddManualVpnInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.AddManualVpnInteraction.RegisterHandler(async interaction =>
             {
-                var dialog = new Geksa.GeksaManualVpnWindow();
-                var result = await dialog.ShowDialog<GeksaManualVpnProfile?>(this);
+                var dialog = new Trisko.TriskoManualVpnWindow();
+                var result = await dialog.ShowDialog<TriskoManualVpnProfile?>(this);
                 interaction.SetOutput(result);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.BrowseAnyDeskExecutableInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.BrowseAnyDeskExecutableInteraction.RegisterHandler(async interaction =>
             {
-                var filter = new Avalonia.Platform.Storage.FilePickerFileType(global::ServiceLib.Geksa.TriskoLocalization.Text("Portable-клиент AnyDesk"))
+                var filter = new Avalonia.Platform.Storage.FilePickerFileType(global::ServiceLib.Trisko.TriskoLocalization.Text("Portable-клиент AnyDesk"))
                 {
                     Patterns = ["AnyDesk.exe", "*.exe"]
                 };
@@ -167,20 +167,20 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 interaction.SetOutput(result);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ShowAnyDeskWarningInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ShowAnyDeskWarningInteraction.RegisterHandler(async interaction =>
             {
-                await UI.ShowMessage(interaction.Input, global::ServiceLib.Geksa.TriskoLocalization.Text("Предупреждение AnyDesk"));
+                await UI.ShowMessage(interaction.Input, global::ServiceLib.Trisko.TriskoLocalization.Text("Предупреждение AnyDesk"));
                 interaction.SetOutput(RxVoid.Default);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ConfigureVpnSubscriptionInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ConfigureVpnSubscriptionInteraction.RegisterHandler(async interaction =>
             {
-                var dialog = new Geksa.GeksaVpnSubscriptionWindow(interaction.Input);
-                var result = await dialog.ShowDialog<GeksaVpnSubscriptionRequest?>(this);
+                var dialog = new Trisko.TriskoVpnSubscriptionWindow(interaction.Input);
+                var result = await dialog.ShowDialog<TriskoVpnSubscriptionRequest?>(this);
                 interaction.SetOutput(result);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.SaveCorporateConfigurationInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.SaveCorporateConfigurationInteraction.RegisterHandler(async interaction =>
             {
                 var topLevel = TopLevel.GetTopLevel(this);
                 if (topLevel?.StorageProvider is null)
@@ -190,12 +190,12 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 }
                 var file = await topLevel.StorageProvider.SaveFilePickerAsync(new Avalonia.Platform.Storage.FilePickerSaveOptions
                 {
-                    Title = global::ServiceLib.Geksa.TriskoLocalization.Text("Экспорт корпоративного комплекта"),
+                    Title = global::ServiceLib.Trisko.TriskoLocalization.Text("Экспорт корпоративного комплекта"),
                     SuggestedFileName = interaction.Input,
                     DefaultExtension = "gac3",
                     FileTypeChoices =
                     [
-                        new Avalonia.Platform.Storage.FilePickerFileType(global::ServiceLib.Geksa.TriskoLocalization.Text("Комплект Trisko (*.gac3)"))
+                        new Avalonia.Platform.Storage.FilePickerFileType(global::ServiceLib.Trisko.TriskoLocalization.Text("Комплект Trisko (*.gac3)"))
                         {
                             Patterns = ["*.gac3"]
                         }
@@ -204,30 +204,30 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 interaction.SetOutput(file?.TryGetLocalPath());
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ConfirmCorporateConfigurationImportInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ConfirmCorporateConfigurationImportInteraction.RegisterHandler(async interaction =>
             {
-                var dialog = new Geksa.GeksaConfigurationImportPreviewWindow(interaction.Input);
-                var decision = await dialog.ShowDialog<GeksaConfigurationImportDecision?>(this);
-                interaction.SetOutput(decision ?? new GeksaConfigurationImportDecision(
+                var dialog = new Trisko.TriskoConfigurationImportPreviewWindow(interaction.Input);
+                var decision = await dialog.ShowDialog<TriskoConfigurationImportDecision?>(this);
+                interaction.SetOutput(decision ?? new TriskoConfigurationImportDecision(
                     Confirmed: false,
                     KeepLocalChanges: true));
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ConfirmOneCSystemChangeInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ConfirmOneCSystemChangeInteraction.RegisterHandler(async interaction =>
             {
                 var result = await UI.ShowYesNo(interaction.Input);
                 interaction.SetOutput(result == ButtonResult.Yes);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ShowVpnProfileSwitchBlockedInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ShowVpnProfileSwitchBlockedInteraction.RegisterHandler(async interaction =>
             {
-                await UI.ShowMessage(interaction.Input, global::ServiceLib.Geksa.TriskoLocalization.Text("Смена VPN-сервера"));
+                await UI.ShowMessage(interaction.Input, global::ServiceLib.Trisko.TriskoLocalization.Text("Смена VPN-сервера"));
                 interaction.SetOutput(RxVoid.Default);
             }).DisposeWith(disposables);
 
-            ViewModel.GeksaShellViewModel.ShowFormatHelpInteraction.RegisterHandler(async interaction =>
+            ViewModel.TriskoShellViewModel.ShowFormatHelpInteraction.RegisterHandler(async interaction =>
             {
-                var dialog = new Geksa.GeksaFormatHelpWindow();
+                var dialog = new Trisko.TriskoFormatHelpWindow();
                 await dialog.ShowDialog(this);
                 interaction.SetOutput(RxVoid.Default);
             }).DisposeWith(disposables);
@@ -258,7 +258,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         if (Utils.IsWindows())
         {
             Title = $"Trisko connect {Utils.GetVersionInfo()} — " +
-                global::ServiceLib.Geksa.TriskoLocalization.Format("{0}", (Utils.IsAdministrator() ? global::ServiceLib.Geksa.TriskoLocalization.Text("запущено от администратора") : global::ServiceLib.Geksa.TriskoLocalization.Text("требуются права администратора для TUN")));
+                global::ServiceLib.Trisko.TriskoLocalization.Format("{0}", (Utils.IsAdministrator() ? global::ServiceLib.Trisko.TriskoLocalization.Text("запущено от администратора") : global::ServiceLib.Trisko.TriskoLocalization.Text("требуются права администратора для TUN")));
 
             if (!Design.IsDesignMode)
             {
@@ -292,14 +292,14 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
     private async Task DelegateSnackMsg(string content)
     {
         var kind = content == ResUI.OperationFailed || content == ResUI.CheckServerSettings
-            ? GeksaNotificationKind.Error
-            : content == ResUI.OperationSuccess ? GeksaNotificationKind.Success : GeksaNotificationKind.Information;
-        ViewModel?.GeksaShellViewModel.Notifications.Show("Trisko connect", content, kind);
+            ? TriskoNotificationKind.Error
+            : content == ResUI.OperationSuccess ? TriskoNotificationKind.Success : TriskoNotificationKind.Information;
+        ViewModel?.TriskoShellViewModel.Notifications.Show("Trisko connect", content, kind);
         await Task.CompletedTask;
     }
 
     private void NotificationThemeChanged(object? sender, EventArgs e) =>
-        NotificationThemeScope.RequestedThemeVariant = GeksaThemeVariants.CurrentVariant;
+        NotificationThemeScope.RequestedThemeVariant = TriskoThemeVariants.CurrentVariant;
 
     private void OnHotkeyHandler(EGlobalHotkey e)
     {
@@ -412,7 +412,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
 
     private async void MenuCheckUpdate_Click(object? sender, RoutedEventArgs e)
     {
-        await ShowGeksaUpdateWindowAsync(checkImmediately: true);
+        await ShowTriskoUpdateWindowAsync(checkImmediately: true);
         AppEvents.HasUpdateNotified.Publish(false);
     }
 
@@ -466,7 +466,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         _exitPreparationInProgress = true;
         try
         {
-            var failureMessage = ViewModel?.GeksaShellViewModel is { } shell
+            var failureMessage = ViewModel?.TriskoShellViewModel is { } shell
                 ? await shell.TryPrepareApplicationExitAsync()
                 : null;
             if (failureMessage.IsNotEmpty())
@@ -474,7 +474,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 _blCloseByUser = false;
                 ShowAdvancedVpnSettings(false);
                 ShowHideWindow(true);
-                await UI.ShowMessage(failureMessage, global::ServiceLib.Geksa.TriskoLocalization.Text("Отключите устройства ЭЦП"));
+                await UI.ShowMessage(failureMessage, global::ServiceLib.Trisko.TriskoLocalization.Text("Отключите устройства ЭЦП"));
                 return false;
             }
 
@@ -499,7 +499,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         }
         _blCloseByUser = true;
         StorageUI();
-        _geksaTrayMenuManager?.Dispose();
+        _triskoTrayMenuManager?.Dispose();
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             HotkeyManager.Instance.Dispose();
@@ -513,12 +513,12 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
 
     public void ShowAdvancedVpnSettings(bool showAdvanced)
     {
-        if (!showAdvanced) ViewModel?.GeksaShellViewModel.RefreshStartupSettings();
-        contentGeksaShell.IsVisible = !showAdvanced;
+        if (!showAdvanced) ViewModel?.TriskoShellViewModel.RefreshStartupSettings();
+        contentTriskoShell.IsVisible = !showAdvanced;
         advancedVpnPanel.IsVisible = showAdvanced;
     }
 
-    private async Task ShowGeksaUpdateWindowAsync(bool checkImmediately)
+    private async Task ShowTriskoUpdateWindowAsync(bool checkImmediately)
     {
         if (ViewModel is null)
         {
@@ -531,10 +531,10 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         }
         try
         {
-            _gekUpdateService ??= new VelopackGeksaApplicationUpdateService(
-                ViewModel.GeksaVpnController);
-            var viewModel = new GeksaUpdateViewModel(_gekUpdateService);
-            var window = new GeksaUpdateWindow(viewModel, checkImmediately);
+            _gekUpdateService ??= new VelopackTriskoApplicationUpdateService(
+                ViewModel.TriskoVpnController);
+            var viewModel = new TriskoUpdateViewModel(_gekUpdateService);
+            var window = new TriskoUpdateWindow(viewModel, checkImmediately);
             await window.ShowDialog(this);
         }
         finally
@@ -543,7 +543,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         }
     }
 
-    private async Task MonitorGeksaUpdatesLoopAsync(CancellationToken cancellationToken)
+    private async Task MonitorTriskoUpdatesLoopAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -560,25 +560,25 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         {
             try
             {
-                if (ViewModel is not null && _config.UiItem.GeksaAutoCheckUpdatesEnabled)
+                if (ViewModel is not null && _config.UiItem.TriskoAutoCheckUpdatesEnabled)
                 {
-                    var intervalHours = Math.Clamp(_config.UiItem.GeksaCheckUpdateIntervalHours, 1, 720);
+                    var intervalHours = Math.Clamp(_config.UiItem.TriskoCheckUpdateIntervalHours, 1, 720);
                     var elapsed = DateTime.UtcNow - lastCheckUtc;
                     if (elapsed >= TimeSpan.FromHours(intervalHours))
                     {
                         lastCheckUtc = DateTime.UtcNow;
 
-                        _gekUpdateService ??= new VelopackGeksaApplicationUpdateService(
-                            ViewModel.GeksaVpnController);
+                        _gekUpdateService ??= new VelopackTriskoApplicationUpdateService(
+                            ViewModel.TriskoVpnController);
 
                         if (_gekUpdateService.IsInstalled)
                         {
                             var checkResult = await _gekUpdateService.CheckAsync(cancellationToken);
-                            if (checkResult == GeksaUpdateCheckResult.Available)
+                            if (checkResult == TriskoUpdateCheckResult.Available)
                             {
                                 await Dispatcher.UIThread.InvokeAsync(async () =>
                                 {
-                                    await ShowGeksaUpdateWindowAsync(checkImmediately: false);
+                                    await ShowTriskoUpdateWindowAsync(checkImmediately: false);
                                 });
                             }
                         }
@@ -591,7 +591,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
             }
             catch (Exception exception)
             {
-                Logging.SaveLog(nameof(MonitorGeksaUpdatesLoopAsync), exception);
+                Logging.SaveLog(nameof(MonitorTriskoUpdatesLoopAsync), exception);
             }
 
             try
@@ -605,11 +605,11 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         }
     }
 
-    private async void BtnBackToGeksa_Click(object? sender, RoutedEventArgs e)
+    private async void BtnBackToTrisko_Click(object? sender, RoutedEventArgs e)
     {
         if (ViewModel is not null)
         {
-            await ViewModel.GeksaVpnController.RefreshAsync();
+            await ViewModel.TriskoVpnController.RefreshAsync();
         }
 
         ShowAdvancedVpnSettings(false);
@@ -657,9 +657,9 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
             ShowHideWindow(false);
         }
         RestoreUI();
-        if (ViewModel?.GeksaShellViewModel != null)
+        if (ViewModel?.TriskoShellViewModel != null)
         {
-            _geksaTrayMenuManager = new GeksaTrayMenuManager(this, ViewModel, ViewModel.GeksaShellViewModel);
+            _triskoTrayMenuManager = new TriskoTrayMenuManager(this, ViewModel, ViewModel.TriskoShellViewModel);
             if (!_subscriptionOnboardingStarted)
             {
                 _subscriptionOnboardingStarted = true;
@@ -667,21 +667,21 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
                 {
                     try
                     {
-                        if (await ViewModel.GeksaShellViewModel.NeedsSubscriptionOnboardingAsync())
+                        if (await ViewModel.TriskoShellViewModel.NeedsSubscriptionOnboardingAsync())
                         {
                             ShowHideWindow(true);
                         }
-                        await ViewModel.GeksaShellViewModel.PromptForSubscriptionOnboardingAsync();
-                        await ViewModel.GeksaShellViewModel.TryAutoConnectOnStartupAsync();
+                        await ViewModel.TriskoShellViewModel.PromptForSubscriptionOnboardingAsync();
+                        await ViewModel.TriskoShellViewModel.TryAutoConnectOnStartupAsync();
                     }
                     catch (Exception ex)
                     {
-                        Logging.SaveLog(nameof(GeksaVpnSubscriptionWindow), ex);
+                        Logging.SaveLog(nameof(TriskoVpnSubscriptionWindow), ex);
                     }
                 });
             }
         }
-        _ = MonitorGeksaUpdatesLoopAsync(_updateLoopCts.Token);
+        _ = MonitorTriskoUpdatesLoopAsync(_updateLoopCts.Token);
     }
 
     private void RestoreUI()
