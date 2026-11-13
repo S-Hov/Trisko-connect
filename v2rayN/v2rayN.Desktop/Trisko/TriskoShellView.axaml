@@ -317,7 +317,7 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="11" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoNavCornerRadius}" />
             <Setter Property="Foreground" Value="{DynamicResource TriskoNavForeground}" />
             <Setter Property="FontSize" Value="13" />
         </Style>
@@ -388,13 +388,16 @@
             <Setter Property="Background" Value="{DynamicResource TriskoCardBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoCardBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoCardCornerRadius}" />
             <Setter Property="BoxShadow" Value="0 5 15 0 #1A000000" />
             <Setter Property="Transitions">
                 <Transitions>
                     <BrushTransition Property="BorderBrush" Duration="0:0:0.2" />
                 </Transitions>
             </Setter>
+        </Style>
+        <Style Selector="Border.card.connectionSideCard">
+            <Setter Property="Background" Value="{DynamicResource TriskoConnectionSideBackground}" />
         </Style>
         <Style Selector="Border.card:pointerover, Border.resourceCard:pointerover">
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoCardBorderHover}" />
@@ -480,7 +483,7 @@
             <Setter Property="Background" Value="{DynamicResource TriskoPrimaryActionBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoPrimaryActionBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
             <Setter Property="Foreground" Value="{DynamicResource TriskoPrimaryActionForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -494,7 +497,7 @@
             <Setter Property="Background" Value="{DynamicResource TriskoSecondaryActionBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoSecondaryActionBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
             <Setter Property="Foreground" Value="{DynamicResource TriskoSecondaryActionForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
@@ -507,7 +510,7 @@
             <Setter Property="Background" Value="{DynamicResource TriskoWarningActionBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoWarningActionBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
             <Setter Property="Foreground" Value="{DynamicResource TriskoWarningActionForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -522,7 +525,7 @@
             <Setter Property="Background" Value="{DynamicResource TriskoDangerActionBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoDangerActionBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
             <Setter Property="Foreground" Value="{DynamicResource TriskoDangerActionForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -661,7 +664,7 @@
             <Setter Property="Background" Value="{DynamicResource TriskoSecondaryActionBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoSecondaryActionBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
             <Setter Property="Foreground" Value="{DynamicResource TriskoSecondaryActionForeground}" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
@@ -697,7 +700,7 @@
 
         <Style Selector="TextBox.searchBox, TextBox.remoteInput">
             <Setter Property="Height" Value="38" />
-            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
             <Setter Property="Background" Value="{DynamicResource TriskoSubCardBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoCardBorder}" />
             <Setter Property="BorderThickness" Value="1" />
@@ -1126,7 +1129,7 @@
             <Setter Property="Background" Value="{DynamicResource TriskoSecondaryActionBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TriskoSecondaryActionBorder}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="CornerRadius" Value="{DynamicResource TriskoCardCornerRadius}" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Cursor" Value="Hand" />
@@ -1467,6 +1470,8 @@
                                     <StackPanel Grid.Row="1" Margin="0,14" HorizontalAlignment="Center" Spacing="4">
                                         <Grid Width="244" Height="244">
                                             <deskgek:TriskoConnectingOrb
+                                                IdleBackground="{DynamicResource TriskoOrbIdleBackground}"
+                                                IdleBorder="{DynamicResource TriskoOrbIdleBorder}"
                                                 AccentColor="{Binding StatusColor}"
                                                 StateKey="{Binding ConnectionStatusBadge}"
                                                 IsIdle="{Binding IsConnectionIdle}"
@@ -1860,7 +1865,7 @@
                     </deskgek:TriskoStretchStackPanel>
 
                     <deskgek:TriskoStretchStackPanel Spacing="14" VerticalAlignment="Stretch" IsVisible="{Binding HasConnectionSideBlocks}">
-                        <Border Padding="20" Classes="card" IsVisible="{Binding ShowConnectionResources}">
+                        <Border Padding="20" Classes="card connectionSideCard" IsVisible="{Binding ShowConnectionResources}">
                             <StackPanel Spacing="11">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBlock FontSize="17" Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.S87d89494d05be655}" TextWrapping="Wrap" />
@@ -1894,7 +1899,7 @@
                         <!-- Разблокировка сервисов -->
                         
 
-                        <Border Padding="20" Classes="card" IsVisible="{Binding ShowConnectionConfiguration}">
+                        <Border Padding="20" Classes="card connectionSideCard" IsVisible="{Binding ShowConnectionConfiguration}">
                             <StackPanel Spacing="10">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <TextBlock FontSize="16" Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.Sf67a185fb3e05ded}" VerticalAlignment="Center" />
@@ -1929,7 +1934,7 @@
                             </StackPanel>
                         </Border>
 
-                        <Border Padding="18,16" Classes="card" VerticalAlignment="Stretch" MinHeight="220" deskgek:TriskoStretchStackPanel.NaturalHeightLimit="400" IsVisible="{Binding ShowConnectionLogs}">
+                        <Border Padding="18,16" Classes="card connectionSideCard" VerticalAlignment="Stretch" MinHeight="220" deskgek:TriskoStretchStackPanel.NaturalHeightLimit="400" IsVisible="{Binding ShowConnectionLogs}">
                             <Grid RowDefinitions="Auto,Auto,*">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <StackPanel Spacing="4">

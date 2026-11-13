@@ -5,7 +5,7 @@
         <Setter Property="Background" Value="{DynamicResource TriskoPrimaryActionBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TriskoPrimaryActionBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
         <Setter Property="Foreground" Value="{DynamicResource TriskoPrimaryActionForeground}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -20,7 +20,7 @@
         <Setter Property="Background" Value="{DynamicResource TriskoSecondaryActionBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TriskoSecondaryActionBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
         <Setter Property="Foreground" Value="{DynamicResource TriskoSecondaryActionForeground}" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
@@ -34,7 +34,7 @@
         <Setter Property="Background" Value="{DynamicResource TriskoWarningActionBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TriskoWarningActionBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
         <Setter Property="Foreground" Value="{DynamicResource TriskoWarningActionForeground}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -49,7 +49,7 @@
         <Setter Property="Background" Value="{DynamicResource TriskoDangerActionBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TriskoDangerActionBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="CornerRadius" Value="{DynamicResource TriskoControlCornerRadius}" />
         <Setter Property="Foreground" Value="{DynamicResource TriskoDangerActionForeground}" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>

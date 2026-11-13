@@ -21,8 +21,28 @@ public sealed class TriskoConnectingOrb : Control
     private const double BoostPeakMultiplier = 8.5;
     private const double TransitionDurationSeconds = 0.35;
 
-    private static readonly IBrush IdleBackgroundBrush = new SolidColorBrush(Color.Parse("#657184"));
-    private static readonly IPen IdleBorderPen = new Pen(new SolidColorBrush(Color.Parse("#8A96A8")), 2.0);
+    public static readonly StyledProperty<IBrush?> IdleBackgroundProperty =
+        AvaloniaProperty.Register<TriskoConnectingOrb, IBrush?>(nameof(IdleBackground), new SolidColorBrush(Color.Parse("#657184")));
+
+    public static readonly StyledProperty<IBrush?> IdleBorderProperty =
+        AvaloniaProperty.Register<TriskoConnectingOrb, IBrush?>(nameof(IdleBorder), new SolidColorBrush(Color.Parse("#8A96A8")));
+
+    public IBrush? IdleBackground
+    {
+        get => GetValue(IdleBackgroundProperty);
+        set => SetValue(IdleBackgroundProperty, value);
+    }
+
+    public IBrush? IdleBorder
+    {
+        get => GetValue(IdleBorderProperty);
+        set => SetValue(IdleBorderProperty, value);
+    }
+
+    static TriskoConnectingOrb()
+    {
+        AffectsRender<TriskoConnectingOrb>(IdleBackgroundProperty, IdleBorderProperty);
+    }
 
     private readonly Stopwatch _clock = new();
     private readonly DispatcherTimer _timer;
@@ -205,12 +225,12 @@ public sealed class TriskoConnectingOrb : Control
         var (time, boost, activity) = AdvanceAnimationTime();
         var buttonRadius = size * (88.0 / 244.0);
 
-        // 1. Состояние покоя: серая круглая кнопка (плавно растворяется при активации)
+        // 1. Theme-aware idle button, fading out as the animated contour appears.
         if (activity < 0.999)
         {
             using (context.PushOpacity(1.0 - activity))
             {
-                context.DrawEllipse(IdleBackgroundBrush, IdleBorderPen, center, buttonRadius, buttonRadius);
+                context.DrawEllipse(IdleBackground, new Pen(IdleBorder, 2.0), center, buttonRadius, buttonRadius);
             }
         }
 
