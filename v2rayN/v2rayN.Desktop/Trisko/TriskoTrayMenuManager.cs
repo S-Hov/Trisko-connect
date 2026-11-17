@@ -21,6 +21,7 @@ public sealed class TriskoTrayMenuManager : IDisposable
     private readonly TriskoShellViewModel _shellViewModel;
     private readonly StatusBarViewModel _statusBarViewModel;
     private IDisposable? _vpnSubscription;
+    private readonly TriskoTrayMenuTheme _menuTheme = new();
     private bool _disposed;
 
     public TriskoTrayMenuManager(
@@ -267,6 +268,7 @@ public sealed class TriskoTrayMenuManager : IDisposable
         }
 
         _disposed = true;
+        _menuTheme.Dispose();
         _vpnSubscription?.Dispose();
         if (_shellViewModel.Resources is INotifyCollectionChanged notifyResources)
         {
