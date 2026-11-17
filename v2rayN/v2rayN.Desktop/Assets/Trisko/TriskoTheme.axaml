@@ -21,32 +21,31 @@
         <ResourceDictionary x:Key="{x:Static trisko:TriskoThemeVariants.Brand}">
             <!-- Backgrounds -->
             <SolidColorBrush x:Key="TriskoShellBackground">#070B14</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoSidebarBackground">#0A1020</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoSidebarBackground">#0B0F18</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSidebarBorder">#292F3B</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoCardBackground">#141922</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoConnectionSideBackground">#0B0F18</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoCardBackground">#0B0F18</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBorder">#303642</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBorderHover">#68758B</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoSubCardBackground">#1B212C</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoSubCardBorder">#343C49</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoSubCardBackground">#131B25</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoSubCardBorder">#2B3543</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSeparatorBackground">#303642</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoModalBackdropBackground">#E6070B14</SolidColorBrush>
             
-            <SolidColorBrush x:Key="TriskoNavHoverBackground">#1B2230</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoNavActiveBackground">#232533</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoNavActiveBorder">#77748F</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoNavHoverBackground">#14222D</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoNavActiveBackground">#152C35</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoNavActiveBorder">#467A84</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoNavForeground">#B8BDC8</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoNavActiveForeground">#DFDDED</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoNavActiveForeground">#D8ECEE</SolidColorBrush>
 
             <SolidColorBrush x:Key="TriskoSecondaryActionBackground">#202630</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSecondaryActionBorder">#444D5C</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSecondaryActionForeground">#E4E5E9</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSecondaryActionHoverBackground">#2B3340</SolidColorBrush>
 
-            <SolidColorBrush x:Key="TriskoPrimaryActionBackground">#AAA6C8</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoPrimaryActionBorder">#C0BCDA</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoPrimaryActionForeground">#161820</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoPrimaryActionHoverBackground">#BBB7D6</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoPrimaryActionBackground">#28616B</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoPrimaryActionBorder">#518E96</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoPrimaryActionForeground">#F4FAFB</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoPrimaryActionHoverBackground">#327580</SolidColorBrush>
 
             <SolidColorBrush x:Key="TriskoWarningActionBackground">#D97706</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoWarningActionBorder">#F59E0B</SolidColorBrush>
@@ -63,14 +62,14 @@
             <SolidColorBrush x:Key="TriskoSidebarToggleHoverBackground">#2A3342</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSidebarToggleHoverBorder">#7E91B2</SolidColorBrush>
 
-            <SolidColorBrush x:Key="TriskoQuickCardBackground">#1A202B</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoQuickCardBorder">#3B4454</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoQuickCardHoverBackground">#242E3D</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoQuickCardHoverBorder">#8194B5</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoQuickCardBackground">#131B25</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoQuickCardBorder">#303D4C</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoQuickCardHoverBackground">#192B36</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoQuickCardHoverBorder">#53848E</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoQuickCardForeground">#E8E9ED</SolidColorBrush>
 
             <SolidColorBrush x:Key="TriskoSettingIconBackground">#253044</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoSettingIconForeground">#9CADC9</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoSettingIconForeground">#5B8CFF</SolidColorBrush>
 
             <!-- Texts -->
             <SolidColorBrush x:Key="TriskoBrandTitleForeground">#F0F0F2</SolidColorBrush>
@@ -86,16 +85,16 @@
             <SolidColorBrush x:Key="TriskoErrorBoxBorder">#733748</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoErrorTextForeground">#F4A5B4</SolidColorBrush>
 
-            <!-- Muted brand blues, neutral surfaces and a soft lavender action accent. -->
+            <!-- Muted brand blues, neutral surfaces and a muted blue-teal action accent. -->
             <CornerRadius x:Key="TriskoCardCornerRadius">10</CornerRadius>
             <CornerRadius x:Key="TriskoControlCornerRadius">6</CornerRadius>
             <CornerRadius x:Key="TriskoNavCornerRadius">6</CornerRadius>
             <RadialGradientBrush x:Key="TriskoOrbIdleBackground" Center="35%,25%" GradientOrigin="35%,25%">
-                <GradientStop Color="#414359" Offset="0" />
-                <GradientStop Color="#292C3A" Offset="0.65" />
-                <GradientStop Color="#1B202B" Offset="1" />
+                <GradientStop Color="#264A56" Offset="0" />
+                <GradientStop Color="#152B36" Offset="0.65" />
+                <GradientStop Color="#101B28" Offset="1" />
             </RadialGradientBrush>
-            <SolidColorBrush x:Key="TriskoOrbIdleBorder">#85819F</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoOrbIdleBorder">#53848E</SolidColorBrush>
 
         </ResourceDictionary>
 
@@ -113,7 +112,6 @@
             <SolidColorBrush x:Key="TriskoSidebarBackground">#18181B</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSidebarBorder">#27272A</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBackground">#18181B</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoConnectionSideBackground">#18181B</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBorder">#3F3F46</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBorderHover">#71717A</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSubCardBackground">#27272A</SolidColorBrush>
@@ -159,7 +157,7 @@
             <SolidColorBrush x:Key="TriskoQuickCardForeground">#FAFAFA</SolidColorBrush>
 
             <SolidColorBrush x:Key="TriskoSettingIconBackground">#27272A</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoSettingIconForeground">#E4E4E7</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoSettingIconForeground">#5B8CFF</SolidColorBrush>
 
             <!-- Texts -->
             <SolidColorBrush x:Key="TriskoBrandTitleForeground">#FAFAFA</SolidColorBrush>
@@ -191,7 +189,6 @@
             <SolidColorBrush x:Key="TriskoSidebarBackground">#FFFFFF</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSidebarBorder">#CBD5E1</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBackground">#FFFFFF</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoConnectionSideBackground">#FFFFFF</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBorder">#CBD5E1</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoCardBorderHover">#2563EB</SolidColorBrush>
             <SolidColorBrush x:Key="TriskoSubCardBackground">#F1F5F9</SolidColorBrush>
@@ -237,7 +234,7 @@
             <SolidColorBrush x:Key="TriskoQuickCardForeground">#0F172A</SolidColorBrush>
 
             <SolidColorBrush x:Key="TriskoSettingIconBackground">#EFF6FF</SolidColorBrush>
-            <SolidColorBrush x:Key="TriskoSettingIconForeground">#2563EB</SolidColorBrush>
+            <SolidColorBrush x:Key="TriskoSettingIconForeground">#5B8CFF</SolidColorBrush>
 
             <!-- Texts -->
             <SolidColorBrush x:Key="TriskoBrandTitleForeground">#0F172A</SolidColorBrush>
