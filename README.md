@@ -93,6 +93,8 @@ Find a resource by name or address and open it, or jump to its section. Shortcut
 3. Pin frequently used resources and find them with **Search**.
 4. For remote assistance, use **AnyDesk** or **VNC**. Start **VirtualHere** from the digital signature section when remote USB access is needed.
 
+On Windows, open **Remote desktops → VNC → Settings → SoftEther work network** to discover computers in a shared SoftEther hub and connect by workplace number. [SoftEther setup guide](docs/softether.md).
+
 VirtualHere startup is **off by default** and can be enabled explicitly in Settings. Changing the interface language requires an application restart.
 
 ## Build & run
@@ -157,6 +159,8 @@ Resource bundles do not include personal VPN subscriptions or passwords. Virtual
 4. Для удалённой помощи используйте **AnyDesk** или **VNC**. Для удалённых USB-токенов запустите **VirtualHere** в разделе ЭЦП.
 
 Автозапуск VirtualHere **выключен по умолчанию** и включается отдельно в настройках. После изменения языка нужно перезапустить приложение.
+
+В Windows откройте **Удалённые рабочие столы → VNC → Настройки → Рабочая сеть SoftEther**, чтобы находить компьютеры в общем хабе и подключаться по их номерам. [Настройка SoftEther](docs/softether.md).
 
 ### Сборка и данные
 

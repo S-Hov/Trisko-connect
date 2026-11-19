@@ -8,9 +8,12 @@ namespace v2rayN.Desktop.Trisko;
 public partial class TriskoVncPanel : UserControl
 {
     private readonly TriskoVncServerService _server = OperatingSystem.IsWindows() ? new() : null;
-    private readonly DispatcherTimer _statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
+    private readonly DispatcherTimer _statusTimer = new() { Interval = TimeSpan.FromSeconds(3) };
     private bool _busy;
     private bool _initialized;
+    private bool _statusVisible;
+    private bool _shellActive;
+    private bool _refreshCycle;
     private bool _promptingForPassword;
     private bool _refreshing;
     private TriskoVncServerStatus? _serverStatus;
@@ -25,31 +28,58 @@ public partial class TriskoVncPanel : UserControl
     public TriskoVncPanel()
     {
         InitializeComponent();
+        InitializeWorkNetwork();
+        if (OperatingSystem.IsWindows())
+            HostBox.PlaceholderText = TriskoLocalization.Text("Номер, IP-адрес или имя компьютера");
         _statusTimer.Tick += async (_, _) => await RefreshStatusesAsync(false);
     }
 
     public void SetStatusMonitoring(bool enabled)
     {
-        if (!enabled)
+        _statusVisible = enabled;
+        UpdateStatusMonitoring();
+    }
+
+    public void SetWorkNetworkMonitoring(bool enabled)
+    {
+        _shellActive = enabled;
+        UpdateStatusMonitoring();
+    }
+
+    private void UpdateStatusMonitoring()
+    {
+        if (!_statusVisible && !(_shellActive && _workOptions is not null))
         {
             _statusTimer.Stop();
+            StopDiscovery();
             return;
         }
-        if (_statusTimer.IsEnabled) return;
+
         var initialize = !_initialized;
-        _initialized = true;
         if (initialize)
         {
+            _initialized = true;
             LoadHistory();
             LoadClientSettings();
         }
-        _statusTimer.Start();
-        _ = RefreshStatusesAsync(initialize);
+
+        if (!_statusTimer.IsEnabled)
+        {
+            _statusTimer.Start();
+            _ = RefreshStatusesAsync(initialize);
+        }
     }
 
     private async Task RefreshStatusesAsync(bool loadSettings)
     {
-        if (!_busy) await RefreshAsync(loadSettings);
+        if (_refreshCycle) return;
+        _refreshCycle = true;
+        try
+        {
+            if (!_busy) await RefreshAsync(loadSettings);
+            await RefreshWorkNetworkAsync();
+        }
+        finally { _refreshCycle = false; }
     }
 
     private async void OpenSettings_Click(object? sender, RoutedEventArgs e) => await OpenSettingsAsync();
@@ -61,15 +91,18 @@ public partial class TriskoVncPanel : UserControl
         if (section is not null)
         {
             VncServerPanel.IsExpanded = section == VncServerPanel;
+            WorkNetworkPanel.IsExpanded = section == WorkNetworkPanel;
         }
+        LoadWorkNetworkFields();
         try
         {
             await TriskoRemoteSettingsWindow.ShowFormAsync(this, SettingsSlot, TriskoLocalization.Text("Настройки VNC"),
-                TriskoLocalization.Text("Параметры подключения и доступ к этому компьютеру."));
+                TriskoLocalization.Text("Рабочая сеть, параметры подключения и доступ к этому компьютеру."));
         }
         finally
         {
             ServerPasswordBox.Text = "";
+            WorkPasswordBox.Text = "";
         }
     }
 
@@ -79,7 +112,7 @@ public partial class TriskoVncPanel : UserControl
         {
             if (_history.FirstOrDefault() is { } recent)
             {
-                HostBox.Text = recent.Host;
+                HostBox.Text = recent.Number ?? recent.Host;
                 ClientPortBox.Text = recent.Port.ToString(CultureInfo.InvariantCulture);
                 return;
             }
@@ -106,8 +139,15 @@ public partial class TriskoVncPanel : UserControl
     {
         try
         {
-            var (host, port) = TriskoVncSettings.ResolveEndpoint(HostBox.Text?.Trim() ?? "", ParsePort(ClientPortBox.Text), null);
-            await ConnectToAsync(new Destination(host, port));
+            var input = HostBox.Text?.Trim() ?? "";
+            var number = input.Replace(" ", "");
+            if (OperatingSystem.IsWindows() && number.Length > 0 && number.All(char.IsAsciiDigit))
+                await ConnectToAsync(ResolveWorkplace(number));
+            else
+            {
+                var (host, port) = TriskoVncSettings.ResolveEndpoint(input, ParsePort(ClientPortBox.Text), null);
+                await ConnectToAsync(new Destination(host, port));
+            }
         }
         catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось подключиться по VNC"), ex); }
     }
@@ -115,7 +155,17 @@ public partial class TriskoVncPanel : UserControl
     private async Task ConnectToAsync(Destination target)
     {
         if (_promptingForPassword || TopLevel.GetTopLevel(this) is not Window owner) return;
-        try { await OpenSessionAsync(owner, target); }
+        try
+        {
+            if (target is { Number: { } number, Id: { } id })
+            {
+                if (target.NetworkKey != _workOptions?.NetworkKey)
+                    throw new InvalidOperationException(TriskoLocalization.Text("Подключите нужную рабочую сеть SoftEther."));
+                target = ResolveWorkplace(number, id);
+            }
+            CheckWorkplaceRoute(target);
+            await OpenSessionAsync(owner, target);
+        }
         catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось подключиться по VNC"), ex); }
     }
 
@@ -143,14 +193,22 @@ public partial class TriskoVncPanel : UserControl
             finally { _promptingForPassword = false; }
         }
 
-        HostBox.Text = target.Host;
+        if (target.Number is { } number)
+        {
+            var live = ResolveWorkplace(number, target.Id);
+            if (target.Key != live.Key || target.Host != live.Host || target.Port != live.Port)
+                throw new InvalidOperationException(TriskoLocalization.Text("Адрес рабочего места изменился. Подключитесь повторно."));
+            CheckWorkplaceRoute(target);
+        }
+
+        HostBox.Text = target.Number ?? target.Host;
         ClientPortBox.Text = target.Port.ToString(CultureInfo.InvariantCulture);
         var window = new TriskoVncSessionWindow(target.Host, target.Port, password, Notifications);
         window.Authenticated += secret =>
         {
             try
             {
-                var remembered = _history.FirstOrDefault(target.Matches) ?? target;
+                var remembered = _history.FirstOrDefault(target.Matches) is { } saved ? target.WithPresentation(saved) : target;
                 SaveHistory(_history.Where(item => !target.Matches(item)).Prepend(remembered).ToList());
                 if (savePassword && OperatingSystem.IsWindows())
                     WindowsTriskoResourceLauncher.SetVncPassword(target.Key, secret);
@@ -182,7 +240,7 @@ public partial class TriskoVncPanel : UserControl
             var settings = new TriskoVncServerSettings(ParsePort(ServerPortBox.Text),
                 AutoStartBox.IsChecked == true, LoopbackBox.IsChecked == true, AllowedAddressesBox.Text ?? "");
             ServerStatus.Text = TriskoLocalization.Text("Настройка и запуск сервера…");
-            await _server.EnableAsync(settings, ServerPasswordBox.Text ?? "");
+            await _server.EnableAsync(settings, ServerPasswordBox.Text ?? "", _workOptions?.Subnet);
             await RefreshAsync(true);
         }
         catch (Exception ex) { ServerStatus.Text = TriskoLocalization.Text("Не удалось включить доступ: ") + ex.Message; }
@@ -235,7 +293,8 @@ public partial class TriskoVncPanel : UserControl
                 .OrderByDescending(adapter => adapter.Properties.GatewayAddresses.Any(gateway =>
                     gateway.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.Any.Equals(gateway.Address)))
                 .SelectMany(adapter => GetIPv4Addresses(adapter.Properties))
-                .FirstOrDefault(address => !address.StartsWith("169.254.", StringComparison.Ordinal));
+                .FirstOrDefault(address => !address.StartsWith("169.254.", StringComparison.Ordinal) &&
+                    _workOptions?.Subnet.Contains(IPAddress.Parse(address)) != true);
             LocalAddresses.Text = status.Settings.LoopbackOnly ? TriskoLocalization.Text("Адрес для SSH-туннеля: 127.0.0.1")
                 : TriskoLocalization.Format("Имя компьютера: {0} · IP: {1}. Выберите адрес, доступный из вашей сети.", Dns.GetHostName(), string.Join(", ", localAddresses));
         }
@@ -266,7 +325,12 @@ public partial class TriskoVncPanel : UserControl
         var label = TriskoLocalization.Text("Адрес этого ПК");
         if (_serverStatus is { Running: true, Settings.LoopbackOnly: false } server)
         {
-            if (_lanAddress is { } lanAddress)
+            if (_workStatus is { Connected: true } && _deviceId != Guid.Empty)
+            {
+                identity = TriskoWorkNetwork.GetNumber(_deviceId);
+                label = TriskoLocalization.Text("Номер этого компьютера");
+            }
+            else if (_lanAddress is { } lanAddress)
             {
                 identity = server.Settings.Port == TriskoVncSettings.DefaultPort ? lanAddress : $"{lanAddress}:{server.Settings.Port}";
             }

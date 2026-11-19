@@ -32,6 +32,11 @@
       "sha256": "8C3A825B1A7D09F627DE10263B21008B8A48DEE10794F42CAF1927928FEC74DA"
     }
   ],
+  "softEtherInstaller": {
+    "fileName": "vpnclient-setup.exe",
+    "url": "https://github.com/SoftEtherVPN/SoftEtherVPN_Stable/releases/download/v4.44-9807-rtm/softether-vpnclient-v4.44-9807-rtm-2025.04.16-windows-x86_x64-intel.exe",
+    "sha256": "AB006331F1F646BC319585088239D55BC54ECDE5C269009268E9598307DA7A44"
+  },
   "licenses": [
     {
       "fileName": "Xray-core-MPL-2.0.txt",
@@ -47,6 +52,11 @@
       "fileName": "Wintun-prebuilt-binaries-license.txt",
       "url": "https://git.zx2c4.com/wintun/plain/prebuilt-binaries-license.txt",
       "sha256": "9AAF948856CE8845A762121306039EF09D0EEB4D9E4F4C355647D4081E818087"
+    },
+    {
+      "fileName": "SoftEther-VPN-Client-Apache-2.0.txt",
+      "url": "https://raw.githubusercontent.com/SoftEtherVPN/SoftEtherVPN_Stable/v4.44-9807-rtm/LICENSE",
+      "sha256": "5DA6241DDB987C4543BF1CBBA6B40A3CD3ECB624DBD4A63DAF04440911656BDE"
     }
   ]
 }

@@ -15,6 +15,35 @@ public class CoreConfigSingboxServiceTests
 {
 
 
+    [Theory]
+    [InlineData("work.example.net", false)]
+    [InlineData("192.0.2.50", true)]
+    public void Work_network_server_uses_the_proxy_and_peers_bypass_TUN(string host, bool ip)
+    {
+        var config = CoreConfigTestFactory.CreateConfig(ECoreType.sing_box);
+        config.TunModeItem.EnableTun = true;
+        config.TunModeItem.TriskoRoutingMode = TriskoVpnRoutingMode.Global;
+        config.UiItem.TriskoWorkNetwork = TriskoWorkNetworkOptions.Create(host, "5555", "WORK", "operator", "10.78.0.0/16", false);
+        CoreConfigTestFactory.BindAppManagerConfig(config);
+        var node = CoreConfigTestFactory.CreateVmessNode(ECoreType.sing_box);
+        var context = CoreConfigTestFactory.CreateContext(config, node, ECoreType.sing_box);
+
+        var result = new CoreConfigSingboxService(context).GenerateClientConfigContent();
+
+        result.Success.Should().BeTrue(result.Msg);
+        var cfg = JsonUtils.Deserialize<SingboxConfig>(result.Data!.ToString())!;
+        var route = cfg.route.rules.First();
+        route.inbound.Should().Contain(nameof(EInboundProtocol.socks));
+        route.network.Should().Contain("tcp");
+        route.port.Should().Contain(5555);
+        route.outbound.Should().Be(Global.ProxyTag);
+        if (ip)
+            route.ip_cidr.Should().Contain(host + "/32");
+        else
+            route.domain.Should().Contain(host);
+        cfg.inbounds.Single(inbound => inbound.type == "tun").route_exclude_address.Should().Contain("10.78.0.0/16");
+    }
+
     [Fact]
     public void GenerateClientConfigContent_ShouldGenerateBasicProxyConfig()
     {

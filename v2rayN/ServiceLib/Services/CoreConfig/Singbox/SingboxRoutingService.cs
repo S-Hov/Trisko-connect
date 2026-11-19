@@ -33,6 +33,19 @@ public partial class CoreConfigSingboxService
                 strategy = dialDnsStrategy
             };
 
+            if (TriskoWorkNetworkOptions.Validated(_config.UiItem?.TriskoWorkNetwork) is { } work)
+            {
+                _coreConfig.route.rules.Add(new()
+                {
+                    inbound = [nameof(EInboundProtocol.socks)],
+                    network = ["tcp"],
+                    domain = work.IsIpAddress ? null : [work.Host],
+                    ip_cidr = work.IsIpAddress ? [work.Host + "/32"] : null,
+                    port = [work.Port],
+                    outbound = Global.ProxyTag,
+                });
+            }
+
             if (context.IsTunEnabled)
             {
                 _coreConfig.route.auto_detect_interface = true;

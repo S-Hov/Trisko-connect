@@ -17,6 +17,7 @@ public static class TriskoStrings
     public static string S08977566c6ae8e28 => TriskoLocalization.Text("Копировать полную ошибку");
     public static string S09f592151b47eb34 => TriskoLocalization.Text("Удалить настройку");
     public static string S0a206f6d2e0aa4dc => TriskoLocalization.Text("Экспортировать корпоративные ресурсы с новой уникальной ревизией. VPN-подписка не включается.");
+    public static string S0aec9df4b66b3bae => TriskoLocalization.Text("Порт SoftEther");
     public static string S0b29a3640f4cad3a => TriskoLocalization.Text("Установлено");
     public static string S0b682f514be4635b => TriskoLocalization.Text("Авто выбирает самый быстрый сервер из ваших подключений.");
     public static string S0b74d868ec98b6b9 => TriskoLocalization.Text("Настроенные серверы");
@@ -29,6 +30,7 @@ public static class TriskoStrings
     public static string S10683b85750090f6 => TriskoLocalization.Text("Перед установкой VPN будет автоматически отключён.");
     public static string S10818ec5a4cad749 => TriskoLocalization.Text("Во весь экран");
     public static string S10f678567a524be5 => TriskoLocalization.Text("DOMAIN\\user или user");
+    public static string S135a15058cff130a => TriskoLocalization.Text("Виртуальный хаб");
     public static string S13d6bcc7b7d5bf0a => TriskoLocalization.Text("Назначение формата .gac3");
     public static string S1421f9bd85a5841c => TriskoLocalization.Text("🖥️ Подключение .json (Одиночный ресурс)");
     public static string S148f33dcb4f1dfc3 => TriskoLocalization.Text("Например, Домашний компьютер");
@@ -65,6 +67,7 @@ public static class TriskoStrings
     public static string S26bca9141a3139fd => TriskoLocalization.Text("Укажите адрес, доступный из офисной сети или через VPN. Стандартный порт VirtualHere — 7575.");
     public static string S27c5d9725520d438 => TriskoLocalization.Text("Проверить задержку всех подключений (реальный пинг)");
     public static string S28069432212b3b59 => TriskoLocalization.Text("Версия приложения");
+    public static string S284ddaa509b32b98 => TriskoLocalization.Text("Подключать рабочую сеть вместе с VPN");
     public static string S286c9ae3e7737dab => TriskoLocalization.Text("Открыть полный интерфейс v2rayN: профили, маршруты, DNS и журналы");
     public static string S28fe2f7b80899add => TriskoLocalization.Text("Закрепить подключение вверху страницы");
     public static string S295a0e48e21dafe7 => TriskoLocalization.Text("Portable AnyDesk 6.1.0, встроенное окно и стратегия подключения без установки системной службы");
@@ -89,6 +92,7 @@ public static class TriskoStrings
     public static string S36b4c0b07f08c596 => TriskoLocalization.Text("Подключиться");
     public static string S36d2a22f2675f09d => TriskoLocalization.Text("Автоматически открывать при подключении VPN");
     public static string S36d42699b3b3ca32 => TriskoLocalization.Text("Из комплекта");
+    public static string S36eef2169f76785e => TriskoLocalization.Text("Подсеть рабочей сети");
     public static string S378960c62634292f => TriskoLocalization.Text("Форматы разделены: .gac3 содержит корпоративные ресурсы, а .json — ровно одно RDP, SSH или SMB-подключение. VPN-подписка хранится отдельно.");
     public static string S37f1f81b74ab6c7d => TriskoLocalization.Text("Поиск по программе");
     public static string S38aa0ac1ffe1a361 => TriskoLocalization.Text("Выбрать");
@@ -186,6 +190,7 @@ public static class TriskoStrings
     public static string S75168b402337248a => TriskoLocalization.Text("Сканировать");
     public static string S76de79c683ce74de => TriskoLocalization.Text("Принимать подключения только с этого компьютера (для SSH-туннеля)");
     public static string S790734f1561373d5 => TriskoLocalization.Text("Комплект изменяет только корпоративные RDP, SMB и SSH-ресурсы. VPN-подписка настраивается отдельно для каждого пользователя.");
+    public static string S797dc757ed10b3d4 => TriskoLocalization.Text("Подставить подсеть SoftEther");
     public static string S7996f711496a5424 => TriskoLocalization.Text("Позже");
     public static string S79b5f61a827a23fc => TriskoLocalization.Text("После подключения VPN программа удаляет сохранённые ручные адреса из VirtualHere, добавляет их заново и сканирует устройства. Такое же полное обновление запускается кнопкой «Обновить» в разделе ЭЦП.");
     public static string S7a4f6595b5ed6fd4 => TriskoLocalization.Text("Повторить сейчас");
@@ -231,6 +236,7 @@ public static class TriskoStrings
     public static string S92a94440bbc20c6b => TriskoLocalization.Text("Для открытия требуется активный VPN");
     public static string S93b08f7b14651b6d => TriskoLocalization.Text("Проверить обновления");
     public static string S943d795e3b07c4a1 => TriskoLocalization.Text("Добавить RDP");
+    public static string S9516a2a9ecf92285 => TriskoLocalization.Text("Пользователь SoftEther");
     public static string S95a62e84478a347f => TriskoLocalization.Text("Буква сетевого диска");
     public static string S95dba9a83702a233 => TriskoLocalization.Text("Поиск SMB / папок...");
     public static string S96080c489c53acc1 => TriskoLocalization.Text("Создать комплект корпоративных ресурсов с уникальной ревизией. VPN-профили и подписки не экспортируются.");
@@ -289,6 +295,7 @@ public static class TriskoStrings
     public static string Sba1a5b02aa36ded5 => TriskoLocalization.Text("ВРЕМЯ ПОДКЛЮЧЕНИЯ");
     public static string Sbb5bdd176cdf98df => TriskoLocalization.Text("Отключить");
     public static string Sbc016a1cbc9778b3 => TriskoLocalization.Text("Что изменилось");
+    public static string Sbcafa808f0871ba2 => TriskoLocalization.Text("Подключить рабочую сеть");
     public static string Sbce875270d0b623e => TriskoLocalization.Text("Ссылка VPN-подписки");
     public static string Sbceea86f17715a3a => TriskoLocalization.Text("Своё имя подключения AnyDesk");
     public static string Sbd0aeb1b4a3a69c9 => TriskoLocalization.Text("Добавляется в VirtualHere автоматически");
@@ -313,6 +320,7 @@ public static class TriskoStrings
     public static string Scf1371b79eeb4e91 => TriskoLocalization.Text("Программа использует AnyDesk.exe напрямую и не устанавливает службу. В комплекте ожидается неизменённая версия 6.1.0.");
     public static string Sd0422edc0ad49cfd => TriskoLocalization.Text("Импорт .gac3");
     public static string Sd2ab5a1bb6394a4b => TriskoLocalization.Text("Экспорт");
+    public static string Sd3257f0c9ba359c3 => TriskoLocalization.Text("Сохранить настройки");
     public static string Sd343cbabc004b778 => TriskoLocalization.Text("Адрес компьютера");
     public static string Sd346cff923d15add => TriskoLocalization.Text("Окно AnyDesk");
     public static string Sd36bbb9851de118a => TriskoLocalization.Text("Проверка актуальности версии и параметры автоматического обновления");
@@ -344,8 +352,10 @@ public static class TriskoStrings
     public static string Seb17429eb1c00fef => TriskoLocalization.Text("Trisko connect работает только со своим изолированным блоком '# BEGIN/END Trisko connect managed 1C'. Перед записью автоматически создаётся резервная копия hosts.trisko-backup. При обнаружении конфликтующих строк программа запросит подтверждение.");
     public static string Seb476cc933e1da11 => TriskoLocalization.Text("Порт подключения");
     public static string Secbae64154602432 => TriskoLocalization.Text("Если выключено, VirtualHere не стартует вместе с Trisko connect или при подключении VPN. Запустить его можно отдельной кнопкой в разделе «ЭЦП».");
+    public static string Sed77c63a04ba7a30 => TriskoLocalization.Text("Рабочая сеть SoftEther");
     public static string Sedd378c90fb0a830 => TriskoLocalization.Text("Выбор визуального стиля интерфейса: Trisko, тёмная или светлая");
     public static string Sef05d57959cfde50 => TriskoLocalization.Text("Готово");
+    public static string Sef6d20aed29f5caa => TriskoLocalization.Text("Сервер SoftEther");
     public static string Sf014354519291665 => TriskoLocalization.Text("Центр обновлений");
     public static string Sf06de185d68e4fba => TriskoLocalization.Text("Дополнительные маршруты пока не добавлены.");
     public static string Sf0cd3a6033724d44 => TriskoLocalization.Text("Светлая");
@@ -359,6 +369,7 @@ public static class TriskoStrings
     public static string Sf5b1345ebed84b1e => TriskoLocalization.Text("Автоматизация и автозапуск рабочих ресурсов");
     public static string Sf67a185fb3e05ded => TriskoLocalization.Text("Конфигурация");
     public static string Sf925ff81b5a48f4b => TriskoLocalization.Text("Настройка VPN-подписки");
+    public static string Sf981e6008c196dee => TriskoLocalization.Text("Пароль SoftEther");
     public static string Sfb60742527deb73d => TriskoLocalization.Text("USB-устройства не найдены");
     public static string Sfc117ff050685d05 => TriskoLocalization.Text("Сохранить и загрузить");
     public static string Sfd2ccf3a4291152c => TriskoLocalization.Text("Проверить пинг");

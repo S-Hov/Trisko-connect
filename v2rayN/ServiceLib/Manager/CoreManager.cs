@@ -27,6 +27,8 @@ public class CoreManager
 
     public RunningProfileInfo? ActiveProfile { get; private set; }
     public int? ActiveLocalProxyPort { get; private set; }
+    public TriskoWorkNetworkOptions? ActiveWorkNetwork { get; private set; }
+    public long ActiveWorkNetworkTransportVersion { get; private set; }
 
     public async Task Init(Config config, Func<bool, string, Task> updateFunc)
     {
@@ -81,6 +83,7 @@ public class CoreManager
             return;
         }
 
+        var workNetwork = TriskoWorkNetworkOptions.Validated(mainContext.AppConfig.UiItem?.TriskoWorkNetwork);
         var node = mainContext.Node;
         var fileName = Utils.GetBinConfigPath(Global.CoreConfigFileName);
         var proxyPort = AppManager.Instance.GetLocalPort(EInboundProtocol.socks);
@@ -130,6 +133,8 @@ public class CoreManager
             && (mainContext.IsTunEnabled || preContext?.IsTunEnabled == true);
         ActiveProfile = IsCoreRunning ? RunningProfileInfo.From(mainContext) : null;
         ActiveLocalProxyPort = IsCoreRunning ? proxyPort : null;
+        ActiveWorkNetwork = IsCoreRunning ? workNetwork : null;
+        ActiveWorkNetworkTransportVersion++;
 
         if (_processService != null)
         {
@@ -186,6 +191,7 @@ public class CoreManager
             _isTunRunning = false;
             ActiveProfile = null;
             ActiveLocalProxyPort = null;
+            ActiveWorkNetwork = null;
             if (_linuxSudo)
             {
                 await CoreAdminManager.Instance.KillProcessAsLinuxSudo();

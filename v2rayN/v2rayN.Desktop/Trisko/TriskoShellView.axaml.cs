@@ -79,6 +79,8 @@ public partial class TriskoShellView : ReactiveUserControl<TriskoShellViewModel>
 
         this.WhenActivated(disposables =>
         {
+            VncPanel.SetWorkNetworkMonitoring(true);
+            disposables.Add(new DelegateDisposable(() => VncPanel.SetWorkNetworkMonitoring(false)));
             disposables.Add(this.WhenAnyValue(x => x.ViewModel!.IsRemoteDesktopsPage)
                 .Subscribe(UpdateRemoteMonitoring));
             disposables.Add(new DelegateDisposable(() => UpdateRemoteMonitoring(false)));

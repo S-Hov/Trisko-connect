@@ -138,6 +138,11 @@ Copy-Item -LiteralPath (Join-Path $coreRoot 'sing_box') -Destination $publishedB
 Copy-Item -LiteralPath (Join-Path $coreRoot 'geoip.dat') -Destination $publishedBin -Force
 Copy-Item -LiteralPath (Join-Path $coreRoot 'geosite.dat') -Destination $publishedBin -Force
 
+$softEtherDirectory = Join-Path $publishDirectory 'Tools\SoftEther'
+New-Item -ItemType Directory -Path $softEtherDirectory -Force | Out-Null
+Get-VerifiedReleaseFile $lock.softEtherInstaller (Join-Path $softEtherDirectory $lock.softEtherInstaller.fileName) `
+    (Join-Path $repositoryRoot 'artifacts\softether-cache')
+
 $licenses = Join-Path $publishDirectory 'licenses'
 New-Item -ItemType Directory -Path $licenses -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $repositoryRoot 'LICENSE') -Destination (Join-Path $licenses 'v2rayN-GPL-3.0.txt')

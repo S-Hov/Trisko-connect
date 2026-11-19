@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 
 namespace v2rayN.Desktop.Trisko;
@@ -5,17 +6,23 @@ namespace v2rayN.Desktop.Trisko;
 public partial class TriskoVncPanel
 {
     private sealed record Destination(string Host, int Port, string? Title = null, string? Description = null,
-        bool Pinned = false, bool Favorite = false)
+        bool Pinned = false, bool Favorite = false, Guid? Id = null, string? Name = null, string? NetworkKey = null)
     {
-        public string Label => Host.Contains(':') ? $"[{Host}]:{Port}" : $"{Host}:{Port}";
-        public string Key => Label.ToLowerInvariant();
+        public string? Number => Id is { } id ? TriskoWorkNetwork.GetNumber(id) : null;
+        private string Endpoint => Host.Contains(':') ? $"[{Host}]:{Port}" : $"{Host}:{Port}";
+        public string Label => Number is { } number ? $"{Name} · {number}" : Endpoint;
+        public string Key => Id is { } id ? $"work/{NetworkKey}/{id:N}" : Endpoint.ToLowerInvariant();
         public string Caption => string.IsNullOrEmpty(Title) ? Label : Title;
 
         public bool Matches(Destination other) => Key == other.Key;
+
+        public Destination WithPresentation(Destination saved) =>
+            this with { Title = saved.Title, Description = saved.Description, Pinned = saved.Pinned, Favorite = saved.Favorite };
     }
 
     private static string HistoryPath => Utils.GetConfigPath("trisko-vnc-history.json");
     private List<Destination> _history = [];
+    private Destination[] _shownWorkplaces = [];
 
     private void LoadHistory()
     {
@@ -110,9 +117,10 @@ public partial class TriskoVncPanel
         {
             var updated = _history.ToList();
             var index = updated.FindIndex(target.Matches);
-            if (index < 0) return;
-            updated[index] = edit(updated[index]);
+            if (index < 0) updated.Add(edit(target));
+            else updated[index] = edit(updated[index]);
             SaveHistory(updated);
+            ShowWorkplaces(_discovery?.GetPeers() ?? []);
         }
         catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось сохранить оформление подключения"), ex); }
     }
@@ -142,6 +150,55 @@ public partial class TriskoVncPanel
         finally { File.Delete(temporary); }
         _history = updated;
         RenderHistory();
+    }
+
+    private Destination FromWorkplace(TriskoWorkplace peer)
+    {
+        var target = new Destination(peer.Address.ToString(), peer.Port,
+            Id: peer.Id, Name: peer.Name, NetworkKey: _workOptions?.NetworkKey);
+        return _history.FirstOrDefault(target.Matches) is { } saved ? target.WithPresentation(saved) : target;
+    }
+
+    private void ShowWorkplaces(TriskoWorkplace[] peers)
+    {
+        var available = peers.Select(FromWorkplace).OrderByDescending(peer => peer.Pinned)
+            .ThenByDescending(peer => peer.Favorite).ToArray();
+        if (!_shownWorkplaces.SequenceEqual(available))
+        {
+            _shownWorkplaces = available;
+            WorkplaceList.ItemsSource = available.Select(CreateConnectionRow).ToArray();
+            WorkplaceList.IsVisible = available.Length > 0;
+        }
+
+        DiscoveryStatus.Text = available.Length == 0 ? TriskoLocalization.Text("Рабочие места пока не найдены")
+            : TriskoLocalization.Format("Доступные рабочие места · {0}", available.Length);
+    }
+
+    private Destination ResolveWorkplace(string number, Guid? expectedId = null)
+    {
+        if (number.Length != 9 || (_deviceId != Guid.Empty && number == TriskoWorkNetwork.GetNumber(_deviceId)))
+            throw new ArgumentException(TriskoLocalization.Text("Введите девятизначный номер другого рабочего места."));
+
+        var peers = _discovery?.GetPeers() ?? [];
+        var matches = peers.Where(peer => peer.Number == number).ToArray();
+        if (matches.Length > 1)
+            throw new InvalidOperationException(TriskoLocalization.Text("Этот номер принадлежит нескольким рабочим местам."));
+        if (matches is not [var live])
+            throw new InvalidOperationException(TriskoLocalization.Text("Рабочее место не найдено."));
+        if ((expectedId is { } id && live.Id != id) || peers.Any(peer => peer.Address.Equals(live.Address) && peer.Id != live.Id))
+            throw new InvalidOperationException(TriskoLocalization.Text("По этому адресу обнаружено другое рабочее место."));
+        return FromWorkplace(live);
+    }
+
+    private void CheckWorkplaceRoute(Destination target)
+    {
+        if (target.Id is null) return;
+        if (!OperatingSystem.IsWindows() || CurrentTransport() is not { } transport || _workTransport != transport ||
+            _workStatus is not { Connected: true } || _workOptions is not { } options ||
+            !IPAddress.TryParse(target.Host, out var address) || !options.Subnet.Contains(address) ||
+            TriskoSoftEtherService.FindAdapter() is not { } adapter)
+            throw new InvalidOperationException(TriskoLocalization.Text("Подключите нужную рабочую сеть SoftEther."));
+        TriskoSoftEtherService.CheckPeerRoute(adapter, address);
     }
 
     private static async Task<(string Password, bool Save)?> AskPasswordAsync(Window owner, string label)

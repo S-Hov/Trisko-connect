@@ -6,6 +6,20 @@ public partial class CoreConfigV2rayService
     {
         try
         {
+            if (TriskoWorkNetworkOptions.Validated(_config.UiItem?.TriskoWorkNetwork) is { } work)
+            {
+                _coreConfig.routing.rules.Add(new()
+                {
+                    type = "field",
+                    inboundTag = [nameof(EInboundProtocol.socks)],
+                    network = "tcp",
+                    domain = work.IsIpAddress ? null : [$"full:{work.Host}"],
+                    ip = work.IsIpAddress ? [work.Host + "/32"] : null,
+                    port = work.Port.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    outboundTag = Global.ProxyTag,
+                });
+            }
+
             if (context.IsTunEnabled)
             {
                 var tunRules = JsonUtils.Deserialize<List<RulesItem4Ray>>(EmbedUtils.GetEmbedText(Global.V2raySampleTunRules));

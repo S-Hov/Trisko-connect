@@ -71,10 +71,13 @@ public partial class CoreConfigV2rayService
                 IReadOnlyList<string> systemRoutes = triskoPolicy.IsEnabled
                     ? triskoPolicy.SystemRouteCidrs
                     : ["0.0.0.0/0", "::/0"];
+                var exclusions = _config.TunModeItem.RouteExcludeAddress ?? [];
+                if (TriskoWorkNetworkOptions.Validated(_config.UiItem?.TriskoWorkNetwork) is { } work)
+                    exclusions = [.. exclusions, work.Cidr];
                 tunInbound.settings.autoSystemRoutingTable =
                     TriskoCorporateRoutingTargetProvider.ApplyExclusions(
                             systemRoutes,
-                            _config.TunModeItem.RouteExcludeAddress)
+                            exclusions)
                         .ToList();
                 if (_config.TunModeItem.EnableIPv6Address == true)
                 {

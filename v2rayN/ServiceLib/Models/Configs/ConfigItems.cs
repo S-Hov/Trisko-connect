@@ -87,6 +87,8 @@ public class MsgUIItem
 [Serializable]
 public class UIItem
 {
+    public TriskoWorkNetworkOptions? TriskoWorkNetwork { get; set; }
+
     public bool EnableAutoAdjustMainLvColWidth { get; set; }
     public int MainGirdHeight1 { get; set; }
     public int MainGirdHeight2 { get; set; }

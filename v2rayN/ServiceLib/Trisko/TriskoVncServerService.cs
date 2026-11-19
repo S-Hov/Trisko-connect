@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
@@ -30,6 +31,21 @@ public sealed class TriskoVncServerService
     private static string SettingsPath => Path.Combine(InstallDirectory, "settings.json");
     private static string ImagePath => $"\"{ServerPath}\" -service";
 
+    public static async Task AllowDiscoveryAsync(IPNetwork subnet)
+    {
+        RequireAdministrator();
+        var program = Environment.ProcessPath ?? throw new IOException(
+            TriskoLocalization.Text("Не удалось определить путь к Trisko."));
+        var suffix = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(program.ToUpperInvariant())))[..16];
+        var rule = "Trisko connect Work Network Discovery " + suffix;
+        await DeleteFirewallRuleAsync(rule);
+        await RunAsync("netsh.exe", "advfirewall", "firewall", "add", "rule", "name=" + rule,
+            "dir=in", "action=allow", "program=" + program, "protocol=UDP",
+            $"localport={TriskoWorkplaceDiscovery.DiscoveryPort}",
+            $"localip={subnet},{TriskoWorkplaceDiscovery.MulticastAddress}",
+            $"remoteip={subnet}", "profile=any");
+    }
+
     public Task<TriskoVncServerStatus> GetStatusAsync() => Task.Run(() =>
     {
         var installed = InspectOwnership();
@@ -41,7 +57,7 @@ public sealed class TriskoVncServerService
         return new TriskoVncServerStatus(true, service.Status == ServiceControllerStatus.Running, settings);
     });
 
-    public async Task EnableAsync(TriskoVncServerSettings settings, string password)
+    public async Task EnableAsync(TriskoVncServerSettings settings, string password, IPNetwork? workSubnet = null)
     {
         TriskoVncSettings.ValidatePort(settings.Port);
         TriskoVncSettings.ValidatePassword(password);
@@ -78,9 +94,13 @@ public sealed class TriskoVncServerService
 
                 await DeleteFirewallRuleAsync();
                 if (!settings.LoopbackOnly)
+                {
+                    var localScope = workSubnet is { } subnet && settings.AllowedAddresses == subnet.ToString()
+                        ? subnet.ToString() : "any";
                     await RunAsync("netsh.exe", "advfirewall", "firewall", "add", "rule", "name=" + FirewallRule,
                         "dir=in", "action=allow", "program=" + ServerPath, "protocol=TCP", "localport=" + settings.Port,
-                        "remoteip=" + settings.AllowedAddresses, "profile=any", "enable=yes");
+                        "localip=" + localScope, "remoteip=" + settings.AllowedAddresses, "profile=any", "enable=yes");
+                }
                 if (!installed)
                     await RunAsync("sc.exe", "create", ServiceName, "binPath=", ImagePath, "start=", "demand",
                         "DisplayName=", "Trisko connect — VNC Server", "depend=", "Tcpip");
@@ -173,7 +193,7 @@ public sealed class TriskoVncServerService
         throw new System.TimeoutException(TriskoLocalization.Text("Служба VNC не завершила операцию за 15 секунд."));
     }
 
-    private static Task DeleteFirewallRuleAsync() => Task.Run(() =>
+    private static Task DeleteFirewallRuleAsync(string name = FirewallRule) => Task.Run(() =>
     {
         // INetFwRules.Remove is a no-op when absent; unlike a localized netsh error,
         // this is safe on first installation while still surfacing access failures.
@@ -184,7 +204,7 @@ public sealed class TriskoVncServerService
         try
         {
             rulesObject = policy.Rules;
-            ((dynamic)rulesObject).Remove(FirewallRule);
+            ((dynamic)rulesObject).Remove(name);
         }
         finally
         {

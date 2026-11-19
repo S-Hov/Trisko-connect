@@ -1659,6 +1659,8 @@ public partial class TriskoShellViewModel : MyReactiveObject, IDisposable
         SetTheme(next);
     }
 
+    public Task StartWorkNetworkVpnAsync() => CoreManager.Instance.IsCoreRunning ? Task.CompletedTask : ConnectAsync();
+
     private async Task ConnectAsync()
     {
         if (IsBusy || _controller.Snapshot.IsCoreRunning)

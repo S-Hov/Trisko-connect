@@ -90,6 +90,8 @@ public partial class CoreConfigSingboxService
                     tunInbound.address.Add(address6);
                 }
                 tunInbound.route_exclude_address = _config.TunModeItem.RouteExcludeAddress;
+                if (TriskoWorkNetworkOptions.Validated(_config.UiItem?.TriskoWorkNetwork) is { } work)
+                    tunInbound.route_exclude_address = [.. (tunInbound.route_exclude_address ?? []), work.Cidr];
 
                 _coreConfig.inbounds.Add(tunInbound);
             }

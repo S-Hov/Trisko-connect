@@ -12,6 +12,7 @@
         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
             <WrapPanel ItemSpacing="10" LineSpacing="6" VerticalAlignment="Center">
                 <TextBlock Classes="sectionSubtitle" Text="{Binding $parent[local:TriskoVncPanel].StatusText}" VerticalAlignment="Center" />
+                <Button x:Name="QuickWorkButton" Classes="secondaryAction" Click="QuickWork_Click" IsVisible="False" />
                 <StackPanel x:Name="WorkstationIdentity" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" IsVisible="False">
                     <TextBlock x:Name="WorkstationLabel" Classes="sectionSubtitle" VerticalAlignment="Center" />
                     <SelectableTextBlock x:Name="WorkstationValue" FontWeight="SemiBold" VerticalAlignment="Center" />
@@ -36,6 +37,10 @@
             <TextBlock Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.Se4c1d01c5c8f2193}" />
             <ItemsControl x:Name="FavoriteList" ItemsPanel="{StaticResource VncConnectionCards}" />
         </StackPanel>
+        <StackPanel x:Name="DiscoveryPanel" Spacing="6" IsVisible="False">
+            <TextBlock x:Name="DiscoveryStatus" Classes="sectionSubtitle" TextWrapping="Wrap" />
+            <ItemsControl x:Name="WorkplaceList" ItemsPanel="{StaticResource VncConnectionCards}" IsVisible="False" />
+        </StackPanel>
         <StackPanel x:Name="HistoryPanel" Spacing="6" IsVisible="False">
             <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S60ba8b1a759773a0}" />
             <ItemsControl x:Name="HistoryList" ItemsPanel="{StaticResource VncConnectionCards}" />
@@ -49,6 +54,29 @@
                 </Grid>
                 <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.Se924243b8513f09f}" TextWrapping="Wrap" />
                 
+                <Expander x:Name="WorkNetworkPanel" Header="{x:Static tr:TriskoStrings.Sed77c63a04ba7a30}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsVisible="False">
+                    <StackPanel Spacing="10" Margin="0,12,0,0">
+                        <Grid ColumnDefinitions="*,100" ColumnSpacing="8">
+                            <TextBox x:Name="WorkHostBox" PlaceholderText="{x:Static tr:TriskoStrings.Sef6d20aed29f5caa}" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sef6d20aed29f5caa}" />
+                            <TextBox x:Name="WorkPortBox" Grid.Column="1" PlaceholderText="{x:Static tr:TriskoStrings.S90947197f86bfdea}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S0aec9df4b66b3bae}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <TextBox x:Name="WorkHubBox" PlaceholderText="{x:Static tr:TriskoStrings.S135a15058cff130a}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S135a15058cff130a}" />
+                            <TextBox x:Name="WorkUsernameBox" Grid.Column="1" PlaceholderText="{x:Static tr:TriskoStrings.S9516a2a9ecf92285}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S9516a2a9ecf92285}" />
+                        </Grid>
+                        <TextBox x:Name="WorkSubnetBox" PlaceholderText="{x:Static tr:TriskoStrings.S36eef2169f76785e}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S36eef2169f76785e}" />
+                        <TextBox x:Name="WorkPasswordBox" PasswordChar="●" MaxLength="63" PlaceholderText="{x:Static tr:TriskoStrings.Sf981e6008c196dee}" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sf981e6008c196dee}" />
+                        <CheckBox x:Name="AutoWorkBox" Content="{x:Static tr:TriskoStrings.S284ddaa509b32b98}" />
+                        <WrapPanel ItemSpacing="8" LineSpacing="8">
+                            <Button x:Name="SaveWorkButton" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.Sd3257f0c9ba359c3}" Click="SaveWork_Click" />
+                            <Button x:Name="ConnectWorkButton" Classes="triskoPrimary" Content="{x:Static tr:TriskoStrings.Sbcafa808f0871ba2}" Click="ConnectWork_Click" />
+                            <Button x:Name="DisconnectWorkButton" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.Sbb5bdd176cdf98df}" Click="DisconnectWork_Click" IsEnabled="False" />
+                        </WrapPanel>
+                        <TextBlock x:Name="WorkNetworkStatus" Classes="sectionSubtitle" TextWrapping="Wrap" />
+                        <TextBlock x:Name="WorkNetworkFeedback" Classes="sectionSubtitle" TextWrapping="Wrap"
+                                   IsVisible="{Binding #WorkNetworkFeedback.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                </Expander>
                 <Expander x:Name="VncServerPanel" Header="{x:Static tr:TriskoStrings.Sb7bf4b3f92aae694}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                     <StackPanel Spacing="12" Margin="0,12,0,0">
                         <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S6bba98e71580523c}" TextWrapping="Wrap" />
@@ -61,6 +89,8 @@
                             <TextBox x:Name="AllowedAddressesBox" Grid.Row="2" Grid.Column="1" Text="LocalSubnet" PlaceholderText="{x:Static tr:TriskoStrings.Sf3e3f8295e679989}" />
                         </Grid>
                         <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S2040cb3df1574a52}" TextWrapping="Wrap" />
+                        <Button x:Name="UseWorkSubnetButton" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.S797dc757ed10b3d4}"
+                                Click="UseWorkSubnet_Click" IsVisible="False" />
                         <CheckBox x:Name="AutoStartBox" Content="{x:Static tr:TriskoStrings.Saf4d8d4b87280730}" />
                         <CheckBox x:Name="LoopbackBox" Content="{x:Static tr:TriskoStrings.S76de79c683ce74de}" />
                         <WrapPanel ItemSpacing="8" LineSpacing="8">

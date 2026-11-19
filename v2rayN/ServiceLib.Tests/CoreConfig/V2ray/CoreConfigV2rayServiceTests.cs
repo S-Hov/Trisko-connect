@@ -11,6 +11,37 @@ namespace ServiceLib.Tests.CoreConfig.V2ray;
 public class CoreConfigV2rayServiceTests
 {
 
+    [Theory]
+    [InlineData("work.example.net", false)]
+    [InlineData("192.0.2.50", true)]
+    public void Work_network_server_uses_the_proxy_and_peers_bypass_TUN(string host, bool ip)
+    {
+        var config = CoreConfigTestFactory.CreateConfig(ECoreType.Xray);
+        config.TunModeItem.EnableTun = true;
+        config.TunModeItem.TriskoRoutingMode = TriskoVpnRoutingMode.Global;
+        config.UiItem.TriskoWorkNetwork = TriskoWorkNetworkOptions.Create(host, "5555", "WORK", "operator", "10.78.0.0/16", false);
+        CoreConfigTestFactory.BindAppManagerConfig(config);
+        var node = CoreConfigTestFactory.CreateVmessNode(ECoreType.Xray);
+        var context = CoreConfigTestFactory.CreateContext(config, node, ECoreType.Xray);
+
+        var result = new CoreConfigV2rayService(context).GenerateClientConfigContent();
+
+        result.Success.Should().BeTrue(result.Msg);
+        var cfg = JsonUtils.Deserialize<V2rayConfig>(result.Data!.ToString())!;
+        var route = cfg.routing.rules.First();
+        route.inboundTag.Should().Contain(nameof(EInboundProtocol.socks));
+        route.network.Should().Be("tcp");
+        route.port.Should().Be("5555");
+        route.outboundTag.Should().Be(Global.ProxyTag);
+        if (ip)
+            route.ip.Should().Contain(host + "/32");
+        else
+            route.domain.Should().Contain("full:" + host);
+        var routes = cfg.inbounds.Single(inbound => inbound.protocol == "tun").settings.autoSystemRoutingTable!;
+        Covers(routes, "10.78.2.5").Should().BeFalse();
+        Covers(routes, "10.79.2.5").Should().BeTrue();
+    }
+
     [Fact]
     public void GenerateClientConfigContent_ShouldGenerateBasicProxyConfig()
     {

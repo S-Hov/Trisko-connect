@@ -13,6 +13,7 @@ The release bundle can include independently licensed networking components:
 - [Wintun](https://www.wintun.net/) — WireGuard project distribution terms;
 - [VirtualHere USB Client](https://www.virtualhere.com/node/316) — proprietary client software; the Windows client may be installed and used on an unlimited number of computers without payment, subject to the VirtualHere USB Client License;
 - GeoIP and GeoSite data included by the selected upstream v2rayN core bundle.
+- [SoftEther VPN Client](https://github.com/SoftEtherVPN/SoftEtherVPN_Stable/releases/tag/v4.44-9807-rtm) 4.44 build 9807 — Apache-2.0. The Windows release contains the unmodified installer and a copy of the license.
 - [UltraVNC Server](https://github.com/ultravnc/UltraVNC) 1.8.3.0 — GNU GPL v3; unmodified Windows x64 server binaries, license and provenance are in `v2rayN/v2rayN.Desktop/Tools/UltraVNC`. Distributions must also provide the corresponding UltraVNC source; it is separate from this application's source archive.
 - [MarcusW.VncClient](https://github.com/MarcusWichelmann/MarcusW.VncClient) pinned at commit `9d9fbf7b97b390ca9f0dff68ba52d2b9a85aed09` — MIT; the client core is included as source in `v2rayN/ThirdParty/MarcusW.VncClient`, with documented .NET compatibility and shutdown fixes. Keyboard and mouse adapters were adapted from upstream commit `9d9fbf7b97b390ca9f0dff68ba52d2b9a85aed09`; their license is included in `v2rayN/v2rayN.Desktop/Trisko/Vnc/LICENSE-MarcusW.txt` and copied into application builds.
 
