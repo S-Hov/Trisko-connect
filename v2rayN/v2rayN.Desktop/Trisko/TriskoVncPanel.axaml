@@ -1,29 +1,45 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+             xmlns:local="using:v2rayN.Desktop.Trisko"
              x:Class="v2rayN.Desktop.Trisko.TriskoVncPanel">
+    <UserControl.Resources>
+        <ItemsPanelTemplate x:Key="VncConnectionCards">
+            <local:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="12" />
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
     <StackPanel Spacing="12">
-        <WrapPanel ItemSpacing="8" LineSpacing="6">
-            <StackPanel x:Name="WorkstationIdentity" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" IsVisible="False">
-                <TextBlock x:Name="WorkstationLabel" Classes="sectionSubtitle" VerticalAlignment="Center" />
-                <SelectableTextBlock x:Name="WorkstationValue" FontWeight="SemiBold" VerticalAlignment="Center" />
-            </StackPanel>
-            <Button x:Name="SetupIncomingButton" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S21cb41929dcb9b94}"
-                    Click="SetupIncoming_Click" IsVisible="False" />
-        </WrapPanel>
-        <Grid ColumnDefinitions="*,180,Auto" ColumnSpacing="8">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <WrapPanel ItemSpacing="10" LineSpacing="6" VerticalAlignment="Center">
+                <TextBlock Classes="sectionSubtitle" Text="{Binding $parent[local:TriskoVncPanel].StatusText}" VerticalAlignment="Center" />
+                <StackPanel x:Name="WorkstationIdentity" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" IsVisible="False">
+                    <TextBlock x:Name="WorkstationLabel" Classes="sectionSubtitle" VerticalAlignment="Center" />
+                    <SelectableTextBlock x:Name="WorkstationValue" FontWeight="SemiBold" VerticalAlignment="Center" />
+                </StackPanel>
+                <Button x:Name="SetupIncomingButton" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S21cb41929dcb9b94}"
+                        Click="SetupIncoming_Click" IsVisible="False" />
+            </WrapPanel>
+            <Button Grid.Column="1" VerticalAlignment="Top" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}"
+                    Click="OpenSettings_Click" AutomationProperties.Name="{x:Static tr:TriskoStrings.S5244e86a155f9941}" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
             <TextBox x:Name="HostBox" Classes="remoteInput" PlaceholderText="{x:Static tr:TriskoStrings.Sd343cbabc004b778}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S4c8fcd6da1bf3b9f}" />
-            <TextBox x:Name="ClientPasswordBox" Grid.Column="1" Classes="remoteInput" PasswordChar="●" PlaceholderText="{x:Static tr:TriskoStrings.S2fe04a29706f6d9b}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S2fe04a29706f6d9b}" />
-            <Button Grid.Column="2" Classes="primaryAction" Content="{x:Static tr:TriskoStrings.S36b4c0b07f08c596}" Click="Connect_Click" />
+            <Button Grid.Column="1" Classes="primaryAction" Content="{x:Static tr:TriskoStrings.S36b4c0b07f08c596}" Click="Connect_Click" />
         </Grid>
         <TextBlock x:Name="ClientStatus" Classes="sectionSubtitle" TextWrapping="Wrap"
                    IsVisible="{Binding #ClientStatus.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-        <WrapPanel ItemSpacing="8" LineSpacing="6">
-            
-            <Button Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="OpenSettings_Click"
-                    AutomationProperties.Name="{x:Static tr:TriskoStrings.S5244e86a155f9941}" />
-        </WrapPanel>
-        
+        <StackPanel x:Name="PinnedPanel" Spacing="6" IsVisible="False">
+            <TextBlock Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.S40cdef60755c34b3}" />
+            <ItemsControl x:Name="PinnedList" ItemsPanel="{StaticResource VncConnectionCards}" />
+        </StackPanel>
+        <StackPanel x:Name="FavoritePanel" Spacing="6" IsVisible="False">
+            <TextBlock Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.Se4c1d01c5c8f2193}" />
+            <ItemsControl x:Name="FavoriteList" ItemsPanel="{StaticResource VncConnectionCards}" />
+        </StackPanel>
+        <StackPanel x:Name="HistoryPanel" Spacing="6" IsVisible="False">
+            <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S60ba8b1a759773a0}" />
+            <ItemsControl x:Name="HistoryList" ItemsPanel="{StaticResource VncConnectionCards}" />
+        </StackPanel>
 
         <ContentControl x:Name="SettingsSlot" IsVisible="False">
             <StackPanel Spacing="12">

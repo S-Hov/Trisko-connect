@@ -11,6 +11,7 @@ public partial class TriskoVncPanel : UserControl
     private readonly DispatcherTimer _statusTimer = new() { Interval = TimeSpan.FromSeconds(5) };
     private bool _busy;
     private bool _initialized;
+    private bool _promptingForPassword;
     private bool _refreshing;
     private TriskoVncServerStatus? _serverStatus;
     private string? _lanAddress;
@@ -37,7 +38,11 @@ public partial class TriskoVncPanel : UserControl
         if (_statusTimer.IsEnabled) return;
         var initialize = !_initialized;
         _initialized = true;
-        if (initialize) LoadClientSettings();
+        if (initialize)
+        {
+            LoadHistory();
+            LoadClientSettings();
+        }
         _statusTimer.Start();
         _ = RefreshStatusesAsync(initialize);
     }
@@ -60,7 +65,7 @@ public partial class TriskoVncPanel : UserControl
         try
         {
             await TriskoRemoteSettingsWindow.ShowFormAsync(this, SettingsSlot, TriskoLocalization.Text("Настройки VNC"),
-                TriskoLocalization.Text("Рабочая сеть, параметры подключения и доступ к этому компьютеру."));
+                TriskoLocalization.Text("Параметры подключения и доступ к этому компьютеру."));
         }
         finally
         {
@@ -72,6 +77,14 @@ public partial class TriskoVncPanel : UserControl
     {
         try
         {
+            if (_history.FirstOrDefault() is { } recent)
+            {
+                HostBox.Text = recent.Host;
+                ClientPortBox.Text = recent.Port.ToString(CultureInfo.InvariantCulture);
+                return;
+            }
+
+            // The previous client saved only the last address and port.
             if (!File.Exists(ClientSettingsPath)) return;
             var saved = JsonSerializer.Deserialize<ClientSettings>(File.ReadAllText(ClientSettingsPath));
             if (saved == null) return;
@@ -81,28 +94,83 @@ public partial class TriskoVncPanel : UserControl
         catch (Exception ex) { ClientStatus.Text = TriskoLocalization.Text("Не удалось прочитать последнее подключение: ") + ex.Message; }
     }
 
-    private void Connect_Click(object? sender, RoutedEventArgs e)
+    private TriskoNotificationCenter? Notifications => (DataContext as TriskoShellViewModel)?.Notifications;
+
+    private void ReportError(string summary, Exception error)
+    {
+        ClientStatus.Text = $"{summary}: {error.Message}";
+        Notifications?.Show(summary, error.Message, TriskoNotificationKind.Error, error.ToString());
+    }
+
+    private async void Connect_Click(object? sender, RoutedEventArgs e)
     {
         try
         {
-            var input = HostBox.Text?.Trim() ?? "";
-            var (host, port) = TriskoVncSettings.ResolveEndpoint(input, ParsePort(ClientPortBox.Text), null);
-            var password = ClientPasswordBox.Text ?? "";
-            if (string.IsNullOrEmpty(password)) throw new ArgumentException(TriskoLocalization.Text("Введите пароль удалённого сервера VNC."));
-            if (password.Length > 8 || password.Any(c => c > 127))
-                throw new ArgumentException(TriskoLocalization.Text("Эта версия поддерживает стандартный пароль VNC: до 8 символов ASCII."));
-            if (TopLevel.GetTopLevel(this) is not Window owner) return;
-            var window = new TriskoVncSessionWindow(host, port, password);
-            window.Show(owner);
-            ClientPasswordBox.Text = "";
-            ClientStatus.Text = "";
+            var (host, port) = TriskoVncSettings.ResolveEndpoint(HostBox.Text?.Trim() ?? "", ParsePort(ClientPortBox.Text), null);
+            await ConnectToAsync(new Destination(host, port));
+        }
+        catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось подключиться по VNC"), ex); }
+    }
+
+    private async Task ConnectToAsync(Destination target)
+    {
+        if (_promptingForPassword || TopLevel.GetTopLevel(this) is not Window owner) return;
+        try { await OpenSessionAsync(owner, target); }
+        catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось подключиться по VNC"), ex); }
+    }
+
+    private async Task OpenSessionAsync(Window owner, Destination target)
+    {
+        ClientStatus.Text = "";
+        string? password = null;
+        if (OperatingSystem.IsWindows())
+        {
+            try { password = WindowsTriskoResourceLauncher.ReadVncPassword(target.Key); }
+            catch (System.ComponentModel.Win32Exception ex) { Logging.SaveLog("VNC credentials", ex); }
+        }
+
+        var usedSavedPassword = password is not null;
+        var savePassword = false;
+        if (password is null)
+        {
+            _promptingForPassword = true;
             try
             {
-                File.WriteAllText(ClientSettingsPath, JsonSerializer.Serialize(new ClientSettings(host, port)));
+                var answer = await AskPasswordAsync(owner, target.Caption);
+                if (answer is null) return;
+                (password, savePassword) = answer.Value;
             }
-            catch (Exception ex) { ClientStatus.Text += TriskoLocalization.Text(" Не удалось запомнить адрес: ") + ex.Message; }
+            finally { _promptingForPassword = false; }
         }
-        catch (Exception ex) { ClientStatus.Text = ex.Message; }
+
+        HostBox.Text = target.Host;
+        ClientPortBox.Text = target.Port.ToString(CultureInfo.InvariantCulture);
+        var window = new TriskoVncSessionWindow(target.Host, target.Port, password, Notifications);
+        window.Authenticated += secret =>
+        {
+            try
+            {
+                var remembered = _history.FirstOrDefault(target.Matches) ?? target;
+                SaveHistory(_history.Where(item => !target.Matches(item)).Prepend(remembered).ToList());
+                if (savePassword && OperatingSystem.IsWindows())
+                    WindowsTriskoResourceLauncher.SetVncPassword(target.Key, secret);
+            }
+            catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось сохранить подключение"), ex); }
+        };
+        if (usedSavedPassword)
+        {
+            window.PasswordRejected += secret =>
+            {
+                if (!OperatingSystem.IsWindows()) return;
+                try
+                {
+                    if (WindowsTriskoResourceLauncher.ReadVncPassword(target.Key) == secret)
+                        WindowsTriskoResourceLauncher.SetVncPassword(target.Key, null);
+                }
+                catch (Exception ex) { ReportError(TriskoLocalization.Text("Не удалось удалить отклонённый пароль VNC"), ex); }
+            };
+        }
+        window.Show(owner);
     }
 
     private async void EnableServer_Click(object? sender, RoutedEventArgs e)

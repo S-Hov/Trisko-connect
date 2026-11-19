@@ -82,6 +82,16 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
+		<None Update="Tools\TurboJPEG\turbojpeg.dll" Condition="'$(RuntimeIdentifier)' == 'win-x64' Or ('$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows')) And '$(NETCoreSdkPortableRuntimeIdentifier)' == 'win-x64')">
+			<Link>turbojpeg.dll</Link>
+			<TargetPath>turbojpeg.dll</TargetPath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</None>
+		<None Update="Tools\TurboJPEG\LICENSE.md;Tools\TurboJPEG\README.ijg;Tools\TurboJPEG\README.txt">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</None>
 		<None Update="Trisko\Vnc\LICENSE-MarcusW.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

@@ -368,6 +368,48 @@ public sealed class WindowsTriskoResourceLauncher : ITriskoResourceLauncher
         }
     }
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    public static string? ReadVncPassword(string key)
+    {
+        if (!CredRead("Trisko/VNC/" + key, 1, 0, out var ptr))
+        {
+            var error = Marshal.GetLastWin32Error();
+            if (error == 1168) return null;
+            throw new System.ComponentModel.Win32Exception(error);
+        }
+        try
+        {
+            var credential = Marshal.PtrToStructure<NativeCredential>(ptr);
+            return Marshal.PtrToStringUni(credential.CredentialBlob, checked((int)credential.CredentialBlobSize / 2));
+        }
+        finally { CredFree(ptr); }
+    }
+
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    public static void SetVncPassword(string key, string? password)
+    {
+        var target = "Trisko/VNC/" + key;
+        if (password is null)
+        {
+            if (!CredDelete(target, 1, 0) && Marshal.GetLastWin32Error() != 1168)
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            return;
+        }
+        var name = Marshal.StringToHGlobalUni(target);
+        var secret = Marshal.StringToHGlobalUni(password);
+        try
+        {
+            var credential = new NativeCredential { Type = 1, TargetName = name, Persist = 2,
+                CredentialBlob = secret, CredentialBlobSize = checked((uint)password.Length * 2) };
+            if (!CredWrite(ref credential, 0)) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+        }
+        finally
+        {
+            Marshal.ZeroFreeGlobalAllocUnicode(secret);
+            Marshal.FreeHGlobal(name);
+        }
+    }
+
     public static bool UserNamesMatch(string? existingUser, string? expectedUser)
     {
         if (string.IsNullOrWhiteSpace(existingUser) || string.IsNullOrWhiteSpace(expectedUser))

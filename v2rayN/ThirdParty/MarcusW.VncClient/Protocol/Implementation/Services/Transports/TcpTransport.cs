@@ -24,6 +24,8 @@ namespace MarcusW.VncClient.Protocol.Implementation.Services.Transports
         public TcpTransport(TcpClient tcpClient)
         {
             _tcpClient = tcpClient ?? throw new ArgumentNullException(nameof(tcpClient));
+            // Input messages are small and latency-sensitive, especially inside a VPN.
+            _tcpClient.NoDelay = true;
         }
 
         /// <inhertitdoc />

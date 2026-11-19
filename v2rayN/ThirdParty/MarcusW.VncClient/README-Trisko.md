@@ -15,4 +15,6 @@ Local changes:
 - Close the transport before joining worker threads so idle connections do not hang during shutdown.
 - Replace obsolete DES provider construction and make the ZRLE palette switch exhaustive.
 
+- Disable Nagle buffering for VNC input and request a full frame again if the initial update contains no pixel data.
+
 The original NuGet alpha4 reproduced a process crash on a normal CloseAsync against UltraVNC 1.8.3.0. Keep this regression covered when updating the core.

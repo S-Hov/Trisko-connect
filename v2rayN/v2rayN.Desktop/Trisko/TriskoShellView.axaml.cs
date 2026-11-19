@@ -80,8 +80,8 @@ public partial class TriskoShellView : ReactiveUserControl<TriskoShellViewModel>
         this.WhenActivated(disposables =>
         {
             disposables.Add(this.WhenAnyValue(x => x.ViewModel!.IsRemoteDesktopsPage)
-                .Subscribe(isOpen => VncPanel.SetStatusMonitoring(isOpen && VncCard.IsVisible)));
-            disposables.Add(new DelegateDisposable(() => VncPanel.SetStatusMonitoring(false)));
+                .Subscribe(UpdateRemoteMonitoring));
+            disposables.Add(new DelegateDisposable(() => UpdateRemoteMonitoring(false)));
             disposables.Add(this.WhenAnyValue(x => x.ViewModel!.IsGlobalSearchOpen).Where(open => open)
                 .Subscribe(_ => Dispatcher.UIThread.Post(() => GlobalSearchTextBox.Focus())));
             disposables.Add(this.WhenAnyValue(x => x.ViewModel!.IsAnyDeskNameOpen).Where(open => open)

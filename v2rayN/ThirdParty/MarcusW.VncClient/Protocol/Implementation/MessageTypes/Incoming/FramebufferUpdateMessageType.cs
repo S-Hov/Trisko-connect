@@ -35,6 +35,8 @@ namespace MarcusW.VncClient.Protocol.Implementation.MessageTypes.Incoming
 
         private int? _lastEncodingTypeId;
         private IEncodingType? _lastEncodingType;
+        private bool _receivedPixelData;
+        private bool _retriedInitialUpdate;
 
         /// <inheritdoc />
         public byte Id => (byte)WellKnownIncomingMessageType.FramebufferUpdate;
@@ -82,7 +84,10 @@ namespace MarcusW.VncClient.Protocol.Implementation.MessageTypes.Incoming
             // Read number of rectangles (first byte is padding)
             ushort numberOfRectangles = BinaryPrimitives.ReadUInt16BigEndian(buffer[1..]);
             if (numberOfRectangles == 0)
+            {
+                RequestNextFramebufferUpdate();
                 return;
+            }
 
             if (_logger.IsEnabled(LogLevel.Debug))
             {
@@ -143,6 +148,7 @@ namespace MarcusW.VncClient.Protocol.Implementation.MessageTypes.Incoming
                         {
                             // Read frame encoding
                             frameEncodingType.ReadFrameEncoding(transportStream, targetFramebuffer, rectangle, _state.RemoteFramebufferSize, _state.RemoteFramebufferFormat);
+                            _receivedPixelData |= width > 0 && height > 0;
 
                             // Visualize rectangle
                             if (targetFramebuffer != null && _visualizeRectangles)
@@ -215,6 +221,14 @@ namespace MarcusW.VncClient.Protocol.Implementation.MessageTypes.Incoming
             Debug.Assert(_context.MessageSender != null, "_context.MessageSender != null");
 
             var wholeScreenRectangle = new Rectangle(Position.Origin, _state.RemoteFramebufferSize);
+
+            // Some servers acknowledge the initial request with an empty or metadata-only update.
+            if (!_receivedPixelData && !_retriedInitialUpdate)
+            {
+                _retriedInitialUpdate = true;
+                _context.MessageSender.EnqueueMessage(new FramebufferUpdateRequestMessage(false, wholeScreenRectangle));
+                return;
+            }
 
             // Can we enable continuous updates instead of requesting single updates?
             if (_state.ServerSupportsContinuousUpdates)

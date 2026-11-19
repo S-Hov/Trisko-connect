@@ -115,6 +115,8 @@ public static class TriskoVncSettings
             AllowShutdown=0
             DebugMode=0
             Secure=0
+            [poll]
+            MaxFPS=60
             [ultravnc]
             passwd={encoded}
             """ + "\r\n";

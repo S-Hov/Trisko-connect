@@ -1906,7 +1906,7 @@
             </Grid>
 
             <!-- Удалённый доступ -->
-            <Grid Margin="32,24,32,30" RowDefinitions="Auto,*" IsVisible="{Binding IsRemoteDesktopsPage}">
+            <Grid Margin="32,24,32,30" RowDefinitions="Auto,Auto,*" IsVisible="{Binding IsRemoteDesktopsPage}">
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
                     <StackPanel Spacing="6">
                         <TextBlock Classes="pageTitle" Text="{x:Static tr:TriskoStrings.S7ec5636aaf881c65}" TextWrapping="Wrap" />
@@ -1915,7 +1915,12 @@
                     <Button Grid.Column="1" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S682554aad26a4b9f}" VerticalAlignment="Center"
                             Click="RemoteSections_Click" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sa6817432c405aef9}" />
                 </Grid>
-                <ScrollViewer Grid.Row="1" Margin="0,20,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <WrapPanel Grid.Row="1" Margin="0,16,0,0" ItemSpacing="8" LineSpacing="6">
+                    <Button x:Name="RdpTab" Classes="secondaryAction" Content="RDP" Click="RemoteTab_Click" />
+                    <Button x:Name="VncTab" Classes="secondaryAction" Content="VNC" Click="RemoteTab_Click" />
+                    <Button x:Name="AnyDeskTab" Classes="secondaryAction" Content="AnyDesk" Click="RemoteTab_Click" />
+                </WrapPanel>
+                <ScrollViewer x:Name="RemoteDesktopScroll" Grid.Row="2" Margin="0,12,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <StackPanel Spacing="12">
                         <TextBlock x:Name="RemoteLayoutFeedback" Classes="sectionSubtitle" TextWrapping="Wrap"
                                    IsVisible="{Binding #RemoteLayoutFeedback.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
@@ -1923,164 +1928,138 @@
                                    Text="{x:Static tr:TriskoStrings.S4b124087f2df3846}" />
 
                         <Border x:Name="RdpCard" Classes="remoteDesktopCard">
-                            <Expander Classes="remoteDesktopMethod" IsExpanded="True">
-                                <Expander.Header>
-                                    <StackPanel Spacing="3">
-                                        <TextBlock Classes="sectionTitle" Text="RDP" />
-                                        <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S567c156dfc0af260}" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Expander.Header>
-                                <StackPanel Classes="remoteDesktopBody">
-                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                                        <TextBox
-                                            VerticalAlignment="Center"
-                                            Classes="searchBox"
-                                            PlaceholderText="{x:Static tr:TriskoStrings.S696de6647be92fdb}"
-                                            Text="{Binding RdpSearchQuery, Mode=TwoWay}">
-                                            <TextBox.InnerLeftContent>
-                                                <PathIcon Width="14" Height="14" Margin="10,0,6,0" Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" Foreground="{DynamicResource TriskoNavIconForeground}" />
-                                            </TextBox.InnerLeftContent>
-                                            <TextBox.InnerRightContent>
-                                                <Button
-                                                    Width="24"
-                                                    Height="24"
-                                                    Margin="0,0,6,0"
-                                                    Padding="0"
-                                                    Classes="clearSearchButton"
-                                                    Command="{Binding ClearRdpSearchCommand}"
-                                                    IsVisible="{Binding RdpSearchQuery, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                                    ToolTip.Tip="{x:Static tr:TriskoStrings.S6e1f7baa472fcfbb}">
-                                                    <PathIcon Width="10" Height="10" Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" Foreground="{DynamicResource TriskoNavIconForeground}" />
-                                                </Button>
-                                            </TextBox.InnerRightContent>
-                                        </TextBox>
-                                        <Button Grid.Column="1" Classes="primaryAction" Command="{Binding AddRdpResourceCommand}" Content="{x:Static tr:TriskoStrings.S943d795e3b07c4a1}" />
-                                        <Button Grid.Column="2" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="RdpSettings_Click"
-                                                AutomationProperties.Name="{x:Static tr:TriskoStrings.S23e9d16eaea0d215}" />
-                                    </Grid>
-                                    <StackPanel Spacing="16" IsVisible="{Binding HasRemoteDesktopResources}">
-                                        <!-- Pinned Section -->
-                                        <StackPanel Spacing="10" IsVisible="{Binding HasPinnedRemoteDesktopResources}">
-                                            <StackPanel Orientation="Horizontal" Spacing="7">
-                                                <PathIcon Width="12" Height="12" Data="M505.743,157.097L354.895,6.249c-8.331-8.331-21.839-8.331-30.17,0L264.395,66.58c-8.331,8.331-8.331,21.839,0,30.17 l15.075,15.075L168.712,222.583C121.131,199.863,62.432,208.2,23.04,247.612c-8.328,8.332-8.326,21.836,0.004,30.166 l90.531,90.531c-0.219,0.201-0.448,0.384-0.66,0.596L6.248,475.572c-8.331,8.331-8.331,21.839,0,30.17 c8.331,8.331,21.839,8.331,30.17,0l106.667-106.667c0.212-0.212,0.395-0.441,0.596-0.66l90.541,90.541 c8.331,8.331,21.839,8.331,30.17,0c39.415-39.415,47.747-98.116,25.014-145.694l110.75-110.75l15.086,15.086 c8.331,8.331,21.839,8.331,30.17,0l60.331-60.331C514.074,178.936,514.074,165.429,505.743,157.097z M247.408,441.802 L70.196,264.59c32.716-19.33,75.573-14.935,103.696,13.188l60.331,60.331C262.346,366.233,266.742,409.078,247.408,441.802z M264.393,307.937l-60.347-60.347l105.594-105.594l60.347,60.348L264.393,307.937z M430.328,202.343l-15.065-15.065 c-0.007-0.007-0.013-0.015-0.02-0.022l-90.517-90.517c-0.007-0.007-0.015-0.013-0.022-0.02l-15.054-15.054l30.161-30.161 l120.678,120.678L430.328,202.343z" Foreground="{DynamicResource TriskoNavIconForeground}" />
-                                                <TextBlock FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S7b4269825916f1aa}" />
-                                            </StackPanel>
-                                            <ItemsControl ItemTemplate="{StaticResource ResourceCardTemplate}" ItemsSource="{Binding PinnedRemoteDesktopResources}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <deskgek:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="16" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
+                            <StackPanel Classes="remoteDesktopBody">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                    <TextBox
+                                        VerticalAlignment="Center"
+                                        Classes="searchBox"
+                                        PlaceholderText="{x:Static tr:TriskoStrings.S696de6647be92fdb}"
+                                        Text="{Binding RdpSearchQuery, Mode=TwoWay}">
+                                        <TextBox.InnerLeftContent>
+                                            <PathIcon Width="14" Height="14" Margin="10,0,6,0" Data="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" Foreground="{DynamicResource TriskoNavIconForeground}" />
+                                        </TextBox.InnerLeftContent>
+                                        <TextBox.InnerRightContent>
+                                            <Button
+                                                Width="24"
+                                                Height="24"
+                                                Margin="0,0,6,0"
+                                                Padding="0"
+                                                Classes="clearSearchButton"
+                                                Command="{Binding ClearRdpSearchCommand}"
+                                                IsVisible="{Binding RdpSearchQuery, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                ToolTip.Tip="{x:Static tr:TriskoStrings.S6e1f7baa472fcfbb}">
+                                                <PathIcon Width="10" Height="10" Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" Foreground="{DynamicResource TriskoNavIconForeground}" />
+                                            </Button>
+                                        </TextBox.InnerRightContent>
+                                    </TextBox>
+                                    <Button Grid.Column="1" Classes="primaryAction" Command="{Binding AddRdpResourceCommand}" Content="{x:Static tr:TriskoStrings.S943d795e3b07c4a1}" />
+                                    <Button Grid.Column="2" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="RdpSettings_Click"
+                                            AutomationProperties.Name="{x:Static tr:TriskoStrings.S23e9d16eaea0d215}" />
+                                </Grid>
+                                <StackPanel Spacing="16" IsVisible="{Binding HasRemoteDesktopResources}">
+                                    <!-- Pinned Section -->
+                                    <StackPanel Spacing="10" IsVisible="{Binding HasPinnedRemoteDesktopResources}">
+                                        <StackPanel Orientation="Horizontal" Spacing="7">
+                                            <PathIcon Width="12" Height="12" Data="M505.743,157.097L354.895,6.249c-8.331-8.331-21.839-8.331-30.17,0L264.395,66.58c-8.331,8.331-8.331,21.839,0,30.17 l15.075,15.075L168.712,222.583C121.131,199.863,62.432,208.2,23.04,247.612c-8.328,8.332-8.326,21.836,0.004,30.166 l90.531,90.531c-0.219,0.201-0.448,0.384-0.66,0.596L6.248,475.572c-8.331,8.331-8.331,21.839,0,30.17 c8.331,8.331,21.839,8.331,30.17,0l106.667-106.667c0.212-0.212,0.395-0.441,0.596-0.66l90.541,90.541 c8.331,8.331,21.839,8.331,30.17,0c39.415-39.415,47.747-98.116,25.014-145.694l110.75-110.75l15.086,15.086 c8.331,8.331,21.839,8.331,30.17,0l60.331-60.331C514.074,178.936,514.074,165.429,505.743,157.097z M247.408,441.802 L70.196,264.59c32.716-19.33,75.573-14.935,103.696,13.188l60.331,60.331C262.346,366.233,266.742,409.078,247.408,441.802z M264.393,307.937l-60.347-60.347l105.594-105.594l60.347,60.348L264.393,307.937z M430.328,202.343l-15.065-15.065 c-0.007-0.007-0.013-0.015-0.02-0.022l-90.517-90.517c-0.007-0.007-0.015-0.013-0.022-0.02l-15.054-15.054l30.161-30.161 l120.678,120.678L430.328,202.343z" Foreground="{DynamicResource TriskoNavIconForeground}" />
+                                            <TextBlock FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TriskoBrandSubtitleForeground}" Text="{x:Static tr:TriskoStrings.S7b4269825916f1aa}" />
                                         </StackPanel>
-
-                                        <!-- Unpinned Section -->
-                                        <StackPanel Spacing="10" IsVisible="{Binding HasUnpinnedRemoteDesktopResources}">
-                                            <TextBlock FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Sdf97dd3ba9584c30}" IsVisible="{Binding HasPinnedRemoteDesktopResources}" />
-                                            <ItemsControl ItemTemplate="{StaticResource ResourceCardTemplate}" ItemsSource="{Binding UnpinnedRemoteDesktopResources}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <deskgek:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="16" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
-                                        </StackPanel>
+                                        <ItemsControl ItemTemplate="{StaticResource ResourceCardTemplate}" ItemsSource="{Binding PinnedRemoteDesktopResources}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <deskgek:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="16" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
                                     </StackPanel>
 
-                                    <Border Padding="28" Classes="card" IsVisible="{Binding HasNoRemoteDesktopResources}" VerticalAlignment="Top">
-                                        <StackPanel Spacing="8">
-                                            <TextBlock FontSize="19" Classes="sectionTitle" Text="{Binding RdpEmptyTitle}" />
-                                            <TextBlock Classes="sectionSubtitle" Text="{Binding RdpEmptySubtitle}" TextWrapping="Wrap" />
-                                        </StackPanel>
-                                    </Border>
+                                    <!-- Unpinned Section -->
+                                    <StackPanel Spacing="10" IsVisible="{Binding HasUnpinnedRemoteDesktopResources}">
+                                        <TextBlock FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TriskoSectionSubtitleForeground}" Text="{x:Static tr:TriskoStrings.Sdf97dd3ba9584c30}" IsVisible="{Binding HasPinnedRemoteDesktopResources}" />
+                                        <ItemsControl ItemTemplate="{StaticResource ResourceCardTemplate}" ItemsSource="{Binding UnpinnedRemoteDesktopResources}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <deskgek:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="16" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </StackPanel>
                                 </StackPanel>
-                            </Expander>
+
+                                <Border Padding="28" Classes="card" IsVisible="{Binding HasNoRemoteDesktopResources}" VerticalAlignment="Top">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock FontSize="19" Classes="sectionTitle" Text="{Binding RdpEmptyTitle}" />
+                                        <TextBlock Classes="sectionSubtitle" Text="{Binding RdpEmptySubtitle}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
                         </Border>
 
                         <Border x:Name="VncCard" Classes="remoteDesktopCard">
-                            <Expander Classes="remoteDesktopMethod">
-                                <Expander.Header>
-                                    <StackPanel Spacing="3">
-                                        <TextBlock Classes="sectionTitle" Text="VNC" />
-                                        <TextBlock Classes="sectionSubtitle" Text="{Binding #VncPanel.StatusText}" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Expander.Header>
-                                <StackPanel Classes="remoteDesktopBody">
-                                    <deskgek:TriskoVncPanel x:Name="VncPanel" />
-                                </StackPanel>
-                            </Expander>
+                            <StackPanel Classes="remoteDesktopBody">
+                                <deskgek:TriskoVncPanel x:Name="VncPanel" />
+                            </StackPanel>
                         </Border>
 
                         <Panel x:Name="AnyDeskAvailability" IsVisible="{Binding IsAnyDeskIntegrationEnabled}">
                             <Border x:Name="AnyDeskCard" Classes="remoteDesktopCard">
-                                <Expander x:Name="AnyDeskSection" Classes="remoteDesktopMethod">
-                                    <Expander.Header>
-                                        <StackPanel Spacing="3">
-                                            <WrapPanel ItemSpacing="10" LineSpacing="3">
-                                                <TextBlock Classes="sectionTitle" Text="AnyDesk" VerticalAlignment="Center" />
-                                                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
-                                                    <Border Width="7" Height="7" CornerRadius="4" Background="{Binding AnyDeskNetworkStatusColor}" VerticalAlignment="Center" />
-                                                    <TextBlock Classes="sectionSubtitle" Text="{Binding OverviewAnyDeskText}" VerticalAlignment="Center" TextWrapping="Wrap" />
-                                                </StackPanel>
-                                            </WrapPanel>
-                                            <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.Scc87ef20ed7c63c7}" TextWrapping="Wrap" />
-                                        </StackPanel>
-                                    </Expander.Header>
-                                    <StackPanel Classes="remoteDesktopBody">
-                                        <WrapPanel ItemSpacing="12" LineSpacing="6">
-                                            <RadioButton GroupName="AnyDeskViewMode" IsChecked="{Binding IsAnyDeskIntegrationView, Mode=OneWay}"
-                                                         Command="{Binding ShowAnyDeskIntegrationViewCommand}" Content="{x:Static tr:TriskoStrings.S4b742c6c367a8306}" />
-                                            <RadioButton GroupName="AnyDeskViewMode" IsChecked="{Binding IsEmbeddedAnyDeskView, Mode=OneWay}"
-                                                         Command="{Binding ShowEmbeddedAnyDeskViewCommand}" Content="{x:Static tr:TriskoStrings.Sd346cff923d15add}" />
-                                        </WrapPanel>
-                                        <WrapPanel ItemSpacing="8" LineSpacing="4" IsVisible="{Binding IsAnyDeskIntegrationView}">
-                                            <TextBlock Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Saa42dbd7c0c71490}" />
-                                            <SelectableTextBlock FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding AnyDeskWorkstationAddressText}" />
-                                        </WrapPanel>
-                                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" IsVisible="{Binding IsAnyDeskIntegrationView}">
-                                            <TextBox Classes="remoteInput" PlaceholderText="{x:Static tr:TriskoStrings.S66e984e720cc0a52}" Text="{Binding AnyDeskManualAddress, Mode=TwoWay}" />
-                                            <Button Grid.Column="1" Classes="primaryAction" Command="{Binding ConnectManualAnyDeskCommand}" Content="{x:Static tr:TriskoStrings.S36b4c0b07f08c596}" />
-                                            <Button Grid.Column="2" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="AnyDeskSettings_Click"
-                                                    AutomationProperties.Name="{x:Static tr:TriskoStrings.S8dc07a7bb029948a}" />
-                                        </Grid>
-                                        <StackPanel Spacing="12" IsVisible="{Binding IsAnyDeskIntegrationView}">
-                                            <TextBlock Classes="sectionSubtitle" Text="{Binding AnyDeskActionStatus}" TextWrapping="Wrap"
-                                                       IsVisible="{Binding AnyDeskActionStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-                                            <ItemsControl ItemTemplate="{StaticResource AnyDeskConnectionTemplate}" ItemsSource="{Binding AnyDeskConnections}" IsVisible="{Binding HasAnyDeskConnections}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <deskgek:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="16" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                            </ItemsControl>
+                                <StackPanel Classes="remoteDesktopBody">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <Border Width="7" Height="7" CornerRadius="4" Background="{Binding AnyDeskNetworkStatusColor}" VerticalAlignment="Center" />
+                                        <TextBlock Classes="sectionSubtitle" Text="{Binding OverviewAnyDeskText}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <WrapPanel ItemSpacing="12" LineSpacing="6">
+                                        <RadioButton GroupName="AnyDeskViewMode" IsChecked="{Binding IsAnyDeskIntegrationView, Mode=OneWay}"
+                                                     Command="{Binding ShowAnyDeskIntegrationViewCommand}" Content="{x:Static tr:TriskoStrings.S4b742c6c367a8306}" />
+                                        <RadioButton GroupName="AnyDeskViewMode" IsChecked="{Binding IsEmbeddedAnyDeskView, Mode=OneWay}"
+                                                     Command="{Binding ShowEmbeddedAnyDeskViewCommand}" Content="{x:Static tr:TriskoStrings.Sd346cff923d15add}" />
+                                    </WrapPanel>
+                                    <WrapPanel ItemSpacing="8" LineSpacing="4" IsVisible="{Binding IsAnyDeskIntegrationView}">
+                                        <TextBlock Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Saa42dbd7c0c71490}" />
+                                        <SelectableTextBlock FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding AnyDeskWorkstationAddressText}" />
+                                    </WrapPanel>
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" IsVisible="{Binding IsAnyDeskIntegrationView}">
+                                        <TextBox Classes="remoteInput" PlaceholderText="{x:Static tr:TriskoStrings.S66e984e720cc0a52}" Text="{Binding AnyDeskManualAddress, Mode=TwoWay}" />
+                                        <Button Grid.Column="1" Classes="primaryAction" Command="{Binding ConnectManualAnyDeskCommand}" Content="{x:Static tr:TriskoStrings.S36b4c0b07f08c596}" />
+                                        <Button Grid.Column="2" Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="AnyDeskSettings_Click"
+                                                AutomationProperties.Name="{x:Static tr:TriskoStrings.S8dc07a7bb029948a}" />
+                                    </Grid>
+                                    <StackPanel Spacing="12" IsVisible="{Binding IsAnyDeskIntegrationView}">
+                                        <TextBlock Classes="sectionSubtitle" Text="{Binding AnyDeskActionStatus}" TextWrapping="Wrap"
+                                                   IsVisible="{Binding AnyDeskActionStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                        <ItemsControl ItemTemplate="{StaticResource AnyDeskConnectionTemplate}" ItemsSource="{Binding AnyDeskConnections}" IsVisible="{Binding HasAnyDeskConnections}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <deskgek:TriskoResponsiveGridPanel MinItemWidth="300" Spacing="16" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
 
-                                            <Border Padding="22" Classes="card" IsVisible="{Binding HasNoAnyDeskConnections}">
-                                                <StackPanel Spacing="6">
-                                                    <TextBlock FontSize="16" Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.Saef644bbb273e8a2}" />
-                                                    <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S35149cebd0834ecd}" TextWrapping="Wrap" />
-                                                </StackPanel>
-                                            </Border>
-                                        </StackPanel>
-                                        <WrapPanel ItemSpacing="8" LineSpacing="8" IsVisible="{Binding IsEmbeddedAnyDeskView}">
-                                            <Button Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="AnyDeskSettings_Click"
-                                                    AutomationProperties.Name="{x:Static tr:TriskoStrings.S8dc07a7bb029948a}" />
-                                            <Button Classes="primaryAction" Content="{x:Static tr:TriskoStrings.S10818ec5a4cad749}" Click="AnyDeskFullscreenButton_Click"
-                                                    IsEnabled="{Binding IsAnyDeskEmbeddedWindowAttached}" />
-                                        </WrapPanel>
-                                        <Border Height="640" Padding="1" Classes="card" ClipToBounds="True" IsVisible="{Binding IsEmbeddedAnyDeskView}">
-                                            <Grid>
-                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
-                                                    <TextBlock HorizontalAlignment="Center" FontSize="16" Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.S399e809ab4800ca4}" />
-                                                    <TextBlock MaxWidth="520" TextAlignment="Center" Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S86c2b7c8b50ada77}" TextWrapping="Wrap" />
-                                                </StackPanel>
-                                                <deskgek:TriskoAnyDeskNativeHost x:Name="EmbeddedAnyDeskHost"
-                                                    ExecutablePath="{Binding EffectiveAnyDeskExecutablePath}"
-                                                    IsActive="{Binding IsEmbeddedAnyDeskActive}"
-                                                    IsWindowAttached="{Binding IsAnyDeskEmbeddedWindowAttached, Mode=TwoWay}" />
-                                            </Grid>
+                                        <Border Padding="22" Classes="card" IsVisible="{Binding HasNoAnyDeskConnections}">
+                                            <StackPanel Spacing="6">
+                                                <TextBlock FontSize="16" Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.Saef644bbb273e8a2}" />
+                                                <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S35149cebd0834ecd}" TextWrapping="Wrap" />
+                                            </StackPanel>
                                         </Border>
                                     </StackPanel>
-                                </Expander>
+                                    <WrapPanel ItemSpacing="8" LineSpacing="8" IsVisible="{Binding IsEmbeddedAnyDeskView}">
+                                        <Button Classes="secondaryAction" Content="{x:Static tr:TriskoStrings.S985b5e0f2ccf1ba0}" Click="AnyDeskSettings_Click"
+                                                AutomationProperties.Name="{x:Static tr:TriskoStrings.S8dc07a7bb029948a}" />
+                                        <Button Classes="primaryAction" Content="{x:Static tr:TriskoStrings.S10818ec5a4cad749}" Click="AnyDeskFullscreenButton_Click"
+                                                IsEnabled="{Binding IsAnyDeskEmbeddedWindowAttached}" />
+                                    </WrapPanel>
+                                    <Border Height="640" Padding="1" Classes="card" ClipToBounds="True" IsVisible="{Binding IsEmbeddedAnyDeskView}">
+                                        <Grid>
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                                                <TextBlock HorizontalAlignment="Center" FontSize="16" Classes="sectionTitle" Text="{x:Static tr:TriskoStrings.S399e809ab4800ca4}" />
+                                                <TextBlock MaxWidth="520" TextAlignment="Center" Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.S86c2b7c8b50ada77}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <deskgek:TriskoAnyDeskNativeHost x:Name="EmbeddedAnyDeskHost"
+                                                ExecutablePath="{Binding EffectiveAnyDeskExecutablePath}"
+                                                IsActive="{Binding IsEmbeddedAnyDeskActive}"
+                                                IsWindowAttached="{Binding IsAnyDeskEmbeddedWindowAttached, Mode=TwoWay}" />
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
                             </Border>
                         </Panel>
                         <ContentControl x:Name="AnyDeskSettingsSlot" IsVisible="False">

@@ -1,5 +1,9 @@
 # Third-party notices
 
+The Windows x64 VNC client includes unmodified libjpeg-turbo 3.2.1 for Tight JPEG decoding.
+Its IJG and BSD license notices and binary provenance are in `v2rayN/v2rayN.Desktop/Tools/TurboJPEG`.
+This software is based in part on the work of the Independent JPEG Group.
+
 Trisko connect is a modified distribution of [v2rayN](https://github.com/2dust/v2rayN) by 2dust and contributors, based on the Geksa-A Connection work by S-Hov. The source code is distributed under GPL-3.0; see [`LICENSE`](LICENSE).
 
 The release bundle can include independently licensed networking components:

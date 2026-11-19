@@ -6,12 +6,11 @@ public partial class TriskoShellView
 {
     private static string RemoteDesktopLayoutPath => Utils.GetConfigPath("trisko-remote-desktop-layout.json");
 
+    private RemoteDesktopLayout _remoteLayout = new();
+    private Button? _activeRemoteTab;
+
     private void InitializeRemoteDesktopLayout()
     {
-        AnyDeskSection.PropertyChanged += (_, change) =>
-        {
-            if (change.Property == Expander.IsExpandedProperty) UpdateRemoteSections();
-        };
         AnyDeskAvailability.PropertyChanged += (_, change) =>
         {
             if (change.Property == Visual.IsVisibleProperty) UpdateRemoteSections();
@@ -20,20 +19,21 @@ public partial class TriskoShellView
         {
             if (File.Exists(RemoteDesktopLayoutPath) &&
                 JsonSerializer.Deserialize<RemoteDesktopLayout>(File.ReadAllText(RemoteDesktopLayoutPath)) is { } layout)
-                ApplyRemoteDesktopLayout(layout);
+                _remoteLayout = layout;
         }
         catch (Exception ex)
         {
             Logging.SaveLog(nameof(InitializeRemoteDesktopLayout), ex);
         }
+        UpdateRemoteSections();
     }
 
     private async void RemoteSections_Click(object? sender, RoutedEventArgs e)
     {
         if (TopLevel.GetTopLevel(this) is not Window owner) return;
-        var rdp = new CheckBox { Content = "RDP", IsChecked = RdpCard.IsVisible };
-        var vnc = new CheckBox { Content = "VNC", IsChecked = VncCard.IsVisible };
-        var anyDesk = new CheckBox { Content = "AnyDesk", IsChecked = AnyDeskCard.IsVisible };
+        var rdp = new CheckBox { Content = "RDP", IsChecked = _remoteLayout.Rdp };
+        var vnc = new CheckBox { Content = "VNC", IsChecked = _remoteLayout.Vnc };
+        var anyDesk = new CheckBox { Content = "AnyDesk", IsChecked = _remoteLayout.AnyDesk };
         var form = new StackPanel { Spacing = 8, Children = { rdp, vnc, anyDesk } };
         var dialog = new TriskoRemoteSettingsWindow(TriskoLocalization.Text("Разделы удалённого доступа"),
             TriskoLocalization.Text("Выберите, что показывать на этой странице."), form, canApply: true);
@@ -43,7 +43,8 @@ public partial class TriskoShellView
         try
         {
             await TriskoConfigurationFileIO.WriteTextAtomicallyAsync(RemoteDesktopLayoutPath, JsonSerializer.Serialize(layout));
-            ApplyRemoteDesktopLayout(layout);
+            _remoteLayout = layout;
+            UpdateRemoteSections();
             RemoteLayoutFeedback.Text = "";
         }
         catch (Exception ex)
@@ -53,20 +54,40 @@ public partial class TriskoShellView
         }
     }
 
-    private void ApplyRemoteDesktopLayout(RemoteDesktopLayout layout)
+    private void RemoteTab_Click(object? sender, RoutedEventArgs e)
     {
-        RdpCard.IsVisible = layout.Rdp;
-        VncCard.IsVisible = layout.Vnc;
-        AnyDeskCard.IsVisible = layout.AnyDesk;
-        VncPanel.SetStatusMonitoring(layout.Vnc && ViewModel is { IsRemoteDesktopsPage: true });
+        if (sender is not Button tab || tab == _activeRemoteTab) return;
+        _activeRemoteTab = tab;
         UpdateRemoteSections();
+        RemoteDesktopScroll.Offset = default;
     }
 
     private void UpdateRemoteSections()
     {
-        var showAnyDesk = AnyDeskAvailability.IsVisible && AnyDeskCard.IsVisible;
-        RemoteSectionsEmpty.IsVisible = !RdpCard.IsVisible && !VncCard.IsVisible && !showAnyDesk;
-        ViewModel?.SetAnyDeskSectionOpen(showAnyDesk && AnyDeskSection.IsExpanded);
+        RdpTab.IsVisible = _remoteLayout.Rdp;
+        VncTab.IsVisible = _remoteLayout.Vnc;
+        AnyDeskTab.IsVisible = _remoteLayout.AnyDesk && AnyDeskAvailability.IsVisible;
+        Button[] tabs = [RdpTab, VncTab, AnyDeskTab];
+        if (_activeRemoteTab is not { IsVisible: true })
+            _activeRemoteTab = tabs.FirstOrDefault(tab => tab.IsVisible);
+        foreach (var tab in tabs)
+        {
+            var selected = tab == _activeRemoteTab;
+            tab.Classes.Set("primaryAction", selected);
+            tab.Classes.Set("secondaryAction", !selected);
+        }
+
+        RdpCard.IsVisible = _activeRemoteTab == RdpTab;
+        VncCard.IsVisible = _activeRemoteTab == VncTab;
+        AnyDeskCard.IsVisible = _activeRemoteTab == AnyDeskTab;
+        RemoteSectionsEmpty.IsVisible = _activeRemoteTab is null;
+        UpdateRemoteMonitoring(ViewModel is { IsRemoteDesktopsPage: true });
+    }
+
+    private void UpdateRemoteMonitoring(bool pageIsOpen)
+    {
+        VncPanel.SetStatusMonitoring(pageIsOpen && VncCard.IsVisible);
+        ViewModel?.SetAnyDeskSectionOpen(pageIsOpen && AnyDeskCard.IsVisible);
     }
 
     private async void RdpSettings_Click(object? sender, RoutedEventArgs e)

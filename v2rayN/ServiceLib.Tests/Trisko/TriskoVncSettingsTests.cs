@@ -70,6 +70,7 @@ public class TriskoVncSettingsTests
         Assert.Contains("FileTransferEnabled=0", ini);
         Assert.Contains("LoopbackOnly=1", ini);
         Assert.Contains("PortNumber=15990", ini);
+        Assert.Contains("[poll]\nMaxFPS=60", ini.ReplaceLineEndings("\n"));
         Assert.DoesNotContain("Test123!", ini);
         Assert.DoesNotContain("passwd2=", ini);
     }

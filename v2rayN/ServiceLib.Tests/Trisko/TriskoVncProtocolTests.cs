@@ -36,6 +36,36 @@ public class TriskoVncProtocolTests
     }
 
     [Fact]
+    public async Task An_empty_first_update_retries_the_full_frame_then_keeps_requesting_updates()
+    {
+        var requests = new TaskCompletionSource<(byte[] Initial, byte[] Retry, byte[] Next)>();
+        await using var server = new IdleRfbServer(async (stream, token) =>
+        {
+            var encodings = new byte[4];
+            await stream.ReadExactlyAsync(encodings, token);
+            Assert.Equal(2, encodings[0]); // SetEncodings
+            var count = System.Buffers.Binary.BinaryPrimitives.ReadUInt16BigEndian(encodings.AsSpan(2));
+            await stream.ReadExactlyAsync(new byte[count * 4], token);
+
+            var initial = new byte[10];
+            var retry = new byte[10];
+            var next = new byte[10];
+            await stream.ReadExactlyAsync(initial, token);
+            await stream.WriteAsync(new byte[4], token); // FramebufferUpdate with zero rectangles
+            await stream.ReadExactlyAsync(retry, token);
+            await stream.WriteAsync(new byte[4], token);
+            await stream.ReadExactlyAsync(next, token);
+            requests.SetResult((initial, retry, next));
+        });
+        using var connection = await ConnectAsync(server.Port);
+        var (initial, retry, next) = await requests.Task.WaitAsync(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
+        Assert.Equal(new byte[] { 3, 0, 0, 0, 0, 0, 0, 2, 0, 2 }, initial);
+        Assert.Equal(initial, retry);
+        Assert.Equal(new byte[] { 3, 1, 0, 0, 0, 0, 0, 2, 0, 2 }, next);
+        await connection.CloseAsync();
+    }
+
+    [Fact]
     public async Task Canceling_a_worker_is_normal_shutdown()
     {
         using var worker = new CancelableWorker();
@@ -78,10 +108,12 @@ public class TriskoVncProtocolTests
         private readonly TcpListener _listener = new(IPAddress.Loopback, 0);
         private readonly CancellationTokenSource _timeout = new(TimeSpan.FromSeconds(10));
         private readonly Task _worker;
+        private readonly Func<NetworkStream, CancellationToken, Task>? _afterHandshake;
         private TcpClient? _client;
         public int Port { get; }
-        public IdleRfbServer()
+        public IdleRfbServer(Func<NetworkStream, CancellationToken, Task>? afterHandshake = null)
         {
+            _afterHandshake = afterHandshake;
             _listener.Start();
             Port = ((IPEndPoint)_listener.LocalEndpoint).Port;
             _worker = ServeAsync();
@@ -103,6 +135,7 @@ public class TriskoVncProtocolTests
                 // 2x2 framebuffer, standard 32-bit true color, four-byte desktop name.
                 await stream.WriteAsync(new byte[] { 0, 2, 0, 2, 32, 24, 0, 1, 0, 255, 0, 255, 0, 255, 16, 8, 0, 0, 0, 0,
                     0, 0, 0, 4, 116, 101, 115, 116 }, _timeout.Token);
+                if (_afterHandshake is not null) await _afterHandshake(stream, _timeout.Token);
                 var buffer = new byte[1024];
                 while (await stream.ReadAsync(buffer, _timeout.Token) > 0) { }
             }

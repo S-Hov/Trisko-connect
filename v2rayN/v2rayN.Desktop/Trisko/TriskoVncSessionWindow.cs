@@ -1,10 +1,12 @@
 using System.ComponentModel;
 using MarcusW.VncClient;
 using MarcusW.VncClient.Protocol.Implementation;
+using MarcusW.VncClient.Protocol.Implementation.MessageTypes.Outgoing;
 using MarcusW.VncClient.Protocol.Implementation.SecurityTypes;
 using MarcusW.VncClient.Protocol.Implementation.Services.Transports;
 using MarcusW.VncClient.Protocol.SecurityTypes;
 using MarcusW.VncClient.Security;
+using MarcusW.VncClient.Rendering;
 using Microsoft.Extensions.Logging.Abstractions;
 using v2rayN.Desktop.Trisko.Vnc;
 
@@ -15,12 +17,18 @@ public sealed class TriskoVncSessionWindow : Window
     private readonly VncView _screen = new();
     private readonly TextBlock _status = new() { VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center };
     private readonly CancellationTokenSource _cancellation = new();
+    private readonly TriskoNotificationCenter? _notifications;
     private RfbConnection? _connection;
     private Task? _connectTask;
     private bool _closing;
+    private bool _reportedInterruption;
 
-    public TriskoVncSessionWindow(string host, int port, string password)
+    public event Action<string>? Authenticated;
+    public event Action<string>? PasswordRejected;
+
+    public TriskoVncSessionWindow(string host, int port, string password, TriskoNotificationCenter? notifications)
     {
+        _notifications = notifications;
         Title = $"VNC — {host}:{port}";
         Width = 1100; Height = 750; MinWidth = 600; MinHeight = 400;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -39,6 +47,19 @@ public sealed class TriskoVncSessionWindow : Window
         var viewport = new Border { Background = Brushes.Black, ClipToBounds = true,
             Child = new Viewbox { Stretch = Stretch.Uniform, Child = _screen } };
         Grid.SetRow(viewport, 1); layout.Children.Add(viewport); Content = layout;
+        if (notifications is not null)
+        {
+            var messages = new TriskoNotificationsView
+            {
+                DataContext = notifications,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom,
+                Margin = new Thickness(12),
+                MaxHeight = 300
+            };
+            Grid.SetRow(messages, 1);
+            layout.Children.Add(messages);
+        }
         Deactivated += (_, _) => _screen.ReleaseInput();
         Opened += (_, _) =>
         {
@@ -60,7 +81,6 @@ public sealed class TriskoVncSessionWindow : Window
     {
         _status.Text = TriskoLocalization.Text("Подключение…");
         var authentication = new PasswordHandler(password);
-        password = string.Empty;
         try
         {
             // Do not negotiate unauthenticated access when a server also offers security type None.
@@ -75,6 +95,9 @@ public sealed class TriskoVncSessionWindow : Window
                 MaxReconnectAttempts = 0,
                 ConnectTimeout = TimeSpan.FromSeconds(15),
                 AllowSharedConnection = true,
+                RenderFlags = RenderFlags.UpdateByRectangle,
+                JpegQualityLevel = 85,
+                JpegSubsamplingLevel = JpegSubsamplingLevel.None,
                 InitialRenderTarget = _screen
             }, _cancellation.Token);
             if (_closing)
@@ -86,22 +109,65 @@ public sealed class TriskoVncSessionWindow : Window
             connection.PropertyChanged += ConnectionChanged;
             UpdateStatus();
             _screen.Focus();
+            Authenticated?.Invoke(password);
         }
         catch (OperationCanceledException) { if (!_closing) _status.Text = TriskoLocalization.Text("Подключение отменено"); }
-        catch (Exception ex) { if (!_closing) { _status.Text = TriskoLocalization.Text("Ошибка: ") + ex.Message; _status.TextWrapping = TextWrapping.Wrap; } }
-        finally { authentication.Clear(); }
+        catch (Exception ex)
+        {
+            if (!_closing)
+            {
+                var message = ex.Message;
+                for (Exception? cause = ex; cause != null; cause = cause.InnerException)
+                    if (cause is MarcusW.VncClient.Protocol.HandshakeFailedException && cause.Message.StartsWith("Authentication failed", StringComparison.Ordinal))
+                    {
+                        PasswordRejected?.Invoke(password);
+                        message = TriskoLocalization.Text("Сервер отклонил пароль VNC. Подключитесь снова и проверьте пароль.");
+                        break;
+                    }
+                _status.Text = message;
+                _notifications?.Show(TriskoLocalization.Text("Не удалось подключиться по VNC"), message, TriskoNotificationKind.Error, ex.ToString());
+            }
+        }
+        finally { authentication.Clear(); password = string.Empty; }
+
+        if (_connection is not { } active) return;
+
+        // UltraVNC can start by sending desktop changes only while screen capture warms up.
+        try
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(500), _cancellation.Token);
+            if (active.ConnectionState == ConnectionState.Connected)
+                active.EnqueueMessage(new FramebufferUpdateRequestMessage(false,
+                    new MarcusW.VncClient.Rectangle(MarcusW.VncClient.Position.Origin, active.RemoteFramebufferSize)), _cancellation.Token);
+        }
+        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
+        catch (ObjectDisposedException) when (active.ConnectionState != ConnectionState.Connected) { }
     }
 
     private void ConnectionChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(RfbConnection.ConnectionState))
+        if (e.PropertyName is nameof(RfbConnection.ConnectionState) or nameof(RfbConnection.UsedEncodingTypes))
             Dispatcher.UIThread.Post(UpdateStatus);
     }
 
     private void UpdateStatus()
     {
+        if (!_closing && !_reportedInterruption && _connection is { ConnectionState: ConnectionState.Closed, InterruptionCause: { } error })
+        {
+            _reportedInterruption = true;
+            _notifications?.Show(TriskoLocalization.Text("Соединение VNC прервано"), error.Message, TriskoNotificationKind.Error, error.ToString());
+        }
         if (!_closing) _status.Text = _connection?.ConnectionState == ConnectionState.Connected
-            ? TriskoLocalization.Text("Подключено") : TriskoLocalization.Text("Соединение закрыто. Для повтора откройте подключение заново.");
+            ? DescribeConnection(_connection)
+            : TriskoLocalization.Text("Соединение закрыто. Для повтора откройте подключение заново.");
+    }
+
+    private static string DescribeConnection(RfbConnection connection)
+    {
+        var encodings = string.Join(", ", connection.UsedEncodingTypes
+            .OfType<MarcusW.VncClient.Protocol.EncodingTypes.IFrameEncodingType>().Select(encoding => encoding.Name));
+        return string.IsNullOrEmpty(encodings) ? TriskoLocalization.Text("Подключено")
+            : TriskoLocalization.Format("Подключено · {0}", encodings);
     }
 
     private async Task CloseConnectionAsync()

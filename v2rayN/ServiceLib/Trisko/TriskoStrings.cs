@@ -101,6 +101,7 @@ public static class TriskoStrings
     public static string S3f6b159016ac0179 => TriskoLocalization.Text("Весь интернет через VPN, локальная сеть напрямую");
     public static string S3fd2288eba652a89 => TriskoLocalization.Text("Структура одиночного подключения (.json)");
     public static string S40cd9f4145a7c826 => TriskoLocalization.Text("Проверка корпоративного комплекта");
+    public static string S40cdef60755c34b3 => TriskoLocalization.Text("Закреплённые");
     public static string S40eb0b6fc23a33b7 => TriskoLocalization.Text("Открыть полный клиент VirtualHere");
     public static string S42f65083b858a687 => TriskoLocalization.Text("Добавить SSH");
     public static string S435de5b9766809f7 => TriskoLocalization.Text("Установить комплект");
@@ -154,6 +155,7 @@ public static class TriskoStrings
     public static string S5ef6da998878b5bc => TriskoLocalization.Text("Менять режим и маршруты можно только при отключённом VPN. Изменения применяются при следующем подключении.");
     public static string S60268d5cceae8fef => TriskoLocalization.Text("Автоматическое открытие сессий при включении VPN и управление сетевыми дисками в проводнике Windows");
     public static string S603e460bf59cac0f => TriskoLocalization.Text("Обновить");
+    public static string S60ba8b1a759773a0 => TriskoLocalization.Text("История подключений");
     public static string S621aa897131d433c => TriskoLocalization.Text("VPN-подключения и подписки");
     public static string S63679dce192ba504 => TriskoLocalization.Text("VPN-профили и подписки не изменяются.");
     public static string S638f8008a1733349 => TriskoLocalization.Text("Проверка…");
