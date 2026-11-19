@@ -38,7 +38,7 @@ $portableDirectory = Join-Path $releaseDirectory 'portable'
 $licenseCacheDirectory = Join-Path $repositoryRoot 'artifacts\license-cache'
 $projectPath = Join-Path $repositoryRoot 'v2rayN\v2rayN.Desktop\v2rayN.Desktop.csproj'
 $iconPath = Join-Path $repositoryRoot 'v2rayN\v2rayN.Desktop\Assets\Trisko\Brand\trisko-connect.ico'
-$splashImagePath = Join-Path $repositoryRoot 'v2rayN\v2rayN.Desktop\Assets\Trisko\Splash\connected-ribbons.png'
+$splashImagePath = Join-Path $repositoryRoot 'installer\installer-splash.png'
 $packageId = 'TriskoConnect-Desktop'
 
 if ([string]::IsNullOrWhiteSpace($ReleaseNotesPath)) {
@@ -206,6 +206,7 @@ try {
         '--packAuthors', 'S-Hov',
         '--icon', $iconPath,
         '--splashImage', $splashImagePath,
+        '--splashProgressColor', '#8AB0FF',
         '--releaseNotes', $ReleaseNotesPath,
         '--channel', 'stable',
         '--shortcuts', 'Desktop,StartMenuRoot',
