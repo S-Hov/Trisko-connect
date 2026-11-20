@@ -9,8 +9,8 @@ public partial class TriskoVncPanel
     private TriskoWorkNetworkOptions? _workOptions;
     private TriskoSoftEtherStatus? _workStatus;
     private TriskoWorkplaceDiscovery? _discovery;
-    private (IPAddress Address, int Index, string Network)? _discoveryBinding;
-    private string? _discoveryFirewallCidr;
+    private (IPAddress Address, int Index, string Network, string Multicast, int Port)? _discoveryBinding;
+    private (string Cidr, string Multicast, int Port)? _discoveryFirewallScope;
     private string? _lastWorkError;
     private (long Version, int Port)? _workTransport;
     private (long Version, int Port)? _autoAttempt;
@@ -31,6 +31,8 @@ public partial class TriskoVncPanel
         WorkHubBox.Text = _workOptions?.Hub;
         WorkUsernameBox.Text = _workOptions?.Username;
         WorkSubnetBox.Text = _workOptions?.Cidr ?? TriskoWorkNetworkOptions.DefaultCidr;
+        WorkMulticastBox.Text = _workOptions?.MulticastAddress ?? TriskoWorkNetworkOptions.DefaultMulticastAddress;
+        WorkDiscoveryPortBox.Text = (_workOptions?.DiscoveryPort ?? TriskoWorkNetworkOptions.DefaultDiscoveryPort).ToString(CultureInfo.InvariantCulture);
         AutoWorkBox.IsChecked = _workOptions?.AutoConnect ?? false;
     }
 
@@ -45,7 +47,7 @@ public partial class TriskoVncPanel
     private async Task SaveWorkNetworkAsync()
     {
         var options = TriskoWorkNetworkOptions.Create(WorkHostBox.Text, WorkPortBox.Text, WorkHubBox.Text,
-            WorkUsernameBox.Text, WorkSubnetBox.Text, AutoWorkBox.IsChecked == true);
+            WorkUsernameBox.Text, WorkSubnetBox.Text, AutoWorkBox.IsChecked == true, WorkMulticastBox.Text, WorkDiscoveryPortBox.Text);
         if (options == _workOptions) return;
         if (_workStatus is { Connected: true } && _workOptions is { } activeOptions &&
             (options with { AutoConnect = activeOptions.AutoConnect }) != activeOptions)
@@ -63,9 +65,12 @@ public partial class TriskoVncPanel
         _workOptions = options;
         _autoAttempt = null;
         UpdateStatusMonitoring();
-        WorkNetworkFeedback.Text = CoreManager.Instance.IsCoreRunning && CurrentTransport() is null
+        LoadWorkNetworkFields();
+        var requiresReconnect = CoreManager.Instance.IsCoreRunning && CurrentTransport() is null;
+        Notifications?.Show("SoftEther", requiresReconnect
             ? TriskoLocalization.Text("Переподключите VPN, чтобы применить настройки рабочей сети.")
-            : TriskoLocalization.Text("Настройки рабочей сети сохранены.");
+            : TriskoLocalization.Text("Настройки рабочей сети сохранены."),
+            requiresReconnect ? TriskoNotificationKind.Warning : TriskoNotificationKind.Success);
     }
 
     private async void SaveWork_Click(object? sender, RoutedEventArgs e) => await RunWorkActionAsync(
@@ -98,6 +103,7 @@ public partial class TriskoVncPanel
             {
                 WorkNetworkStatus.Text = TriskoLocalization.Text("Установка SoftEther VPN Client…");
                 await _workNetwork.InstallAsync();
+                Notifications?.Show("SoftEther", TriskoLocalization.Text("Клиент SoftEther установлен."), TriskoNotificationKind.Success);
                 return;
             }
 
@@ -111,7 +117,8 @@ public partial class TriskoVncPanel
                     ? TriskoLocalization.Text("Переподключите VPN, чтобы применить настройки рабочей сети.")
                     : TriskoLocalization.Text("Сначала подключите VPN."));
 
-            await ConnectWorkAsync(transport, password);
+            if (await ConnectWorkAsync(transport, password))
+                Notifications?.Show("SoftEther", TriskoLocalization.Text("Рабочая сеть подключена."), TriskoNotificationKind.Success);
         });
 
     private Task DisconnectWorkManuallyAsync() => RunWorkActionAsync(
@@ -120,6 +127,7 @@ public partial class TriskoVncPanel
             if (!OperatingSystem.IsWindows() || _workNetwork is null) return;
             _autoAttempt = CurrentTransport();
             await DisconnectWorkAsync();
+            Notifications?.Show("SoftEther", TriskoLocalization.Text("Рабочая сеть отключена."), TriskoNotificationKind.Information);
         });
 
     private async Task RunWorkActionAsync(string operation, Func<Task> action)
@@ -131,13 +139,11 @@ public partial class TriskoVncPanel
         await _workGate.WaitAsync();
         try
         {
-            WorkNetworkFeedback.Text = "";
             await action();
         }
         catch (Exception ex)
         {
-            WorkNetworkFeedback.Text = ex.Message;
-            ReportError(operation, ex);
+            Notifications?.Show(operation, ex.Message, TriskoNotificationKind.Error, ex.ToString());
         }
         finally
         {
@@ -152,7 +158,7 @@ public partial class TriskoVncPanel
     }
 
     [SupportedOSPlatform("windows")]
-    private async Task ConnectWorkAsync((long Version, int Port) transport, string password)
+    private async Task<bool> ConnectWorkAsync((long Version, int Port) transport, string password)
     {
         var options = _workOptions ?? throw new InvalidOperationException(
             TriskoLocalization.Text("Сначала настройте рабочую сеть SoftEther."));
@@ -163,12 +169,12 @@ public partial class TriskoVncPanel
         if (CurrentTransport() != transport)
         {
             await DisconnectWorkAsync();
-            return;
+            return false;
         }
 
         _workTransport = transport;
         _workStatus = await _workNetwork.GetStatusAsync(options);
-        WorkNetworkFeedback.Text = "";
+        return _workStatus.Connected;
     }
 
     [SupportedOSPlatform("windows")]
@@ -199,8 +205,8 @@ public partial class TriskoVncPanel
                 try { await ConnectWorkAsync(transport.Value, ""); }
                 catch (Exception ex)
                 {
-                    WorkNetworkFeedback.Text = ex.Message;
-                    ReportError(TriskoLocalization.Text("Не удалось подключить рабочую сеть"), ex);
+                    Notifications?.Show(TriskoLocalization.Text("Не удалось подключить рабочую сеть"),
+                        ex.Message, TriskoNotificationKind.Error, ex.ToString());
                 }
             }
 
@@ -244,18 +250,20 @@ public partial class TriskoVncPanel
         }
 
         UseDeviceId();
-        var binding = (Address: IPAddress.Parse(address), Index: adapter.Index, Network: options.NetworkKey);
+        var binding = (Address: IPAddress.Parse(address), Index: adapter.Index, Network: options.NetworkKey,
+            Multicast: options.MulticastAddress, Port: options.DiscoveryPort);
         if (!_discoveryBinding.Equals(binding))
         {
             StopDiscovery();
-            if (_discoveryFirewallCidr != options.Cidr)
+            var scope = (options.Cidr, options.MulticastAddress, options.DiscoveryPort);
+            if (_discoveryFirewallScope != scope)
             {
-                await TriskoVncServerService.AllowDiscoveryAsync(options.Subnet);
-                _discoveryFirewallCidr = options.Cidr;
+                await TriskoVncServerService.AllowDiscoveryAsync(options);
+                _discoveryFirewallScope = scope;
             }
 
             if (!_statusTimer.IsEnabled || CurrentTransport() != _workTransport) return;
-            _discovery = new TriskoWorkplaceDiscovery(_deviceId, binding.Address, binding.Index, options.Subnet);
+            _discovery = new TriskoWorkplaceDiscovery(_deviceId, binding.Address, binding.Index, options);
             _discoveryBinding = binding;
         }
 
@@ -295,7 +303,7 @@ public partial class TriskoVncPanel
         ConnectWorkButton.IsEnabled = !connected;
         DisconnectWorkButton.IsEnabled = connected;
         WorkHostBox.IsEnabled = WorkPortBox.IsEnabled = WorkHubBox.IsEnabled = WorkUsernameBox.IsEnabled =
-            WorkSubnetBox.IsEnabled = WorkPasswordBox.IsEnabled = !connected;
+            WorkSubnetBox.IsEnabled = WorkMulticastBox.IsEnabled = WorkDiscoveryPortBox.IsEnabled = WorkPasswordBox.IsEnabled = !connected;
         UseWorkSubnetButton.IsVisible = _workOptions is not null;
         DiscoveryPanel.IsVisible = connected;
         UpdateSummary();

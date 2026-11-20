@@ -16,9 +16,10 @@ public class CoreConfigSingboxServiceTests
 
 
     [Theory]
-    [InlineData("work.example.net", false)]
-    [InlineData("192.0.2.50", true)]
-    public void Work_network_server_uses_the_proxy_and_peers_bypass_TUN(string host, bool ip)
+    [InlineData("work.example.net", null)]
+    [InlineData("192.0.2.50", "192.0.2.50/32")]
+    [InlineData("[2001:db8::50]", "2001:db8::50/128")]
+    public void Work_network_server_uses_the_proxy_and_peers_bypass_TUN(string host, string? ipCidr)
     {
         var config = CoreConfigTestFactory.CreateConfig(ECoreType.sing_box);
         config.TunModeItem.EnableTun = true;
@@ -37,8 +38,8 @@ public class CoreConfigSingboxServiceTests
         route.network.Should().Contain("tcp");
         route.port.Should().Contain(5555);
         route.outbound.Should().Be(Global.ProxyTag);
-        if (ip)
-            route.ip_cidr.Should().Contain(host + "/32");
+        if (ipCidr is not null)
+            route.ip_cidr.Should().Contain(ipCidr);
         else
             route.domain.Should().Contain(host);
         cfg.inbounds.Single(inbound => inbound.type == "tun").route_exclude_address.Should().Contain("10.78.0.0/16");

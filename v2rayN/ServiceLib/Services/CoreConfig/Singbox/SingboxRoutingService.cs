@@ -40,7 +40,7 @@ public partial class CoreConfigSingboxService
                     inbound = [nameof(EInboundProtocol.socks)],
                     network = ["tcp"],
                     domain = work.IsIpAddress ? null : [work.Host],
-                    ip_cidr = work.IsIpAddress ? [work.Host + "/32"] : null,
+                    ip_cidr = work.IsIpAddress ? [work.HostRoute] : null,
                     port = [work.Port],
                     outbound = Global.ProxyTag,
                 });

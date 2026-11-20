@@ -18,11 +18,14 @@ public partial class TriskoRemoteSettingsWindow : Window
         if (canApply) Dismiss.Content = TriskoLocalization.Text("Отмена");
     }
 
-    public static async Task<string?> ShowFormAsync(Control source, ContentControl slot, string title, string description)
+    public static async Task<string?> ShowFormAsync(Control source, ContentControl slot, string title, string description,
+        TriskoNotificationCenter? notifications = null)
     {
         if (TopLevel.GetTopLevel(source) is not Window owner || slot.Content is not Control form) return null;
         slot.Content = null;
         var window = new TriskoRemoteSettingsWindow(title, description, form) { DataContext = source.DataContext };
+        window.SettingsNotifications.DataContext = notifications;
+        window.SettingsNotifications.IsVisible = notifications is not null;
         try
         {
             return await window.ShowDialog<string?>(owner);

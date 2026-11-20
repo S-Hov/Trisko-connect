@@ -14,7 +14,7 @@ public partial class CoreConfigV2rayService
                     inboundTag = [nameof(EInboundProtocol.socks)],
                     network = "tcp",
                     domain = work.IsIpAddress ? null : [$"full:{work.Host}"],
-                    ip = work.IsIpAddress ? [work.Host + "/32"] : null,
+                    ip = work.IsIpAddress ? [work.HostRoute] : null,
                     port = work.Port.ToString(System.Globalization.CultureInfo.InvariantCulture),
                     outboundTag = Global.ProxyTag,
                 });

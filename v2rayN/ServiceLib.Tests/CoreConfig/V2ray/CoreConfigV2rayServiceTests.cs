@@ -12,9 +12,10 @@ public class CoreConfigV2rayServiceTests
 {
 
     [Theory]
-    [InlineData("work.example.net", false)]
-    [InlineData("192.0.2.50", true)]
-    public void Work_network_server_uses_the_proxy_and_peers_bypass_TUN(string host, bool ip)
+    [InlineData("work.example.net", null)]
+    [InlineData("192.0.2.50", "192.0.2.50/32")]
+    [InlineData("[2001:db8::50]", "2001:db8::50/128")]
+    public void Work_network_server_uses_the_proxy_and_peers_bypass_TUN(string host, string? ipCidr)
     {
         var config = CoreConfigTestFactory.CreateConfig(ECoreType.Xray);
         config.TunModeItem.EnableTun = true;
@@ -33,8 +34,8 @@ public class CoreConfigV2rayServiceTests
         route.network.Should().Be("tcp");
         route.port.Should().Be("5555");
         route.outboundTag.Should().Be(Global.ProxyTag);
-        if (ip)
-            route.ip.Should().Contain(host + "/32");
+        if (ipCidr is not null)
+            route.ip.Should().Contain(ipCidr);
         else
             route.domain.Should().Contain("full:" + host);
         var routes = cfg.inbounds.Single(inbound => inbound.protocol == "tun").settings.autoSystemRoutingTable!;

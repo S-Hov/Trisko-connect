@@ -31,7 +31,7 @@ public sealed class TriskoVncServerService
     private static string SettingsPath => Path.Combine(InstallDirectory, "settings.json");
     private static string ImagePath => $"\"{ServerPath}\" -service";
 
-    public static async Task AllowDiscoveryAsync(IPNetwork subnet)
+    public static async Task AllowDiscoveryAsync(TriskoWorkNetworkOptions network)
     {
         RequireAdministrator();
         var program = Environment.ProcessPath ?? throw new IOException(
@@ -41,9 +41,9 @@ public sealed class TriskoVncServerService
         await DeleteFirewallRuleAsync(rule);
         await RunAsync("netsh.exe", "advfirewall", "firewall", "add", "rule", "name=" + rule,
             "dir=in", "action=allow", "program=" + program, "protocol=UDP",
-            $"localport={TriskoWorkplaceDiscovery.DiscoveryPort}",
-            $"localip={subnet},{TriskoWorkplaceDiscovery.MulticastAddress}",
-            $"remoteip={subnet}", "profile=any");
+            $"localport={network.DiscoveryPort}",
+            $"localip={network.Cidr},{network.MulticastAddress}",
+            $"remoteip={network.Cidr}", "profile=any");
     }
 
     public Task<TriskoVncServerStatus> GetStatusAsync() => Task.Run(() =>

@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:tr="clr-namespace:ServiceLib.Trisko;assembly=ServiceLib"
+        xmlns:local="using:v2rayN.Desktop.Trisko"
         x:Class="v2rayN.Desktop.Trisko.TriskoRemoteSettingsWindow"
         Width="620" SizeToContent="Height" MaxHeight="680"
         Background="{DynamicResource TriskoShellBackground}"
@@ -28,5 +29,7 @@
             <Button x:Name="Dismiss" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.Sef05d57959cfde50}" Click="Dismiss_Click" />
             <Button x:Name="Apply" Classes="triskoPrimary" Content="{x:Static tr:TriskoStrings.Sb4d30cae52894cf0}" IsVisible="False" Click="Apply_Click" />
         </StackPanel>
+        <local:TriskoNotificationsView x:Name="SettingsNotifications" Grid.RowSpan="2" IsVisible="False"
+                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" MaxHeight="240" />
     </Grid>
 </Window>

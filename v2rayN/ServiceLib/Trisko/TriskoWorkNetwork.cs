@@ -7,21 +7,31 @@ public sealed record TriskoWorkNetworkOptions(string Host, int Port, string Hub,
 {
     public const string DefaultCidr = "10.77.0.0/16";
     public const int DefaultPort = 5555;
+    public const string DefaultMulticastAddress = "239.255.77.41";
+    public const int DefaultDiscoveryPort = 47741;
+
+    public string MulticastAddress { get; init; } = DefaultMulticastAddress;
+    public int DiscoveryPort { get; init; } = DefaultDiscoveryPort;
 
     [JsonIgnore]
     public IPNetwork Subnet => IPNetwork.Parse(Cidr);
     internal bool IsIpAddress => IPAddress.TryParse(Host, out _);
-    internal string Server => $"{Host}:{Port}";
+    internal string Server => Host.Contains(':') ? $"[{Host}]:{Port}" : $"{Host}:{Port}";
+    internal string HostRoute => $"{Host}/{(Host.Contains(':') ? 128 : 32)}";
     [JsonIgnore]
     public string NetworkKey => $"{Server.ToLowerInvariant()}/{Hub.ToUpperInvariant()}/{Cidr}";
 
     public static TriskoWorkNetworkOptions Create(string? host, string? port, string? hub, string? user,
-        string? cidr, bool autoConnect)
+        string? cidr, bool autoConnect) => Create(host, port, hub, user, cidr, autoConnect,
+            DefaultMulticastAddress, DefaultDiscoveryPort.ToString(CultureInfo.InvariantCulture));
+
+    public static TriskoWorkNetworkOptions Create(string? host, string? port, string? hub, string? user,
+        string? cidr, bool autoConnect, string? multicastAddress, string? discoveryPort)
     {
         var address = host?.Trim() ?? "";
-        if (Uri.CheckHostName(address) is not (UriHostNameType.Dns or UriHostNameType.IPv4) ||
-            address.Length > 253 || address.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('.' or '-')))
-            throw new ArgumentException(TriskoLocalization.Text("Укажите имя сервера SoftEther или его IPv4-адрес."));
+        if (address.StartsWith('[') && address.EndsWith(']')) address = address[1..^1];
+        if (address.Length > 253 || address.Contains('%') || Uri.CheckHostName(address) == UriHostNameType.Unknown)
+            throw new ArgumentException(TriskoLocalization.Text("Укажите имя или IP-адрес сервера SoftEther без порта."));
         if (!int.TryParse(port, NumberStyles.None, CultureInfo.InvariantCulture, out var portNumber) || portNumber is < 1 or > 65535)
             throw new ArgumentException(TriskoLocalization.Text("Порт должен быть от 1 до 65535."));
 
@@ -34,14 +44,25 @@ public sealed record TriskoWorkNetworkOptions(string Host, int Port, string Hub,
             throw new ArgumentException(TriskoLocalization.Text("Укажите частную IPv4-подсеть с префиксом от /16 до /24."));
 
         var normalizedHost = IPAddress.TryParse(address, out var ip) ? ip.ToString() : address.ToLowerInvariant().TrimEnd('.');
-        return new(normalizedHost, portNumber, hubName, userName, subnet.ToString(), autoConnect);
+        if (!IPAddress.TryParse(multicastAddress?.Trim(), out var multicast) ||
+            multicast.AddressFamily != AddressFamily.InterNetwork || (multicast.GetAddressBytes()[0] & 0xf0) != 0xe0)
+            throw new ArgumentException(TriskoLocalization.Text("Укажите IPv4-адрес мультикаста в диапазоне 224.0.0.0–239.255.255.255."));
+        if (!int.TryParse(discoveryPort, NumberStyles.None, CultureInfo.InvariantCulture, out var udpPort) || udpPort is < 1 or > 65535)
+            throw new ArgumentException(TriskoLocalization.Text("Порт обнаружения должен быть от 1 до 65535."));
+
+        return new(normalizedHost, portNumber, hubName, userName, subnet.ToString(), autoConnect)
+        {
+            MulticastAddress = multicast.ToString(),
+            DiscoveryPort = udpPort,
+        };
     }
 
     public static TriskoWorkNetworkOptions? Validated(TriskoWorkNetworkOptions? options)
     {
         if (options is null) return null;
         try { return Create(options.Host, options.Port.ToString(CultureInfo.InvariantCulture), options.Hub,
-            options.Username, options.Cidr, options.AutoConnect); }
+            options.Username, options.Cidr, options.AutoConnect, options.MulticastAddress,
+            options.DiscoveryPort.ToString(CultureInfo.InvariantCulture)); }
         catch (ArgumentException) { return null; }
     }
 

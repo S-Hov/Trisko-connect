@@ -48,33 +48,46 @@
 
         <ContentControl x:Name="SettingsSlot" IsVisible="False">
             <StackPanel Spacing="12">
-                <Grid ColumnDefinitions="*,110" ColumnSpacing="12">
-                    <TextBlock Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Seb476cc933e1da11}" />
-                    <TextBox x:Name="ClientPortBox" Grid.Column="1" Text="5900" AutomationProperties.Name="{x:Static tr:TriskoStrings.S1c01e643ae71aedc}" />
-                </Grid>
-                <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.Se924243b8513f09f}" TextWrapping="Wrap" />
-                
                 <Expander x:Name="WorkNetworkPanel" Header="{x:Static tr:TriskoStrings.Sed77c63a04ba7a30}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" IsVisible="False">
                     <StackPanel Spacing="10" Margin="0,12,0,0">
-                        <Grid ColumnDefinitions="*,100" ColumnSpacing="8">
-                            <TextBox x:Name="WorkHostBox" PlaceholderText="{x:Static tr:TriskoStrings.Sef6d20aed29f5caa}" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sef6d20aed29f5caa}" />
-                            <TextBox x:Name="WorkPortBox" Grid.Column="1" PlaceholderText="{x:Static tr:TriskoStrings.S90947197f86bfdea}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S0aec9df4b66b3bae}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                            <TextBox x:Name="WorkHubBox" PlaceholderText="{x:Static tr:TriskoStrings.S135a15058cff130a}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S135a15058cff130a}" />
-                            <TextBox x:Name="WorkUsernameBox" Grid.Column="1" PlaceholderText="{x:Static tr:TriskoStrings.S9516a2a9ecf92285}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S9516a2a9ecf92285}" />
-                        </Grid>
-                        <TextBox x:Name="WorkSubnetBox" PlaceholderText="{x:Static tr:TriskoStrings.S36eef2169f76785e}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S36eef2169f76785e}" />
-                        <TextBox x:Name="WorkPasswordBox" PasswordChar="●" MaxLength="63" PlaceholderText="{x:Static tr:TriskoStrings.Sf981e6008c196dee}" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sf981e6008c196dee}" />
                         <CheckBox x:Name="AutoWorkBox" Content="{x:Static tr:TriskoStrings.S284ddaa509b32b98}" />
-                        <WrapPanel ItemSpacing="8" LineSpacing="8">
-                            <Button x:Name="SaveWorkButton" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.Sd3257f0c9ba359c3}" Click="SaveWork_Click" />
-                            <Button x:Name="ConnectWorkButton" Classes="triskoPrimary" Content="{x:Static tr:TriskoStrings.Sbcafa808f0871ba2}" Click="ConnectWork_Click" />
-                            <Button x:Name="DisconnectWorkButton" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.Sbb5bdd176cdf98df}" Click="DisconnectWork_Click" IsEnabled="False" />
-                        </WrapPanel>
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnSpacing="16" RowSpacing="8">
+                            <TextBlock Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Sef6d20aed29f5caa}" />
+                            <TextBox x:Name="WorkHostBox" Grid.Column="1" PlaceholderText="{x:Static tr:TriskoStrings.S5eea2fcdf1a41625}" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sef6d20aed29f5caa}" />
+                            <TextBlock Grid.Row="1" Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.S5366ea3494b9c44f}" />
+                            <TextBox x:Name="WorkPortBox" Grid.Row="1" Grid.Column="1" Width="115" HorizontalAlignment="Left" AutomationProperties.Name="{x:Static tr:TriskoStrings.S0aec9df4b66b3bae}" />
+                            <TextBlock Grid.Row="2" Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.S135a15058cff130a}" />
+                            <TextBox x:Name="WorkHubBox" Grid.Row="2" Grid.Column="1" AutomationProperties.Name="{x:Static tr:TriskoStrings.S135a15058cff130a}" />
+                            <TextBlock Grid.Row="3" Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Scc93ce7d6dd9b05f}" />
+                            <TextBox x:Name="WorkUsernameBox" Grid.Row="3" Grid.Column="1" AutomationProperties.Name="{x:Static tr:TriskoStrings.S9516a2a9ecf92285}" />
+                            <TextBlock Grid.Row="4" Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.S36eef2169f76785e}" />
+                            <TextBox x:Name="WorkSubnetBox" Grid.Row="4" Grid.Column="1" PlaceholderText="{x:Static tr:TriskoStrings.Sdb5d21c6a9a7771d}" AutomationProperties.Name="{x:Static tr:TriskoStrings.S36eef2169f76785e}" />
+                            <TextBlock Grid.Row="5" Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Sdd0171711b0bbf01}" />
+                            <TextBox x:Name="WorkMulticastBox" Grid.Row="5" Grid.Column="1" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sdd0171711b0bbf01}" />
+                            <TextBlock Grid.Row="6" Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.S7b34d165db547052}" />
+                            <TextBox x:Name="WorkDiscoveryPortBox" Grid.Row="6" Grid.Column="1" Width="115" HorizontalAlignment="Left" AutomationProperties.Name="{x:Static tr:TriskoStrings.S7b34d165db547052}" />
+                        </Grid>
+                        <TextBlock Classes="sectionSubtitle" TextWrapping="Wrap"
+                                   Text="{x:Static tr:TriskoStrings.S63d5e5e3de771f53}" />
+                        <Button Classes="triskoSecondary" HorizontalAlignment="Left" Content="{x:Static tr:TriskoStrings.Se0f43294c763c914}" Click="SaveWork_Click" />
+                        <Separator Margin="0,4" />
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <TextBox x:Name="WorkPasswordBox" PasswordChar="●" MaxLength="63" VerticalAlignment="Center"
+                                     PlaceholderText="{x:Static tr:TriskoStrings.Sf981e6008c196dee}" AutomationProperties.Name="{x:Static tr:TriskoStrings.Sf981e6008c196dee}" />
+                            <Button x:Name="ConnectWorkButton" Grid.Column="1" Classes="triskoPrimary" Content="{x:Static tr:TriskoStrings.Sbcafa808f0871ba2}" Click="ConnectWork_Click" />
+                            <Button x:Name="DisconnectWorkButton" Grid.Column="2" Classes="triskoSecondary" Content="{x:Static tr:TriskoStrings.Sbb5bdd176cdf98df}" Click="DisconnectWork_Click" IsEnabled="False" />
+                        </Grid>
                         <TextBlock x:Name="WorkNetworkStatus" Classes="sectionSubtitle" TextWrapping="Wrap" />
-                        <TextBlock x:Name="WorkNetworkFeedback" Classes="sectionSubtitle" TextWrapping="Wrap"
-                                   IsVisible="{Binding #WorkNetworkFeedback.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                </Expander>
+                <Expander Header="{x:Static tr:TriskoStrings.S25cbf1ce7c564afb}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <StackPanel Spacing="10" Margin="0,12,0,0">
+                        <Grid ColumnDefinitions="*,110" ColumnSpacing="12">
+                            <TextBlock Classes="sectionSubtitle" VerticalAlignment="Center" Text="{x:Static tr:TriskoStrings.Seb476cc933e1da11}" />
+                            <TextBox x:Name="ClientPortBox" Grid.Column="1" Text="5900" AutomationProperties.Name="{x:Static tr:TriskoStrings.S1c01e643ae71aedc}" />
+                        </Grid>
+                        <TextBlock Classes="sectionSubtitle" Text="{x:Static tr:TriskoStrings.Se924243b8513f09f}" TextWrapping="Wrap" />
                     </StackPanel>
                 </Expander>
                 <Expander x:Name="VncServerPanel" Header="{x:Static tr:TriskoStrings.Sb7bf4b3f92aae694}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">

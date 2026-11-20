@@ -8,10 +8,8 @@ public sealed record TriskoWorkplace(Guid Id, string Name, IPAddress Address, in
 
 public sealed class TriskoWorkplaceDiscovery : IDisposable
 {
-    public const string MulticastAddress = "239.255.77.41";
-    public const int DiscoveryPort = 47741;
     private const SocketOptionName WindowsUnicastInterface = (SocketOptionName)31; // Winsock IP_UNICAST_IF
-    private static readonly IPEndPoint Destination = new(IPAddress.Parse(MulticastAddress), DiscoveryPort);
+    private readonly IPEndPoint _multicast;
     private readonly IPNetwork _subnet;
     private readonly IPEndPoint _broadcast;
     private readonly Socket _socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -24,20 +22,21 @@ public sealed class TriskoWorkplaceDiscovery : IDisposable
     private byte[]? _advertisement;
     private long? _lastProbe;
 
-    public TriskoWorkplaceDiscovery(Guid id, IPAddress address, int interfaceIndex, IPNetwork subnet)
+    public TriskoWorkplaceDiscovery(Guid id, IPAddress address, int interfaceIndex, TriskoWorkNetworkOptions network)
     {
         _id = id;
         _address = address;
         _interfaceIndex = interfaceIndex;
-        _subnet = subnet;
-        _broadcast = new(TriskoWorkNetwork.GetBroadcast(subnet), DiscoveryPort);
+        _subnet = network.Subnet;
+        _multicast = new(IPAddress.Parse(network.MulticastAddress), network.DiscoveryPort);
+        _broadcast = new(TriskoWorkNetwork.GetBroadcast(_subnet), network.DiscoveryPort);
         _query = JsonSerializer.SerializeToUtf8Bytes(new Announcement(1, id, null, 0, Query: true));
         try
         {
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
-            _socket.Bind(new IPEndPoint(IPAddress.Any, DiscoveryPort));
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(Destination.Address, address));
+            _socket.Bind(new IPEndPoint(IPAddress.Any, _multicast.Port));
+            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(_multicast.Address, address));
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastInterface, address.GetAddressBytes());
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 1);
             _directSender.EnableBroadcast = true;
@@ -61,7 +60,7 @@ public sealed class TriskoWorkplaceDiscovery : IDisposable
         Volatile.Write(ref _advertisement, message);
         if (message is not null)
             await Task.WhenAll(
-                SendAsync(_socket, Destination, message),
+                SendAsync(_socket, _multicast, message),
                 SendAsync(_directSender, _broadcast, message)).ConfigureAwait(false);
 
         var now = Environment.TickCount64;
@@ -80,7 +79,7 @@ public sealed class TriskoWorkplaceDiscovery : IDisposable
             .Where(address => _subnet.Contains(address) && !address.Equals(_subnet.BaseAddress) &&
                 !address.Equals(_address) && !address.Equals(_broadcast.Address))
             .Distinct().Take(32);
-        await Task.WhenAll(candidates.Select(address => SendAsync(_directSender, new IPEndPoint(address, DiscoveryPort), _query)))
+        await Task.WhenAll(candidates.Select(address => SendAsync(_directSender, new IPEndPoint(address, _multicast.Port), _query)))
             .ConfigureAwait(false);
     }
 
@@ -160,7 +159,7 @@ public sealed class TriskoWorkplaceDiscovery : IDisposable
                 var destination = packet.PacketInformation.Address;
                 var unicast = destination.Equals(_address);
                 if ((packet.SocketFlags & SocketFlags.Truncated) != 0 || packet.PacketInformation.Interface != _interfaceIndex ||
-                    !(unicast || destination.Equals(Destination.Address) || destination.Equals(_broadcast.Address)) ||
+                    !(unicast || destination.Equals(_multicast.Address) || destination.Equals(_broadcast.Address)) ||
                     packet.RemoteEndPoint is not IPEndPoint sender || !_subnet.Contains(sender.Address) ||
                     sender.Address.Equals(_address) || sender.Address.Equals(_broadcast.Address))
                     continue;
@@ -169,7 +168,7 @@ public sealed class TriskoWorkplaceDiscovery : IDisposable
                 if (announcement.Query)
                 {
                     if (unicast && Volatile.Read(ref _advertisement) is { } advertisement)
-                        await SendAsync(_directSender, new IPEndPoint(sender.Address, DiscoveryPort), advertisement).ConfigureAwait(false);
+                        await SendAsync(_directSender, new IPEndPoint(sender.Address, _multicast.Port), advertisement).ConfigureAwait(false);
                     continue;
                 }
                 var peer = new TriskoWorkplace(announcement.Id, announcement.Name!, sender.Address, announcement.Port);

@@ -97,7 +97,7 @@ public partial class TriskoVncPanel : UserControl
         try
         {
             await TriskoRemoteSettingsWindow.ShowFormAsync(this, SettingsSlot, TriskoLocalization.Text("Настройки VNC"),
-                TriskoLocalization.Text("Рабочая сеть, параметры подключения и доступ к этому компьютеру."));
+                TriskoLocalization.Text("Рабочая сеть, параметры подключения и доступ к этому компьютеру."), Notifications);
         }
         finally
         {

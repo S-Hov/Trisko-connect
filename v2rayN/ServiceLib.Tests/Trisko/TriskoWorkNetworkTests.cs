@@ -21,6 +21,40 @@ public class TriskoWorkNetworkTests
         Assert.False(Options.UsesSameRoute(Options with { Cidr = "10.88.0.0/16" }));
     }
 
+    [Fact]
+    public void Existing_profiles_keep_the_default_discovery_endpoint()
+    {
+        const string json = """
+            {"Host":"work.example.net","Port":5555,"Hub":"WORK","Username":"user","Cidr":"10.77.0.0/16","AutoConnect":true}
+            """;
+        var options = TriskoWorkNetworkOptions.Validated(JsonSerializer.Deserialize<TriskoWorkNetworkOptions>(json));
+
+        Assert.NotNull(options);
+        Assert.Equal("239.255.77.41", options.MulticastAddress);
+        Assert.Equal(47741, options.DiscoveryPort);
+    }
+
+    [Fact]
+    public void Discovery_settings_round_trip_without_changing_the_network_identity_or_proxy_route()
+    {
+        var options = TriskoWorkNetworkOptions.Create(Options.Host, "5555", "WORK", "operator",
+            Options.Cidr, true, "239.20.30.40", "45454");
+
+        Assert.Equal(options, TriskoWorkNetworkOptions.Validated(JsonSerializer.Deserialize<TriskoWorkNetworkOptions>(
+            JsonSerializer.Serialize(options))));
+        Assert.Equal(Options.NetworkKey, options.NetworkKey);
+        Assert.True(Options.UsesSameRoute(options));
+    }
+
+    [Theory]
+    [InlineData("10.77.1.10", "47741")]
+    [InlineData("ff02::1", "47741")]
+    [InlineData("239.255.77.41", "0")]
+    [InlineData("239.255.77.41", "65536")]
+    public void Rejects_invalid_discovery_endpoints(string address, string port) =>
+        Assert.Throws<ArgumentException>(() => TriskoWorkNetworkOptions.Create(Options.Host, "5555", "WORK",
+            "operator", Options.Cidr, true, address, port));
+
     [Theory]
     [InlineData("8.8.8.0/24")]
     [InlineData("10.77.0.0/25")]
