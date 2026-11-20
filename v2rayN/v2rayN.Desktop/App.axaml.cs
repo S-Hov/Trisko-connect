@@ -1,6 +1,8 @@
 using System.Globalization;
+using Avalonia.Rendering.Composition;
 using Semi.Avalonia;
 using v2rayN.Desktop.Common;
+using v2rayN.Desktop.Trisko;
 using v2rayN.Desktop.Views;
 
 namespace v2rayN.Desktop;
@@ -65,6 +67,8 @@ public partial class App : Application
         // Load localized resources only after the saved language is available.
         AvaloniaXamlLoader.Load(this);
         ApplySemiLocale();
+        var theme = AppManager.Instance.Config?.UiItem?.TriskoThemeMode ?? TriskoThemeMode.Brand;
+        TriskoThemeVariants.CurrentVariant = TriskoThemeVariants.FromMode(theme);
     }
 
     private async Task CompleteStartupAsync(IClassicDesktopStyleApplicationLifetime desktop, StartupSplashWindow splash)
@@ -82,12 +86,29 @@ public partial class App : Application
             LoadApplicationResources();
             splash.SetLanguage();
             await Task.Run(() => AppManager.Instance.InitComponents());
+            var mainWindowViewModel = new MainWindowViewModel();
+            try
+            {
+                await mainWindowViewModel.Initialization;
+            }
+            catch (Exception ex)
+            {
+                Logging.SaveLog("Main window initialization", ex);
+            }
+
             DataContext = StatusBarViewModel.Instance;
-            CreateMainWindow();
+            CreateMainWindow(mainWindowViewModel);
 
             // Transfer ownership before closing the temporary main window.
             // The existing MainWindow.Loaded handler still handles tray startup.
-            desktop.MainWindow!.Show();
+            var mainWindow = desktop.MainWindow!;
+            mainWindow.Show();
+            if (mainWindow.IsVisible && mainWindow.WindowState != WindowState.Minimized
+                && ElementComposition.GetElementVisual(mainWindow) is { } visual)
+            {
+                var firstFrame = visual.Compositor.RequestCompositionBatchCommitAsync();
+                await firstFrame.Rendered;
+            }
             splash.Close();
         }
         catch (Exception ex)
@@ -98,15 +119,16 @@ public partial class App : Application
         }
     }
 
-    private void CreateMainWindow()
+    private void CreateMainWindow(MainWindowViewModel? mainWindowViewModel = null)
     {
         var viewLocator = SimpleViewLocator.Instance;
         DataTemplates.Add(viewLocator);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainWindowViewModel = new MainWindowViewModel();
+            mainWindowViewModel ??= new MainWindowViewModel();
             var mainWindow = (MainWindow)viewLocator.Build(mainWindowViewModel);
+            mainWindow.DataContext = mainWindowViewModel;
             mainWindow.ViewModel = mainWindowViewModel;
             desktop.MainWindow = mainWindow;
 

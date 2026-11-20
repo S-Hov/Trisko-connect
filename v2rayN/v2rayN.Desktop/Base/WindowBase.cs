@@ -29,6 +29,11 @@ public class WindowBase<TViewModel> : ReactiveWindow<TViewModel> where TViewMode
 
     protected virtual void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        RestoreWindowSize();
+    }
+
+    protected void RestoreWindowSize(bool beforeFirstShow = false)
+    {
         try
         {
             var sizeItem = ConfigHandler.GetWindowSizeItem(AppManager.Instance.Config, GetType().Name);
@@ -37,7 +42,13 @@ public class WindowBase<TViewModel> : ReactiveWindow<TViewModel> where TViewMode
                 return;
             }
 
-            var screen = Screens.ScreenFromWindow(this) ?? Screens.Primary;
+            var screen = (beforeFirstShow ? Screens.ScreenFromPoint(Position) : Screens.ScreenFromWindow(this))
+                         ?? Screens.Primary;
+            if (screen is null)
+            {
+                return;
+            }
+
             var scaling = screen.Scaling > 0 ? screen.Scaling : 1.0;
             var workingArea = screen.WorkingArea;
 
@@ -46,6 +57,12 @@ public class WindowBase<TViewModel> : ReactiveWindow<TViewModel> where TViewMode
 
             Width = width;
             Height = height;
+
+            // CenterScreen handles positioning with the final frame size on first show.
+            if (beforeFirstShow)
+            {
+                return;
+            }
 
             var frameDiff = (FrameSize ?? ClientSize) - ClientSize;
             var totalWidth = (width + frameDiff.Width) * scaling;

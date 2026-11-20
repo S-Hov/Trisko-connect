@@ -92,6 +92,8 @@ public partial class MainWindowViewModel : MyReactiveObject
 
     #region Init
 
+    public Task Initialization { get; }
+
     public MainWindowViewModel()
     {
         _config = AppManager.Instance.Config;
@@ -330,7 +332,7 @@ public partial class MainWindowViewModel : MyReactiveObject
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(async blProxy => await UpdateSubscriptionProcess("", blProxy));
 
-        _ = Init();
+        Initialization = Init();
     }
 
     private async Task Init()
@@ -355,7 +357,7 @@ public partial class MainWindowViewModel : MyReactiveObject
         {
             await StatisticsManager.Instance.Init(_config, UpdateStatisticsHandler);
         }
-        await RefreshServersDispatcherAsync();
+        await RefreshServers();
 
         // Trisko 3.0 starts disconnected. The VPN core is launched explicitly
         // from the Trisko shell or from the advanced v2rayN interface.

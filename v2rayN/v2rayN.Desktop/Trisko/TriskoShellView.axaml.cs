@@ -30,15 +30,6 @@ public partial class TriskoShellView : ReactiveUserControl<TriskoShellViewModel>
         InitializeComponent();
         InitializeRemoteDesktopLayout();
 
-        var initialMode = AppManager.Instance.Config?.UiItem?.TriskoThemeMode ?? TriskoThemeMode.Brand;
-        TriskoThemeVariants.CurrentVariant = initialMode switch
-        {
-            TriskoThemeMode.Light => ThemeVariant.Light,
-            TriskoThemeMode.Dark => ThemeVariant.Dark,
-            TriskoThemeMode.Brand => TriskoThemeVariants.Brand,
-            _ => ThemeVariant.Default
-        };
-
         TriskoThemeVariants.CurrentVariantChanged += (s, e) => this.TriskoThemeScope.RequestedThemeVariant = TriskoThemeVariants.CurrentVariant;
         this.TriskoThemeScope.RequestedThemeVariant = TriskoThemeVariants.CurrentVariant;
 
@@ -93,14 +84,7 @@ public partial class TriskoShellView : ReactiveUserControl<TriskoShellViewModel>
                 {
                     if (Application.Current != null)
                     {
-                        var newVariant = mode switch
-                        {
-                            TriskoThemeMode.Light => ThemeVariant.Light,
-                            TriskoThemeMode.Dark => ThemeVariant.Dark,
-                            TriskoThemeMode.Brand => TriskoThemeVariants.Brand,
-                            _ => ThemeVariant.Default
-                        };
-                        TriskoThemeVariants.CurrentVariant = newVariant;
+                        TriskoThemeVariants.CurrentVariant = TriskoThemeVariants.FromMode(mode);
                     }
                 })
                 .DisposeWith(disposables);

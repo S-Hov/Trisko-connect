@@ -23,12 +23,16 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
 
     public MainWindow()
     {
+        var themeSettings = new ThemeSettingView();
         InitializeComponent();
 
         _config = AppManager.Instance.Config;
-        NotificationThemeScope.RequestedThemeVariant = TriskoThemeVariants.CurrentVariant;
-        TriskoThemeVariants.CurrentVariantChanged += NotificationThemeChanged;
-        Closed += (_, _) => TriskoThemeVariants.CurrentVariantChanged -= NotificationThemeChanged;
+        RestoreWindowSize(beforeFirstShow: true);
+        RestoreUI();
+        UpdateTriskoTheme(this, EventArgs.Empty);
+        ActualThemeVariantChanged += UpdateTriskoTheme;
+        TriskoThemeVariants.CurrentVariantChanged += UpdateTriskoTheme;
+        Closed += (_, _) => TriskoThemeVariants.CurrentVariantChanged -= UpdateTriskoTheme;
 
         KeyDown += MainWindow_KeyDown;
         menuSettingsSetUWP.Click += MenuSettingsSetUWP_Click;
@@ -36,7 +40,7 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         menuClose.Click += MenuClose_Click;
         btnBackToTrisko.Click += BtnBackToTrisko_Click;
 
-        conTheme.Content ??= new ThemeSettingView();
+        conTheme.Content ??= themeSettings;
 
         this.WhenActivated(disposables =>
         {
@@ -85,7 +89,6 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
             this.OneWayBind(ViewModel, vm => vm.BlNewUpdate, v => v.btnNewUpdate.IsVisible).DisposeWith(disposables);
 
             this.OneWayBind(ViewModel, vm => vm.StatusBarViewModel, v => v.contentStatusBarView.Content).DisposeWith(disposables);
-            this.OneWayBind(ViewModel, vm => vm.TriskoShellViewModel, v => v.contentTriskoShell.Content).DisposeWith(disposables);
 
             _layoutBindingsDisposable.DisposeWith(disposables);
 
@@ -298,8 +301,17 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
         await Task.CompletedTask;
     }
 
-    private void NotificationThemeChanged(object? sender, EventArgs e) =>
-        NotificationThemeScope.RequestedThemeVariant = TriskoThemeVariants.CurrentVariant;
+    private void UpdateTriskoTheme(object? sender, EventArgs e)
+    {
+        var variant = TriskoThemeVariants.CurrentVariant;
+        NotificationThemeScope.RequestedThemeVariant = variant;
+        var backgroundVariant = variant == ThemeVariant.Default ? ActualThemeVariant : variant;
+        if (Application.Current?.TryGetResource("TriskoShellBackground", backgroundVariant, out var background) == true
+            && background is IBrush brush)
+        {
+            Background = brush;
+        }
+    }
 
     private void OnHotkeyHandler(EGlobalHotkey e)
     {
@@ -651,12 +663,10 @@ public partial class MainWindow : WindowBase<MainWindowViewModel>
 
     protected override void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        base.OnLoaded(sender, e);
         if (_config.UiItem.AutoHideStartup)
         {
             ShowHideWindow(false);
         }
-        RestoreUI();
         if (ViewModel?.TriskoShellViewModel != null)
         {
             _triskoTrayMenuManager = new TriskoTrayMenuManager(this, ViewModel, ViewModel.TriskoShellViewModel);

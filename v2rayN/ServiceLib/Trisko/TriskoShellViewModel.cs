@@ -354,7 +354,7 @@ public partial class TriskoShellViewModel : MyReactiveObject, IDisposable
         BrowseAnyDeskExecutableCommand = ReactiveCommand.CreateFromTask(BrowseAnyDeskExecutableAsync);
         UseBundledAnyDeskExecutableCommand = ReactiveCommand.Create(UseBundledAnyDeskExecutable);
         SaveAnyDeskSettingsCommand = ReactiveCommand.CreateFromTask(SaveAnyDeskSettingsAsync);
-        RefreshAnyDeskCommand = ReactiveCommand.CreateFromTask(RefreshAnyDeskEnvironmentAsync);
+        RefreshAnyDeskCommand = ReactiveCommand.CreateFromTask(() => RefreshAnyDeskEnvironmentAsync());
         ShowAnyDeskIntegrationViewCommand = ReactiveCommand.CreateFromTask(ShowAnyDeskIntegrationViewAsync);
         ShowEmbeddedAnyDeskViewCommand = ReactiveCommand.CreateFromTask(ShowEmbeddedAnyDeskViewAsync);
         ConnectAnyDeskCommand = ReactiveCommand.CreateFromTask<TriskoAnyDeskConnection>(ConnectAnyDeskAsync);
@@ -1381,7 +1381,8 @@ public partial class TriskoShellViewModel : MyReactiveObject, IDisposable
                         AnyDeskActionStatus = ex.Message;
                     }
                 }
-                await RefreshAnyDeskEnvironmentAsync();
+                // The window is still being prepared. The monitor can show warnings once it is open.
+                await RefreshAnyDeskEnvironmentAsync(showWarning: false);
             }
             if (AutoStartVirtualHereOnLaunch)
             {
@@ -2408,7 +2409,7 @@ public partial class TriskoShellViewModel : MyReactiveObject, IDisposable
 
     [Reactive] public partial string EffectiveAnyDeskExecutablePath { get; set; } = TriskoAnyDeskClientLocator.BundledExecutablePath;
 
-    private async Task RefreshAnyDeskEnvironmentAsync()
+    private async Task RefreshAnyDeskEnvironmentAsync(bool showWarning = true)
     {
         if (!IsAnyDeskIntegrationEnabled || IsAnyDeskBusy)
         {
@@ -2429,7 +2430,7 @@ public partial class TriskoShellViewModel : MyReactiveObject, IDisposable
                 _monitorCancellation.Token);
             AnyDeskEnvironmentWarningText = inspection.WarningText;
             this.RaisePropertyChanged(nameof(HasAnyDeskEnvironmentWarning));
-            if (inspection.HasWarnings
+            if (showWarning && inspection.HasWarnings
                 && !string.Equals(
                     _lastAnyDeskEnvironmentWarning,
                     inspection.WarningKindKey,

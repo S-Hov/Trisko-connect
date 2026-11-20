@@ -22,13 +22,12 @@
     ShowInTaskbar="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <dialogHost:DialogHost CloseOnClickAway="True" DisableOpeningAnimation="True">
+    <dialogHost:DialogHost Background="Transparent" CloseOnClickAway="True" DisableOpeningAnimation="True">
         <Grid>
-            <ContentControl
+            <gek:TriskoShellView
                 x:Name="contentTriskoShell"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch" />
-            <DockPanel x:Name="advancedVpnPanel" IsVisible="False">
+                DataContext="{Binding TriskoShellViewModel}" />
+            <DockPanel x:Name="advancedVpnPanel" Background="{DynamicResource SemiColorFill0}" IsVisible="False">
             <DockPanel Margin="{StaticResource Margin8}" DockPanel.Dock="Top">
                 <ContentControl x:Name="conTheme" DockPanel.Dock="Right" />
                 <Button

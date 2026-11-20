@@ -6,6 +6,14 @@ public static class TriskoThemeVariants
 {
     public static readonly ThemeVariant Brand = new ThemeVariant("Trisko", ThemeVariant.Dark);
 
+    public static ThemeVariant FromMode(TriskoThemeMode mode) => mode switch
+    {
+        TriskoThemeMode.Light => ThemeVariant.Light,
+        TriskoThemeMode.Dark => ThemeVariant.Dark,
+        TriskoThemeMode.Brand => Brand,
+        _ => ThemeVariant.Default
+    };
+
     private static ThemeVariant _currentVariant = Brand;
     public static ThemeVariant CurrentVariant 
     { 
